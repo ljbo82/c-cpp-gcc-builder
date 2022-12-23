@@ -6,8 +6,7 @@ For details, check [official repository](https://github.com/ljbo82/cpp-project-b
 
 > **Aggregator repository**
 >
-> This repository aggregates all submodules comprising the project (documentation, examples, and the build system itself).
-
+> This repository aggregates all submodules comprising the project (documentation, examples, the build system itself, and extras).
 ## Summary
 
 * [License](#license)
@@ -25,6 +24,8 @@ For details, check [official repository](https://github.com/ljbo82/cpp-project-b
 cpp-project-builder (documentation and core) is distributed under MIT License. Please see the [LICENSE](LICENSE) file for details on copying and distribution.
 
 Examples are under public domain.
+
+Extra components (found in **extra** directory) may have their own licenses. Check each component in order to verify the applicable license.
 
 ## Usage
 
