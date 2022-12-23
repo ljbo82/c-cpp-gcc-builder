@@ -1,0 +1,9 @@
+[submodule "doc"]
+	path = doc
+	url = git@github.com:ljbo82/cpp-project-builder-doc.git
+[submodule "demos"]
+	path = demos
+	url = git@github.com:ljbo82/cpp-project-builder-demos.git
+[submodule "core"]
+	path = core
+	url = git@github.com:ljbo82/cpp-project-builder-core.git
