@@ -25,7 +25,7 @@ cpp-project-builder (documentation and core) is distributed under MIT License. P
 
 Examples are under public domain.
 
-Extra components (found in **extra** directory) may have their own licenses. Check each component in order to verify the applicable license.
+Extra components (found in **extras** directory) may have their own licenses. Check each component in order to verify the applicable license.
 
 ## Usage
 

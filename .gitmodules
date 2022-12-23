@@ -7,6 +7,6 @@
 [submodule "core"]
 	path = core
 	url = https://github.com/ljbo82/cpp-project-builder-core.git
-[submodule "extra/arduino-builder"]
-	path = extra/arduino-builder
+[submodule "extras/arduino-builder"]
+	path = extras/arduino-builder
 	url = https://github.com/ljbo82/arduino-builder.git
