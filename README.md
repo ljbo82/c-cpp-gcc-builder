@@ -1,12 +1,13 @@
 # cpp-project-builder
 
-cpp-project-builder provides a build system based on makefiles containing standard recipes to build C/C++/Assembly multiplatform projects using a GCC-based compiler.
+cpp-project-builder provides a build system based on makefiles containing standard recipes to build C/C++/Assembly multiplatform projects using a GCC-based compilers.
 
 For details, check [official repository](https://github.com/ljbo82/cpp-project-builder).
 
 > **Aggregator repository**
 >
 > This repository aggregates all submodules comprising the project (documentation, examples, the build system itself, and extras).
+
 ## Summary
 
 * [License](#license)
@@ -23,7 +24,7 @@ Extra components (found in **extras** directory) may have their own licenses. Ch
 
 ## Usage
 
-cpp-project-builder provides a build system intended to be used by C/C++/Assembly projects in order to build source files using a GCC-based compiler.
+cpp-project-builder provides a build system intended to be used by C/C++/Assembly projects in order to build source files using GCC-based compilers.
 
 > **Assumptions**
 >
@@ -37,9 +38,9 @@ Typical usage is comprised by the following steps:
 
 1. Clone or copy [cpp-project-builder-core](https://github.com/ljbo82/cpp-project-builder-core) inside directory of your preference (usually inside a subdirectory of `$(PROJ_ROOT)` - this location will be referred from this point onwards as `$(CPP_PROJECT_BUILDER)`);
 
-2. Place project C/C++/Assembly source files into specific directories (usually `$(PROJ_ROOT)/src/` and `$(PROJ_ROOT)/include/`);
+2. Place project C/C++/Assembly source files into specific directories (usually `$(PROJ_ROOT)/src/`, `$(PROJ_ROOT)/include/` or `$(PROJ_ROOT)/hosts/platform_layer/src/`);
 
-3. Create a `$(PROJ_ROOT)/Makefile` containing [variables](https://www.gnu.org/software/make/manual/make.html#Using-Variables) defining how your project shall be built;
+3. Create a `$(PROJ_ROOT)/Makefile` containing [variables](https://github.com/ljbo82/cpp-project-builder-doc/builder.mk.md#variables) defining how your project shall be built;
 
 4. At the end of your `$(PROJ_ROOT)/Makefile` include the `$(CPP_PROJECT_BUILDER)/builder.mk` provided by the build system:
 
@@ -47,7 +48,7 @@ Typical usage is comprised by the following steps:
   include $(CPP_PROJECT_BUILDER)/builder.mk
   ```
 
-5. call `make` (from `$(PROJ_ROOT)` directory, or use `make -C $(PROJ_ROOT)` from any other directory) to build your project.
+5. call `make` from `$(PROJ_ROOT)` directory (or use `make -C $(PROJ_ROOT)` from any other directory) to build your project.
 
 Here is an example of a minimal `$(PROJ_ROOT)/Makefile` used to build an executable with sources contained in `$(PROJ_ROOT)/src/` directory:
 
@@ -71,11 +72,9 @@ The build system is composed by utility makefiles. Here is a summary of the prov
 ```mermaid
 graph TD;
     builder.mk-->project.mk;
-    common.mk-->host.mk;
-    common.mk-->functions.mk;
-    doxygen.mk-->common.mk;
+    project.mk-->functions.mk;
+    doxygen.mk-->project.mk;
     git.mk;
-    project.mk-->common.mk;
 ```
 
 ### builder.mk
