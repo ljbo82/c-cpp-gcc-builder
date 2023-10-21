@@ -40,12 +40,12 @@ Typical usage is comprised by the following steps:
 
 2. Place project C/C++/Assembly source files into specific directories (usually `$(PROJ_ROOT)/src/`, `$(PROJ_ROOT)/include/` or `$(PROJ_ROOT)/hosts/platform_layer/src/`);
 
-3. Create a `$(PROJ_ROOT)/Makefile` containing [variables](https://github.com/ljbo82/cpp-project-builder-doc/builder.mk.md#variables) defining how your project shall be built;
+3. Create a `$(PROJ_ROOT)/Makefile` containing [variables](https://github.com/ljbo82/cpp-project-builder-doc/project.mk.md#variables) defining how your project shall be built;
 
-4. At the end of your `$(PROJ_ROOT)/Makefile` include the `$(CPP_PROJECT_BUILDER)/builder.mk` provided by the build system:
+4. At the end of your `$(PROJ_ROOT)/Makefile` include the `$(CPP_PROJECT_BUILDER)/project.mk` provided by the build system:
 
   ```Makefile
-  include $(CPP_PROJECT_BUILDER)/builder.mk
+  include $(CPP_PROJECT_BUILDER)/project.mk
   ```
 
 5. call `make` from `$(PROJ_ROOT)` directory (or use `make -C $(PROJ_ROOT)` from any other directory) to build your project.
@@ -56,7 +56,7 @@ Here is an example of a minimal `$(PROJ_ROOT)/Makefile` used to build an executa
 PROJ_NAME := hello
 PROJ_TYPE := app
 
-include $(CPP_PROJECT_BUILDER)/builder.mk
+include $(CPP_PROJECT_BUILDER)/project.mk
 ```
 
 With this minimal makefile, an executable can be build just by calling `make`.
@@ -67,43 +67,11 @@ For more examples, check the [demos](https://github.com/ljbo82/cpp-project-build
 
 The build system is composed by utility makefiles. Here is a summary of the provided ones:
 
-### Dependency graph
-
-```mermaid
-graph TD;
-    builder.mk-->project.mk;
-    project.mk-->functions.mk;
-    doxygen.mk-->project.mk;
-    git.mk;
-```
-
-### builder.mk
-
-This is the main makefile. It contains standard recipes to build C/C++/Assembly multiplatform projects using a GCC-based compiler.
-
-Include this file at the end of your `$(PROJ_ROOT)/Makefile`.
-
-See [documentation](https://github.com/ljbo82/cpp-project-builder-doc/blob/master/builder.mk.md) for details.
-
-### common.mk
-
-Common definitions for the build system.
-
-> NOTE: There is no need to include this file manually since it is automatically included by other makefiles. See the [dependency graph](#dependency-graph).
-
 ### doxygen.mk
 
 This file provides standard targets to generate source documentation using [doxygen](https://www.doxygen.nl/index.html).
 
 See [documentation](https://github.com/ljbo82/cpp-project-builder-doc/blob/master/doxygen.mk.md) for details.
-
-### functions.mk
-
-This file provides convenience functions to be used through [`$(call)`](https://www.gnu.org/software/make/manual/make.html#Call-Function).
-
-> NOTE: There is no need to include this file manually since it is automatically included by other makefiles. See the [dependency graph](#dependency-graph).
-
-See [documentation](https://github.com/ljbo82/cpp-project-builder-doc/blob/master/functions.mk.md) for details.
 
 ### git.mk
 
@@ -111,16 +79,10 @@ This file inspects `$(PROJ_ROOT)` directory and exposes git repository informati
 
 See [documentation](https://github.com/ljbo82/cpp-project-builder-doc/blob/master/git.mk.md) for details.
 
-### host.mk
-
-This file inspects current execution environment and identifies the target host if it was not defined.
-
-> NOTE: There is no need to include this file manually since it is automatically included by other makefiles. See the [dependency graph](#dependency-graph).
-
-See [documentation](https://github.com/ljbo82/cpp-project-builder-doc/blob/master/host.mk.md) for details.
-
 ### project.mk
 
-This file contains the project parser. It is automatically included by [builder.mk](#buildermk).
+This is the main makefile. It contains standard recipes to build C/C++/Assembly multiplatform projects using a GCC-based compiler.
 
-Including this file separately is useful only when some logic must be processed after project is fully parsed (e.g. after host layers are processed), but before compiler management takes place.
+Include this file at the end of your `$(PROJ_ROOT)/Makefile`.
+
+See [documentation](https://github.com/ljbo82/cpp-project-builder-doc/blob/master/project.mk.md) for details.
