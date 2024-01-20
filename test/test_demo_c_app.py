@@ -48,7 +48,7 @@ class DemoCAppTest(unittest.TestCase, TestBase):
 
 	@TestBase.BuildTest
 	def test_linux_verbose_build(self):
-		result = self.make(make_flags="V=1")
+		result = self.make("V=1")
 		self.assertEqual(0, result.exitCode)
 
 		line = self.assert_find_line("[CC] output/build/src/main.c.o", result.output)

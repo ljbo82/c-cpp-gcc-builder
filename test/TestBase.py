@@ -78,7 +78,7 @@ class TestBase:
 			text = True,\
 			shell = True)
 
-	def make(self, env=None, make_flags=None):
+	def make(self, make_flags=None, env=None):
 		make_command = f"{'' if env is None else env + ' '}make{'' if make_flags is None else ' ' + make_flags}"
 		class Result:
 			def __init__(self, core_result):
