@@ -26,14 +26,10 @@
 import subprocess
 import os
 import shutil
+import unittest
 
 class TestBase:
 	__this_dir = os.path.abspath(os.path.dirname(__file__))
-
-	def __new__(cls, *args, **kwargs):
-		instance = super().__new__(cls)
-		instance.__cwd = os.path.abspath(os.path.join(TestBase.__this_dir, '.'))
-		return instance
 
 	def __init__(self, cwd=None):
 		if cwd is not None:
@@ -41,6 +37,9 @@ class TestBase:
 
 	@property
 	def cwd(self):
+		if not hasattr(self, '__cwd'):
+			self.__cwd = os.path.abspath(os.path.join(TestBase.__this_dir, '.'))
+
 		return self.__cwd
 
 	@cwd.setter
@@ -187,22 +186,23 @@ class TestBase:
 			raise AssertionError(f"{repr(result[1])} was FOUND")
 
 	@staticmethod
-	def assert_missing_value(varName, result):
+	def assert_var_error(varName, varMessage, result):
 		if result.exitCode == 0:
 			raise AssertionError("Execution succeeded")
 
-		TestBase.assert_contains(f'[{varName}] Missing value', result.output)
+		TestBase.assert_contains(f'[{varName}] {varMessage}', result.output)
+
+	@staticmethod
+	def assert_missing_value(varName, result):
+		TestBase.assert_var_error(varName, 'Missing value', result)
 
 	@staticmethod
 	def assert_unexpected_origin(varName, expectedOrigin, givenOrigin, result):
-		if result.exitCode == 0:
-			raise AssertionError("Execution succeeded")
-
-		TestBase.assert_contains(f'[{varName}] Unexpected origin: "{givenOrigin}" (expected: "{expectedOrigin}")', result.output)
+		TestBase.assert_var_error(varName, f'Unexpected origin: "{givenOrigin}" (expected: "{expectedOrigin}")', result)
 
 	@staticmethod
 	def assert_no_whitespaces(varName, result):
-		if result.exitCode == 0:
-			raise AssertionError("Execution succeeded")
+		TestBase.assert_var_error(varName, 'Value cannot have whitespaces', result)
 
-		TestBase.assert_contains(f'[{varName}] Value cannot have whitespaces', result.output)
+if __name__ == '__main__':
+	raise RuntimeError("Pending discovery support")

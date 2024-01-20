@@ -23,7 +23,7 @@
 #
 # For more information, please refer to <http://unlicense.org/>
 
-# Invalid PROJ_NAME (it cannot have spaces)
-PROJ_NAME = HELLO WORLD
+PROJ_NAME = hello
+PROJ_VERSION =
 
 include ../../core/project.mk

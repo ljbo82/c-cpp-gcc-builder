@@ -23,7 +23,8 @@
 #
 # For more information, please refer to <http://unlicense.org/>
 
-# Invalid PROJ_NAME (it cannot be empty)
-PROJ_NAME =
+PROJ_NAME = hello
+PROJ_VERSION = 1.2.3
+PROJ_TYPE = app lib
 
 include ../../core/project.mk

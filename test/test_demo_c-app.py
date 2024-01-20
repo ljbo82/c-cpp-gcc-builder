@@ -26,12 +26,15 @@
 from TestBase import TestBase
 import unittest
 
-C_APP_DEMO_DIR       = "../demos/c-app"
-INVALID_PROJECTS_DIR = "invalid_projects"
+DEMO_DIR = "../demos/c-app"
 
-class BuildSystemTest(unittest.TestCase, TestBase):
+class DemoCAppTest(unittest.TestCase, TestBase):
 
-	@TestBase.BuildTest(cwd=C_APP_DEMO_DIR)
+	def __init__(self, *args, **kwargs):
+		unittest.TestCase.__init__(self, *args, **kwargs)
+		TestBase.__init__(self, DEMO_DIR)
+
+	@TestBase.BuildTest
 	def test_linux_standard_verbosity(self):
 		result = self.make()
 
@@ -43,7 +46,7 @@ class BuildSystemTest(unittest.TestCase, TestBase):
 		], result.output)
 		self.assert_not_contains(['gcc', 'cp'], result.output)
 
-	@TestBase.BuildTest(cwd=C_APP_DEMO_DIR)
+	@TestBase.BuildTest
 	def test_linux_verbose_build(self):
 		result = self.make(make_flags="V=1")
 		self.assertEqual(0, result.exitCode)
@@ -63,7 +66,7 @@ class BuildSystemTest(unittest.TestCase, TestBase):
 			"/bin/cp output/build/hello output/dist/bin/hello", \
 			result.output[line + 1])
 
-	@TestBase.BuildTest(cwd=C_APP_DEMO_DIR, output_dir=".build")
+	@TestBase.BuildTest(output_dir=".build")
 	def test_linux_custom_output(self):
 		result = self.make('O=.build')
 
@@ -74,27 +77,6 @@ class BuildSystemTest(unittest.TestCase, TestBase):
 			"[DIST] .build/dist/bin/hello", \
 		], result.output)
 		self.assert_not_contains(['gcc', 'cp'], result.output)
-
-	@TestBase.BuildTest(cwd=f"{INVALID_PROJECTS_DIR}/path with spaces", output_dir=None)
-	def test_reject_path_with_spaces(self):
-		result = self.make()
-		self.assertNotEqual(0, result.exitCode)
-		self.assert_contains("whitespaces", result.output)
-
-	@TestBase.BuildTest(cwd=C_APP_DEMO_DIR, output_dir=None)
-	def test_reject_proj_name_from_command_line(self):
-		result = self.make(make_flags='PROJ_NAME=some_val')
-		self.assert_unexpected_origin('PROJ_NAME', 'file', 'command line', result)
-
-	@TestBase.BuildTest(cwd=INVALID_PROJECTS_DIR, output_dir=None)
-	def test_reject_empty_proj_name(self):
-		result = self.make(make_flags='-f empty_proj_name.mk')
-		self.assert_missing_value('PROJ_NAME', result)
-
-	@TestBase.BuildTest(cwd=INVALID_PROJECTS_DIR, output_dir=None)
-	def test_reject_proj_name_with_spaces(self):
-		result = self.make(make_flags='-f proj_name_spaces.mk')
-		self.assert_no_whitespaces('PROJ_NAME', result)
 
 if __name__ == '__main__':
 	unittest.main()
