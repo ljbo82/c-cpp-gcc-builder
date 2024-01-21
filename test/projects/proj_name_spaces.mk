@@ -23,6 +23,6 @@
 #
 # For more information, please refer to <http://unlicense.org/>
 
-PROJ_NAME = HELLO WORLD
+PROJ_NAME = hello world
 
 include ../../core/project.mk

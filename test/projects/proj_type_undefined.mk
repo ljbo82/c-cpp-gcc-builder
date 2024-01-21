@@ -25,6 +25,5 @@
 
 PROJ_NAME = hello
 PROJ_VERSION = 1.2.3
-PROJ_TYPE = value with spaces
 
 include ../../core/project.mk

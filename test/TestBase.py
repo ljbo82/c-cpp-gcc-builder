@@ -26,7 +26,7 @@
 import subprocess
 import os
 import shutil
-import unittest
+from functools import wraps
 
 class TestBase:
 	__this_dir = os.path.abspath(os.path.dirname(__file__))
@@ -50,18 +50,19 @@ class TestBase:
 
 	def BuildTest(output_dir='output', cwd=None):
 		def wrap1(func):
+			@wraps(func)
 			def wrap2(self):
 				oldCwd = self.cwd
 				if cwd is not None:
 					self.cwd = cwd
 
-				if output_dir is not None:
+				if output_dir is not None and os.path.exists(output_dir):
 					shutil.rmtree(output_dir, True)
 
 				try:
 					func(self)
 				finally:
-					if output_dir is not None:
+					if output_dir is not None and os.path.exists(output_dir):
 						shutil.rmtree(output_dir, True)
 
 					if cwd is not None:
@@ -197,12 +198,17 @@ class TestBase:
 		TestBase.assert_var_error(varName, 'Missing value', result)
 
 	@staticmethod
-	def assert_unexpected_origin(varName, expectedOrigin, givenOrigin, result):
-		TestBase.assert_var_error(varName, f'Unexpected origin: "{givenOrigin}" (expected: "{expectedOrigin}")', result)
+	def assert_unexpected_origin(varName, givenOrigin, result):
+		TestBase.assert_var_error(varName, f'Unexpected origin: "{givenOrigin}"', result)
 
 	@staticmethod
 	def assert_no_whitespaces(varName, result):
 		TestBase.assert_var_error(varName, 'Value cannot have whitespaces', result)
+
+	@staticmethod
+	def assert_invalid_value(varName, result):
+		TestBase.assert_var_error(varName, 'Invalid value', result)
+
 
 if __name__ == '__main__':
 	raise RuntimeError("Pending discovery support")

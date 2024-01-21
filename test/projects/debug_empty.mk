@@ -24,7 +24,8 @@
 # For more information, please refer to <http://unlicense.org/>
 
 PROJ_NAME = hello
-PROJ_VERSION = 1.2.3
-PROJ_TYPE = value with spaces
+PROJ_TYPE = app
+
+DEBUG =
 
 include ../../core/project.mk
