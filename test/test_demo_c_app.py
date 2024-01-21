@@ -26,13 +26,12 @@
 from TestBase import TestBase
 import unittest
 
-DEMO_DIR = "../demos/c-app"
+DIR = "../demos/c-app"
 
-class DemoCAppTest(unittest.TestCase, TestBase):
+class DemoCAppTest(TestBase):
 
-	def __init__(self, *args, **kwargs):
-		unittest.TestCase.__init__(self, *args, **kwargs)
-		TestBase.__init__(self, DEMO_DIR)
+	def setUp(self):
+		self.cwd = DIR
 
 	@TestBase.BuildTest
 	def test_linux_standard_verbosity(self):

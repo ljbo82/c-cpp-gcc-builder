@@ -26,21 +26,22 @@
 import subprocess
 import os
 import shutil
-from functools import wraps
+import unittest
+import functools
 
-class TestBase:
-	__this_dir = os.path.abspath(os.path.dirname(__file__))
+DIR = os.path.abspath(os.path.dirname(__file__))
 
-	def __init__(self, cwd=None):
-		if cwd is not None:
-			self.cwd = cwd
+class TestBase(unittest.TestCase):
 
 	@property
 	def cwd(self):
-		if not hasattr(self, '__cwd'):
-			self.__cwd = os.path.abspath(os.path.join(TestBase.__this_dir, '.'))
-
-		return self.__cwd
+		try:
+			return self.__cwd
+		except:
+			cwd = os.path.abspath(os.path.join(DIR, '.'))
+			os.chdir(cwd)
+			self.__cwd = cwd
+			return cwd
 
 	@cwd.setter
 	def cwd(self, cwd):
@@ -49,9 +50,9 @@ class TestBase:
 		self.__cwd = cwd
 
 	def BuildTest(output_dir='output', cwd=None):
-		def wrap1(func):
-			@wraps(func)
-			def wrap2(self):
+		def decorator(func):
+			@functools.wraps(func)
+			def wrapper(self):
 				oldCwd = self.cwd
 				if cwd is not None:
 					self.cwd = cwd
@@ -68,8 +69,13 @@ class TestBase:
 					if cwd is not None:
 						self.cwd = oldCwd
 
-			return wrap2
-		return wrap1
+			return wrapper
+
+		if callable(output_dir):
+			decorator = TestBase.BuildTest('output', None)
+			return decorator(output_dir)
+
+		return decorator
 
 	@staticmethod
 	def __run_command(command):
