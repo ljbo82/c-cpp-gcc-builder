@@ -49,6 +49,7 @@ class TestBase(unittest.TestCase):
 		os.chdir(cwd)
 		self.__cwd = cwd
 
+	@staticmethod
 	def BuildTest(output_dir='output', cwd=None):
 		def decorator(func):
 			@functools.wraps(func)
@@ -93,36 +94,6 @@ class TestBase(unittest.TestCase):
 				self.output = (core_result.stdout if core_result.returncode == 0 else core_result.stderr).strip().split('\n')
 
 		return Result(self.__run_command(make_command))
-
-	@staticmethod
-	def find_line(find, lines):
-		'''
-		Returns the index of the first line containing a given string.
-
-		Args:
-			find (str): String to be searched.
-			lines (list): List of lines to be inspected.
-
-		Returns:
-			The index of the first line containing seached string. If
-			searched line is not found, returns -1
-		'''
-		index = 0
-		for line in lines:
-			if find in line:
-				return index
-
-			index += 1
-
-		return -1
-
-	@staticmethod
-	def assert_find_line(find, lines):
-		line = TestBase.find_line(find, lines)
-		if line == -1:
-			raise AssertionError(f"{repr(find)} was NOT found")
-
-		return line
 
 	@staticmethod
 	def contains(what, where, find_all=None, find_any=None):
@@ -181,6 +152,38 @@ class TestBase(unittest.TestCase):
 		return (found, what)
 
 	@staticmethod
+	def find_line(find, lines):
+		'''
+		Returns the index of the first line containing a given string.
+
+		Args:
+			find (str): String to be searched.
+			lines (list): List of lines to be inspected.
+
+		Returns:
+			The index of the first line containing seached string. If
+			searched line is not found, returns -1
+		'''
+		index = 0
+		for line in lines:
+			if find in line:
+				return index
+
+			index += 1
+
+		return -1
+
+	# region Assert methods
+	# --------------------------------------------------------------------------
+	@staticmethod
+	def assert_find_line(find, lines):
+		line = TestBase.find_line(find, lines)
+		if line == -1:
+			raise AssertionError(f"{repr(find)} was NOT found")
+
+		return line
+
+	@staticmethod
 	def assert_contains(what, where):
 		result = TestBase.contains(what, where, find_all=True)
 		if not result[0]:
@@ -193,11 +196,24 @@ class TestBase(unittest.TestCase):
 			raise AssertionError(f"{repr(result[1])} was FOUND")
 
 	@staticmethod
-	def assert_var_error(varName, varMessage, result):
+	def assert_success(result, findOutputMessage=None):
+		if result.exitCode != 0:
+			raise AssertionError("Execution failed")
+
+		if findOutputMessage is not None:
+			TestBase.assert_find_line(findOutputMessage, result.output)
+
+	@staticmethod
+	def assert_failure(result, findOutputMessage = None):
 		if result.exitCode == 0:
 			raise AssertionError("Execution succeeded")
 
-		TestBase.assert_contains(f'[{varName}] {varMessage}', result.output)
+		if findOutputMessage is not None:
+			TestBase.assert_find_line(findOutputMessage, result.output)
+
+	@staticmethod
+	def assert_var_error(varName, varMessage, result):
+		TestBase.assert_failure(result, f'[{varName}] {varMessage}')
 
 	@staticmethod
 	def assert_missing_value(varName, result):
@@ -215,6 +231,11 @@ class TestBase(unittest.TestCase):
 	def assert_invalid_value(varName, result):
 		TestBase.assert_var_error(varName, 'Invalid value', result)
 
+	@staticmethod
+	def assert_use_of_reserved_variable(varName, result):
+		TestBase.assert_var_error(varName, 'Reserved variable', result)
+	# --------------------------------------------------------------------------
+	#endregion
 
 if __name__ == '__main__':
 	raise RuntimeError("Pending discovery support")

@@ -25,6 +25,7 @@
 
 from TestBase import TestBase
 import unittest
+import os
 
 DIR  = "projects"
 
@@ -36,8 +37,7 @@ class BuildSystemTest(TestBase):
 	@TestBase.BuildTest(cwd='path with spaces')
 	def test_reject_path_with_spaces(self):
 		result = self.make()
-		self.assertNotEqual(0, result.exitCode)
-		self.assert_contains("whitespaces", result.output)
+		self.assert_failure(result, "whitespaces")
 
 	#region var: PROJ_NAME
 	# --------------------------------------------------------------------------
@@ -93,8 +93,7 @@ class BuildSystemTest(TestBase):
 	@TestBase.BuildTest
 	def test_proj_version_undefined_uses_default_value(self):
 		result = self.make('print-vars VARS=PROJ_VERSION')
-		self.assertTrue(result.exitCode == 0)
-		self.assert_contains('PROJ_VERSION = 0.1.0', result.output)
+		self.assert_success(result, 'PROJ_VERSION = 0.1.0')
 	# --------------------------------------------------------------------------
 	#endregion
 
@@ -135,16 +134,14 @@ class BuildSystemTest(TestBase):
 	@TestBase.BuildTest
 	def test_target_deps_with_other_targets(self):
 		result = self.make('deps print-vars')
-		self.assertNotEqual(0, result.exitCode)
-		self.assert_contains('deps cannot be invoked along with other targets (extra targets: print-vars)', result.output)
+		self.assert_failure(result, 'deps cannot be invoked along with other targets (extra targets: print-vars)')
 
 	#region target: print-vars
 	# --------------------------------------------------------------------------
 	@TestBase.BuildTest
 	def test_target_print_vars_with_other_targets(self):
 		result = self.make('print-vars help')
-		self.assertNotEqual(0, result.exitCode)
-		self.assert_contains('print-vars cannot be invoked along with other targets', result.output)
+		self.assert_failure(result, 'print-vars cannot be invoked along with other targets')
 
 	@TestBase.BuildTest
 	def test_target_print_vars_no_vars(self):
@@ -173,8 +170,67 @@ class BuildSystemTest(TestBase):
 	@TestBase.BuildTest
 	def test_debug_undefined_uses_default_value(self):
 		result = self.make('print-vars VARS=DEBUG')
-		self.assertTrue(result.exitCode == 0)
-		self.assert_contains('DEBUG = 0', result.output)
+		self.assert_success(result, 'DEBUG = 0')
+	# --------------------------------------------------------------------------
+	#endregion
+
+	#region BUILD_SUBDIR
+	# --------------------------------------------------------------------------
+	@TestBase.BuildTest
+	def test_build_subdir_reject_value_with_spaces(self):
+		result = self.make('BUILD_SUBDIR=\ path\ with\ spaces')
+		self.assert_no_whitespaces('BUILD_SUBDIR', result)
+
+	@TestBase.BuildTest
+	def test_build_subdir_reject_invalid_path(self):
+		result = self.make('BUILD_SUBDIR=../dir_outside_build')
+		self.assert_var_error('BUILD_SUBDIR', 'Invalid path', result)
+
+	@TestBase.BuildTest
+	def test_build_subdir_reject_reserved_var(self):
+		result = self.make('O_BUILD_DIR=test')
+		self.assert_use_of_reserved_variable('O_BUILD_DIR', result)
+
+	@TestBase.BuildTest
+	def test_build_subdir_test_inspect_valid_value(self):
+		result = self.make('BUILD_SUBDIR=subDir print-vars VARS=O_BUILD_DIR')
+		self.assert_success(result, 'O_BUILD_DIR = output/build/subDir')
+
+	@TestBase.BuildTest(cwd='../../demos/c-app')
+	def test_build_subdir_test_valid_value(self):
+		result = self.make('BUILD_SUBDIR=subDir')
+		self.assert_success(result)
+		self.assertTrue(os.path.exists('output/build/subDir/hello'))
+	# --------------------------------------------------------------------------
+	#endregion
+
+	#region DIST_SUBDIR
+	# --------------------------------------------------------------------------
+	@TestBase.BuildTest
+	def test_dist_subdir_reject_value_with_spaces(self):
+		result = self.make('DIST_SUBDIR=\ path\ with\ spaces')
+		self.assert_no_whitespaces('DIST_SUBDIR', result)
+
+	@TestBase.BuildTest
+	def test_dist_subdir_reject_invalid_path(self):
+		result = self.make('DIST_SUBDIR=../dir_outside_build')
+		self.assert_var_error('DIST_SUBDIR', 'Invalid path', result)
+
+	@TestBase.BuildTest
+	def test_dist_subdir_reject_reserved_var(self):
+		result = self.make('O_DIST_DIR=test')
+		self.assert_use_of_reserved_variable('O_DIST_DIR', result)
+
+	@TestBase.BuildTest
+	def test_dist_subdir_test_inspect_valid_value(self):
+		result = self.make('DIST_SUBDIR=subDir print-vars VARS=O_DIST_DIR')
+		self.assert_success(result, 'O_DIST_DIR = output/dist/subDir')
+
+	@TestBase.BuildTest(cwd='../../demos/c-app')
+	def test_dist_subdir_test_valid_value(self):
+		result = self.make('DIST_SUBDIR=subDir')
+		self.assert_success(result)
+		self.assertTrue(os.path.exists('output/dist/subDir/bin/hello'))
 	# --------------------------------------------------------------------------
 	#endregion
 
