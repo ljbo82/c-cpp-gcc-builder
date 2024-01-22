@@ -28,7 +28,7 @@ import unittest
 
 DIR = "../demos/c-app"
 
-class DemoCAppTest(TestBase):
+class test_demo_c_app(TestBase):
 
 	def setUp(self):
 		self.cwd = DIR
