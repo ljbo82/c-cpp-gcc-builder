@@ -36,27 +36,27 @@ class test_skip_default_include_dir(TestBase):
 	@TestBase.BuildTest
 	def test_reject_from_command_line(self):
 		result = self.make('SKIP_DEFAULT_INCLUDE_DIR=some_val')
-		self.assert_unexpected_origin('SKIP_DEFAULT_INCLUDE_DIR', 'command line', result)
+		self.assert_error_unexpected_origin('SKIP_DEFAULT_INCLUDE_DIR', 'command line', result)
 
 	@TestBase.BuildTest
 	def test_reject_from_environment(self):
 		result = self.make(env='SKIP_DEFAULT_INCLUDE_DIR=some_val')
-		self.assert_unexpected_origin('SKIP_DEFAULT_INCLUDE_DIR', 'environment', result)
+		self.assert_error_unexpected_origin('SKIP_DEFAULT_INCLUDE_DIR', 'environment', result)
 
 	@TestBase.BuildTest
 	def test_reject_empty_value(self):
 		result = self.make('-f skip_default_include_dir_empty.mk')
-		self.assert_missing_value('SKIP_DEFAULT_INCLUDE_DIR', result)
+		self.assert_error_missing_value('SKIP_DEFAULT_INCLUDE_DIR', result)
 
 	@TestBase.BuildTest
 	def test_reject_invalid_value(self):
 		result = self.make('-f skip_default_include_dir_invalid.mk')
-		self.assert_invalid_value('SKIP_DEFAULT_INCLUDE_DIR', result)
+		self.assert_error_invalid_value('SKIP_DEFAULT_INCLUDE_DIR', result)
 
 	@TestBase.BuildTest
 	def test_reject_value_with_spaces(self):
 		result = self.make('-f skip_default_include_dir_spaces.mk')
-		self.assert_no_whitespaces('SKIP_DEFAULT_INCLUDE_DIR', result)
+		self.assert_error_whitespaces('SKIP_DEFAULT_INCLUDE_DIR', result)
 
 	@TestBase.BuildTest
 	def test_uses_default_value(self):

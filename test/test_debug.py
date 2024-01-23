@@ -36,17 +36,17 @@ class test_debug(TestBase):
 	@TestBase.BuildTest
 	def test_reject_empty_value(self):
 		result = self.make('-f debug_empty.mk')
-		self.assert_missing_value('DEBUG', result)
+		self.assert_error_missing_value('DEBUG', result)
 
 	@TestBase.BuildTest
 	def test_reject_value_with_spaces(self):
 		result = self.make('-f debug_spaces.mk')
-		self.assert_no_whitespaces('DEBUG', result)
+		self.assert_error_whitespaces('DEBUG', result)
 
 	@TestBase.BuildTest
 	def test_reject_invalid_value(self):
 		result = self.make('DEBUG=invalid')
-		self.assert_invalid_value('DEBUG', result)
+		self.assert_error_invalid_value('DEBUG', result)
 
 	@TestBase.BuildTest
 	def test_undefined_uses_default_value(self):

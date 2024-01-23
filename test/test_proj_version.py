@@ -36,22 +36,22 @@ class test_proj_version(TestBase):
 	@TestBase.BuildTest
 	def test_reject_from_command_line(self):
 		result = self.make('PROJ_VERSION=some_val')
-		self.assert_unexpected_origin('PROJ_VERSION', 'command line', result)
+		self.assert_error_unexpected_origin('PROJ_VERSION', 'command line', result)
 
 	@TestBase.BuildTest
 	def test_reject_from_enviroment(self):
 		result = self.make(env='PROJ_VERSION=some_val')
-		self.assert_unexpected_origin('PROJ_VERSION', 'environment', result)
+		self.assert_error_unexpected_origin('PROJ_VERSION', 'environment', result)
 
 	@TestBase.BuildTest
 	def test_reject_empty_value(self):
 		result = self.make('-f proj_version_empty.mk')
-		self.assert_missing_value('PROJ_VERSION', result)
+		self.assert_error_missing_value('PROJ_VERSION', result)
 
 	@TestBase.BuildTest
 	def test_reject_invalid_value(self):
 		result = self.make('-f proj_version_invalid.mk')
-		self.assert_var_error('PROJ_VERSION', 'Invalid semantic version', result)
+		self.assert_error_var('PROJ_VERSION', 'Invalid semantic version', result)
 
 	@TestBase.BuildTest
 	def test_undefined_uses_default_value(self):

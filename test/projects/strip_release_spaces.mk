@@ -23,45 +23,9 @@
 #
 # For more information, please refer to <http://unlicense.org/>
 
-from TestBase import TestBase
-import unittest
+PROJ_NAME = hello
+PROJ_TYPE = app
 
-DIR  = "projects"
+STRIP_RELEASE = 0 1
 
-class test_proj_type(TestBase):
-
-	def setUp(self):
-		self.cwd = DIR
-
-	@TestBase.BuildTest
-	def test_reject_from_command_line(self):
-		result = self.make('-f proj_type_undefined.mk PROJ_TYPE=some_val')
-		self.assert_error_unexpected_origin('PROJ_TYPE', 'command line', result)
-
-	@TestBase.BuildTest
-	def test_reject_from_environment(self):
-		result = self.make(make_flags='-f proj_type_undefined.mk', env='PROJ_TYPE=some_val')
-		self.assert_error_unexpected_origin('PROJ_TYPE', 'environment', result)
-
-	@TestBase.BuildTest
-	def test_reject_empty_value(self):
-		result = self.make('-f proj_type_empty.mk')
-		self.assert_error_missing_value('PROJ_TYPE', result)
-
-	@TestBase.BuildTest
-	def test_reject_undefined(self):
-		result = self.make('-f proj_type_undefined.mk')
-		self.assert_error_missing_value('PROJ_TYPE', result)
-
-	@TestBase.BuildTest
-	def test_reject_value_with_spaces(self):
-		result = self.make('-f proj_type_spaces.mk')
-		self.assert_error_whitespaces('PROJ_TYPE', result)
-
-	@TestBase.BuildTest
-	def test_reject_invalid_value(self):
-		result = self.make('-f proj_type_invalid.mk')
-		self.assert_error_invalid_value('PROJ_TYPE', result)
-
-if __name__ == '__main__':
-	unittest.main()
+include ../../core/project.mk

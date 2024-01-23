@@ -28,40 +28,40 @@ import unittest
 
 DIR  = "projects"
 
-class test_proj_type(TestBase):
+class test_strip_release(TestBase):
 
 	def setUp(self):
 		self.cwd = DIR
 
 	@TestBase.BuildTest
 	def test_reject_from_command_line(self):
-		result = self.make('-f proj_type_undefined.mk PROJ_TYPE=some_val')
-		self.assert_error_unexpected_origin('PROJ_TYPE', 'command line', result)
+		result = self.make('STRIP_RELEASE=some_val')
+		self.assert_error_unexpected_origin('STRIP_RELEASE', 'command line', result)
 
 	@TestBase.BuildTest
 	def test_reject_from_environment(self):
-		result = self.make(make_flags='-f proj_type_undefined.mk', env='PROJ_TYPE=some_val')
-		self.assert_error_unexpected_origin('PROJ_TYPE', 'environment', result)
+		result = self.make(env='STRIP_RELEASE=some_val')
+		self.assert_error_unexpected_origin('STRIP_RELEASE', 'environment', result)
 
 	@TestBase.BuildTest
 	def test_reject_empty_value(self):
-		result = self.make('-f proj_type_empty.mk')
-		self.assert_error_missing_value('PROJ_TYPE', result)
-
-	@TestBase.BuildTest
-	def test_reject_undefined(self):
-		result = self.make('-f proj_type_undefined.mk')
-		self.assert_error_missing_value('PROJ_TYPE', result)
-
-	@TestBase.BuildTest
-	def test_reject_value_with_spaces(self):
-		result = self.make('-f proj_type_spaces.mk')
-		self.assert_error_whitespaces('PROJ_TYPE', result)
+		result = self.make('-f strip_release_empty.mk')
+		self.assert_error_missing_value('STRIP_RELEASE', result)
 
 	@TestBase.BuildTest
 	def test_reject_invalid_value(self):
-		result = self.make('-f proj_type_invalid.mk')
-		self.assert_error_invalid_value('PROJ_TYPE', result)
+		result = self.make('-f strip_release_invalid.mk')
+		self.assert_error_invalid_value('STRIP_RELEASE', result)
+
+	@TestBase.BuildTest
+	def test_reject_value_with_spaces(self):
+		result = self.make('-f strip_release_spaces.mk')
+		self.assert_error_whitespaces('STRIP_RELEASE', result)
+
+	@TestBase.BuildTest
+	def test_uses_default_value(self):
+		result = self.make('print-vars VARS=SKIP_DEFAULT_INCLUDE_DIR')
+		self.assert_success(result, 'SKIP_DEFAULT_INCLUDE_DIR = 0')
 
 if __name__ == '__main__':
 	unittest.main()

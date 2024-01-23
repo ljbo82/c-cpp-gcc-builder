@@ -96,7 +96,7 @@ class TestBase(unittest.TestCase):
 		return Result(self.__run_command(make_command))
 
 	@staticmethod
-	def contains(what, where, find_all=None, find_any=None):
+	def find(what, where, find_all=None, find_any=None):
 		'''
 		Checks if a string is found in another string or inside a list of strings
 
@@ -152,13 +152,17 @@ class TestBase(unittest.TestCase):
 		return (found, what)
 
 	@staticmethod
-	def find_line(find, lines):
+	def find_line(find, lines, exact=False):
 		'''
 		Returns the index of the first line containing a given string.
 
 		Args:
 			find (str): String to be searched.
+
 			lines (list): List of lines to be inspected.
+
+			exact (bool=False): Defines if searched string should match exactly
+			      with inspected line.
 
 		Returns:
 			The index of the first line containing seached string. If
@@ -166,7 +170,7 @@ class TestBase(unittest.TestCase):
 		'''
 		index = 0
 		for line in lines:
-			if find in line:
+			if (find in line) if not exact else (find == line):
 				return index
 
 			index += 1
@@ -176,8 +180,8 @@ class TestBase(unittest.TestCase):
 	# region Assert methods
 	# --------------------------------------------------------------------------
 	@staticmethod
-	def assert_find_line(find, lines):
-		line = TestBase.find_line(find, lines)
+	def assert_find_line(find, lines, exact=False):
+		line = TestBase.find_line(find, lines, exact)
 		if line == -1:
 			raise AssertionError(f"{repr(find)} was NOT found")
 
@@ -185,13 +189,13 @@ class TestBase(unittest.TestCase):
 
 	@staticmethod
 	def assert_contains(what, where):
-		result = TestBase.contains(what, where, find_all=True)
+		result = TestBase.find(what, where, find_all=True)
 		if not result[0]:
 			raise AssertionError(f"{repr(result[1])} was NOT found")
 
 	@staticmethod
 	def assert_not_contains(what, where):
-		result = TestBase.contains(what, where, find_any=True)
+		result = TestBase.find(what, where, find_any=True)
 		if result[0]:
 			raise AssertionError(f"{repr(result[1])} was FOUND")
 
@@ -204,36 +208,36 @@ class TestBase(unittest.TestCase):
 			TestBase.assert_find_line(findOutputMessage, result.output)
 
 	@staticmethod
-	def assert_failure(result, findOutputMessage = None):
+	def assert_failure(result, findOutputMessage=None):
 		if result.exitCode == 0:
 			raise AssertionError("Execution succeeded")
 
 		if findOutputMessage is not None:
-			TestBase.assert_find_line(findOutputMessage, result.output)
+			TestBase.assert_find_line(findOutputMessage, result.output, )
 
 	@staticmethod
-	def assert_var_error(varName, varMessage, result):
+	def assert_error_var(varName, varMessage, result):
 		TestBase.assert_failure(result, f'[{varName}] {varMessage}')
 
 	@staticmethod
-	def assert_missing_value(varName, result):
-		TestBase.assert_var_error(varName, 'Missing value', result)
+	def assert_error_missing_value(varName, result):
+		TestBase.assert_error_var(varName, 'Missing value', result)
 
 	@staticmethod
-	def assert_unexpected_origin(varName, givenOrigin, result):
-		TestBase.assert_var_error(varName, f'Unexpected origin: "{givenOrigin}"', result)
+	def assert_error_unexpected_origin(varName, givenOrigin, result):
+		TestBase.assert_error_var(varName, f'Unexpected origin: "{givenOrigin}"', result)
 
 	@staticmethod
-	def assert_no_whitespaces(varName, result):
-		TestBase.assert_var_error(varName, 'Value cannot have whitespaces', result)
+	def assert_error_whitespaces(varName, result):
+		TestBase.assert_error_var(varName, 'Value cannot have whitespaces', result)
 
 	@staticmethod
-	def assert_invalid_value(varName, result):
-		TestBase.assert_var_error(varName, 'Invalid value', result)
+	def assert_error_invalid_value(varName, result):
+		TestBase.assert_error_var(varName, 'Invalid value', result)
 
 	@staticmethod
-	def assert_use_of_reserved_variable(varName, result):
-		TestBase.assert_var_error(varName, 'Reserved variable', result)
+	def assert_error_reserved_variable(varName, result):
+		TestBase.assert_error_var(varName, 'Reserved variable', result)
 	# --------------------------------------------------------------------------
 	#endregion
 

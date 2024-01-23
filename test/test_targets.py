@@ -48,7 +48,7 @@ class test_targets(TestBase):
 	@TestBase.BuildTest
 	def test_print_vars_no_vars(self):
 		result = self.make('print-vars VARS=')
-		self.assert_missing_value('VARS', result)
+		self.assert_error_missing_value('VARS', result)
 	# --------------------------------------------------------------------------
 	#endregion
 

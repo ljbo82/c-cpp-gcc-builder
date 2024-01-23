@@ -37,17 +37,17 @@ class test_build_subdir(TestBase):
 	@TestBase.BuildTest
 	def test_reject_value_with_spaces(self):
 		result = self.make('BUILD_SUBDIR=\ path\ with\ spaces')
-		self.assert_no_whitespaces('BUILD_SUBDIR', result)
+		self.assert_error_whitespaces('BUILD_SUBDIR', result)
 
 	@TestBase.BuildTest
 	def test_reject_invalid_path(self):
 		result = self.make('BUILD_SUBDIR=../dir_outside_build')
-		self.assert_var_error('BUILD_SUBDIR', 'Invalid path', result)
+		self.assert_error_var('BUILD_SUBDIR', 'Invalid path', result)
 
 	@TestBase.BuildTest
 	def test_reject_reserved_var(self):
 		result = self.make('O_BUILD_DIR=test')
-		self.assert_use_of_reserved_variable('O_BUILD_DIR', result)
+		self.assert_error_reserved_variable('O_BUILD_DIR', result)
 
 	@TestBase.BuildTest
 	def test_test_inspect_valid_value(self):
