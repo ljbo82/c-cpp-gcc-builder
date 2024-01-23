@@ -152,7 +152,7 @@ class TestBase(unittest.TestCase):
 		return (found, what)
 
 	@staticmethod
-	def find_line(find, lines, exact=False):
+	def find_line(find, lines, exactMatch=False):
 		'''
 		Returns the index of the first line containing a given string.
 
@@ -161,8 +161,8 @@ class TestBase(unittest.TestCase):
 
 			lines (list): List of lines to be inspected.
 
-			exact (bool=False): Defines if searched string should match exactly
-			      with inspected line.
+			exactMatch (bool=False): Defines if searched string should match
+			    exactly with inspected line.
 
 		Returns:
 			The index of the first line containing seached string. If
@@ -170,7 +170,7 @@ class TestBase(unittest.TestCase):
 		'''
 		index = 0
 		for line in lines:
-			if (find in line) if not exact else (find == line):
+			if (find in line) if not exactMatch else (find == line):
 				return index
 
 			index += 1
@@ -180,18 +180,12 @@ class TestBase(unittest.TestCase):
 	# region Assert methods
 	# --------------------------------------------------------------------------
 	@staticmethod
-	def assert_find_line(find, lines, exact=False):
-		line = TestBase.find_line(find, lines, exact)
-		if line == -1:
-			raise AssertionError(f"{repr(find)} was NOT found")
-
-		return line
-
-	@staticmethod
 	def assert_contains(what, where):
 		result = TestBase.find(what, where, find_all=True)
 		if not result[0]:
 			raise AssertionError(f"{repr(result[1])} was NOT found")
+
+		raise RuntimeError('TODO: Check replace find by find_line')
 
 	@staticmethod
 	def assert_not_contains(what, where):
@@ -199,21 +193,31 @@ class TestBase(unittest.TestCase):
 		if result[0]:
 			raise AssertionError(f"{repr(result[1])} was FOUND")
 
+		raise RuntimeError('TODO: Check replace find by find_line')
+
 	@staticmethod
-	def assert_success(result, findOutputMessage=None):
+	def assert_find_line(find, lines, exactMatch=False):
+		line = TestBase.find_line(find, lines, exactMatch)
+		if line == -1:
+			raise AssertionError(f"{repr(find)} was NOT found")
+
+		return line
+
+	@staticmethod
+	def assert_success(result, outputMessage=None, exactMatch=False):
 		if result.exitCode != 0:
 			raise AssertionError("Execution failed")
 
-		if findOutputMessage is not None:
-			TestBase.assert_find_line(findOutputMessage, result.output)
+		if outputMessage is not None:
+			TestBase.assert_find_line(outputMessage, result.output, exactMatch)
 
 	@staticmethod
-	def assert_failure(result, findOutputMessage=None):
+	def assert_failure(result, outputMessage=None, exactMatch=False):
 		if result.exitCode == 0:
 			raise AssertionError("Execution succeeded")
 
-		if findOutputMessage is not None:
-			TestBase.assert_find_line(findOutputMessage, result.output, )
+		if outputMessage is not None:
+			TestBase.assert_find_line(outputMessage, result.output, exactMatch)
 
 	@staticmethod
 	def assert_error_var(varName, varMessage, result):
