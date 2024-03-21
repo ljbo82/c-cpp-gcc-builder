@@ -1,0 +1,17 @@
+site_name: cpp-project-builder
+site_url: http://ljbo82.github.io/cpp-project-builder
+repo_url: https://github.com/ljbo82/cpp-project-builder/
+theme: readthedocs
+nav:
+  - Home: index.md
+  - User guide: user-guide.md
+  - Variable reference: variables.md
+  - Extra Makefiles:
+    - doxygen.mk: doxygen.mk.md
+    - git.mk: git.mk.md
+markdown_extensions:
+  admonition:
+  toc:
+      permalink: "&para;"
+plugins:
+  - mermaid2

@@ -1,88 +1,103 @@
 # cpp-project-builder
 
-cpp-project-builder provides a build system based on makefiles containing standard recipes to build C/C++/Assembly multiplatform projects using a GCC-based compilers.
+cpp-project-builder provides a build system based on makefiles containing standard recipes to build C/C++/Assembly multiplatform projects using a GCC-based compiler.
 
-For details, check [official repository](https://github.com/ljbo82/cpp-project-builder).
+For details, check the [documentation](http://ljbo82.github.io/cpp-project-builder).
 
 > **Aggregator repository**
 >
-> This repository aggregates all submodules comprising the project (documentation, examples, the build system itself, and extras).
+> Actually the build system is contained in [core](https://github.com/ljbo82/cpp-project-builder-core) subdirectory. [This repository](https://github.com/ljbo82/cpp-project-builder-core) aggregates the build system itself, along with documentation, testing application, demo projects and extra toolchains layers for arduino projects.
 
 ## Summary
 
 * [License](#license)
-* [Usage](#usage)
+* [Basic usage](#basic-usage)
 * [Makefiles](#makefiles)
 
 ## License
 
-cpp-project-builder (documentation and core) is distributed under MIT License. Please see the [LICENSE](LICENSE) file for details on copying and distribution.
+cpp-project-builder is distributed under MIT License. Please see the [LICENSE](LICENSE) file for details on copying and distribution.
 
-Examples are under public domain.
 
-Extra components (found in **extras** directory) may have their own licenses. Check each component in order to verify the applicable license.
+## Basic usage
 
-## Usage
-
-cpp-project-builder provides a build system intended to be used by C/C++/Assembly projects in order to build source files using GCC-based compilers.
+cpp-project-builder provides a build system intended to be used by C/C++/Assembly projects in order to build source files using a GCC-based compiler.
 
 > **Assumptions**
 >
-> * Although the build system simplifies a makefile writing process, the developer must have knowledge on how [GNU Make](https://www.gnu.org/software/make/) works, and how to write makfiles. For details, check [GNU Make official documentation](https://www.gnu.org/software/make/manual/make.html)
+> * Although the build system simplifies a makefile writing process, the developer must have knowledge on how [GNU Make](https://www.gnu.org/software/make/) works, and how to write makfiles. For details, check [GNU Make official documentation](https://www.gnu.org/software/make/manual/make.html).
 >
-> * Although complex arrangements can be made using the build system, in order make easier the explanation of the concepts used by cpp-project-builder, it will be assumed a project containing a single makfile responsible by the compilation/distribution process.
+> * Although complex arrangements can be made using the build system, in order make easier the explanation of the concepts, it will be assumed a project containing a single makfile responsible by the compilation/distribution process.
 >
-> * From this point onwards, the project source tree root directory will be referred as `$(PROJ_ROOT)` and this is the directory where project's main Makefile is located.
+> * From this point onwards, the project root directory will be referred to as `<PROJ_ROOT>` and this is the directory where project's `Makefile` is located.
 
-Typical usage is comprised by the following steps:
+The build system can be either shared by multiple projects or emebedded directly into your project.
 
-1. Clone or copy [cpp-project-builder-core](https://github.com/ljbo82/cpp-project-builder-core) inside directory of your preference (usually inside a subdirectory of `$(PROJ_ROOT)` - this location will be referred from this point onwards as `$(CPP_PROJECT_BUILDER)`);
+The basic usage is comprised by the following steps:
 
-2. Place project C/C++/Assembly source files into specific directories (usually `$(PROJ_ROOT)/src/`, `$(PROJ_ROOT)/include/` or `$(PROJ_ROOT)/hosts/platform_layer/src/`);
+1. Copy or clone the build system (NOTE: the actual build system is located inside [core](https://github.com/ljbo82/cpp-project-builder-core) subirectory) into a directory of your preference (from this point onwards, the directory containing the build system will be referred to as `<CPB_DIR>`).
 
-3. Create a `$(PROJ_ROOT)/Makefile` containing [variables](https://github.com/ljbo82/cpp-project-builder-doc/project.mk.md#variables) defining how your project shall be built;
+   > **Recommended way to share the build system with multiple projects**
+   >
+   > It is recommended to declare an environment variable named `CPB_DIR` with value pointing to the directory where the shared build system is located.
+   >
+   > The variable name can be any valid name, but be sure to refer to the same name in your project's Makefile.
 
-4. At the end of your `$(PROJ_ROOT)/Makefile` include the `$(CPP_PROJECT_BUILDER)/project.mk` provided by the build system:
+2. Place project's C/C++/Assembly source and header files into specific directories:
 
-  ```Makefile
-  include $(CPP_PROJECT_BUILDER)/project.mk
-  ```
+   * Source files should be placed into `<PROJ_ROOT>/src`.
 
-5. call `make` from `$(PROJ_ROOT)` directory (or use `make -C $(PROJ_ROOT)` from any other directory) to build your project.
+   * If you are developing a library, the public headers should be placed into  `<PROJ_ROOT>/include`.
 
-Here is an example of a minimal `$(PROJ_ROOT)/Makefile` used to build an executable with sources contained in `$(PROJ_ROOT)/src/` directory:
+   > Source and public header files can be placed anywhere inside `<PROJ_ROOT>`, but if you use custom directories, you have to declare them explicitly in your make file. See [documentation](http://ljbo82.github.io/cpp-project-builder) for details.
+
+3. Create a `Makefile` inside `<PROJ_ROOT>` containing [variables](http://ljbo82.github.io/cpp-project-builder/variables) defining how your project shall be built (a minimal Makefile has to provide, at least, the variables [`PROJ_NAME`](http://ljbo82.github.io/cpp-project-builder/variables#PROJ_NAME) and [`PROJ_TYPE`](http://ljbo82.github.io/cpp-project-builder/variables#PROJ_TYPE)).
+
+4. At the end of your `<PROJ_ROOT>/Makefile`, include the file `builder.mk` provided by the build system:
+
+   ```Makefile
+   include $(CPB_DIR)/builder.mk
+   ```
+
+Following above guidelines, a minimal Makefile would look like this:
 
 ```Makefile
-PROJ_NAME := hello
-PROJ_TYPE := app
+PROJ_NAME = MyProject
+PROJ_TYPE = app
 
-include $(CPP_PROJECT_BUILDER)/project.mk
+include $(CPB_DIR)/builder.mk
 ```
 
-With this minimal makefile, an executable can be build just by calling `make`.
+Now your project is ready to be built.
 
-For more examples, check the [demos](https://github.com/ljbo82/cpp-project-builder-demos) repository.
+Just call `make` (from `<PROJ_ROOT>` directory, or use `make -C <PROJ_ROOT>` from any other directory) in order to build your project.
+
+For further details about the build system (e.g. how to customize build process, supporting multiple platforms, variable reference, etc.), check the [documentation](http://ljbo82.github.io/cpp-project-builder).
+
+For more examples, check the [demos](https://github.com/ljbo82/cpp-project-builder/demos).
 
 ## Makefiles
 
-The build system is composed by utility makefiles. Here is a summary of the provided ones:
+The build system is composed by multiple makefiles that can be included by your project, depending on its requirements.
+
+Here is a summary of the makefiles provided by the build system:
+
+### builder.mk
+
+This is the main makefile provided by the build system. It contains standard recipes to build C/C++/Assembly multiplatform-ready projects using a GCC-based compiler.
+
+Include this file at the end of your `<PROJ_ROOT>/Makefile`.
+
+See [documentation](http://ljbo82.github.io/cpp-project-builder) for details.
 
 ### doxygen.mk
 
 This file provides standard targets to generate source documentation using [doxygen](https://www.doxygen.nl/index.html).
 
-See [documentation](https://github.com/ljbo82/cpp-project-builder-doc/blob/master/doxygen.mk.md) for details.
+See [documentation](http://ljbo82.github.io/cpp-project-builder/doxygen) for details.
 
 ### git.mk
 
-This file inspects `$(PROJ_ROOT)` directory and exposes git repository information (current commit, tag, status, etc) through read-only variables.
+This file inspects `<PROJ_ROOT>` directory and exposes git repository information (current commit, tag, status, etc) through certain variables.
 
-See [documentation](https://github.com/ljbo82/cpp-project-builder-doc/blob/master/git.mk.md) for details.
-
-### project.mk
-
-This is the main makefile. It contains standard recipes to build C/C++/Assembly multiplatform projects using a GCC-based compiler.
-
-Include this file at the end of your `$(PROJ_ROOT)/Makefile`.
-
-See [documentation](https://github.com/ljbo82/cpp-project-builder-doc/blob/master/project.mk.md) for details.
+See [documentation](http://ljbo82.github.io/cpp-project-builder/git) for details.
