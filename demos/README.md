@@ -28,16 +28,8 @@
 
 # Building the examples
 
-In order to build demos the environment variable `CPB_DIR` must be defined and must point to the directory containing the Build system.
+In order to build the examples, source the script `init-env`. This script will export the variable `CPB_DIR` automatically for the current shell:
 
-* If you cloned/copied the [whole build system project](https://github.com/ljbo82/cpp-project-builder) (containing documentation, demos, and the build system itself), the `CPB_DIR` environment variable must point to the its `core` subdirectory.
-
-* If you just cloned/copied only the [build system](https://github.com/ljbo82/cpp-project-builder-core), the `CPB_DIR` environment variable must point to the directory containing the copy / cloned repository.
-
-> **Convenience script**
->
-> If you cloned/copied the whole build system project, source the script `init-env`. This script will export the variable `CPB_DIR` automatically for the current shell:
->
 > ```bash
 > source init-env
 > ```
