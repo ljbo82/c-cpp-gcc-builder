@@ -1,0 +1,10 @@
+#!/bin/sh
+
+if [ -z "$CPB_DIR" ]; then
+	if [ -f "../core/builder.mk" ]; then
+		export CPB_DIR=$(dirname $(realpath "../core/builder.mk"))
+	else
+		echo "Could not detect CPB_DIR"
+		exit 1
+	fi
+fi
