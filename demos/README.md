@@ -1,6 +1,6 @@
 # cpp-project-builder-demos
 
- [This repository](https://github.com/ljbo82/cpp-project-builder-demos) contains example projects using [cpp-project-builder](tbd) build system:
+ This directory contains example projects using [cpp-project-builder](http://ljbo82.github.io/cpp-project-builder) build system:
 
 * **`c-app/`**
 
