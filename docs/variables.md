@@ -1,6 +1,6 @@
 # Variable Reference
 
-The way in which your project is built is defined according to variables defined in its `Makefile`.
+The way in which your project is built is defined according to variable values.
 
 When the build system is included at the end of your project's `Makefile`, it will inspect the value of defined variables (defined either in the makefiles, environment, or command-line), check the project tree, and will create targets that allows a user to build the project.
 
@@ -280,15 +280,15 @@ The following variables must be defined exclusively inside a makefile (either `$
 ### PROJ_TYPE
 
 * **Description:** Defines the project type.
-  * Its value will be used (on `linux`, `osx`, and `windows` hosts) to set the name of [final artifact](#ARTIFACT) if it is left undefined.
+    * Its value will be used (on `linux`, `osx`, and `windows` hosts) to set the name of [final artifact](#ARTIFACT) if it is left undefined.
 * **Required:** yes
 * **Default value:** _(undefined)_
 * **Mutable:** yes
 * **Origins:** makefile
 * **Restrictions:** Accepted values are:
-  * **`app`** (for an application executable);
-  * **`lib`** (for a library. See  [`LIB_TYPE`](#LIB_TYPE));
-  * **`custom` (used for custom build logic);
+    * `app` (for an application executable);
+    * `lib` (for a library. See  [`LIB_TYPE`](#LIB_TYPE));
+    * `custom` (used for custom build logic);
 
 ### PROJ_VERSION
 

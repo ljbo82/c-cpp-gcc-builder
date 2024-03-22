@@ -2,6 +2,21 @@
 
 This is the main makefile exposed by the cpp-project-builder. It contains standard recipes to build C/C++/Assembly multiplatform projects using a GCC-based compiler.
 
+!!! notes
+    Before reading this document, ensure you have read the [basic usage](/#basic-usage) instructions.
+
+## Project name
+
+TODO
+
+## Project type
+
+TODO
+
+## Customizing the build
+
+TODO: Debug, Release, LIB_TYPE, HOST, O, V
+
 ## Directories
 
 From this point onwards, the project root directory will be referred to as `<PROJ_ROOT>` and it is the directory where project's `Makefile` is located.
@@ -77,25 +92,24 @@ This path can be obtained through [`O_BUILD_DIR`](#O_BUILD_DIR) read-only variab
 
 #### $(O)/dist
 
-  Distribution directory. Final artifact (executable or library), and possibly companion files (e.g. header files, for libraries) are placed into this directory.
+Distribution directory. Final artifact (executable or library), and possibly companion files (e.g. header files, for libraries) are placed into this directory.
 
-  This path can be obtained through [`O_DIST_DIR`](#O_DIST_DIR) read-only variable and customized through [`DIST_SUBDIR`](#DIST_SUBDIR) variable.
+This path can be obtained through [`O_DIST_DIR`](#O_DIST_DIR) read-only variable and customized through [`DIST_SUBDIR`](#DIST_SUBDIR) variable.
 
-  > **Additional distribution files**
-  >
-  > Additional directories and/or files to be distributed along with resulting distribution can be added through usage of [`DIST_DIRS`](#DIST_DIRS) and [`DIST_FILES`](#DIST_FILES) variables.
+!!! notes "Additional distribution files"
+    Additional directories and/or files to be distributed along with resulting distribution can be added through usage of [`DIST_DIRS`](#DIST_DIRS) and [`DIST_FILES`](#DIST_FILES) variables.
 
-  * **`$(O)/dist/bin/`**
+##### $(O)/dist/bin
 
-    If project is an [application executable](#PROJ_TYPE), resulting distribution binary will be placed into this directory.
+If project is an [application executable](#PROJ_TYPE), resulting distribution binary will be placed into this directory.
 
-  * **`$(O)/dist/lib/`**
+##### $(O)/dist/lib
 
-    If project is a [library](#PROJ_TYPE) (either [static or shared](#LIB_TYPE)), resulting binary will be placed into this directory.
+If project is a [library](#PROJ_TYPE) (either [static or shared](#LIB_TYPE)), resulting binary will be placed into this directory.
 
-  * **`$(O)/dist/include/`**
+##### $(O)/dist/include
 
-    If project builds a [library](#PROJ_TYPE) (either [static or shared](#LIB_TYPE)), public headers (if any) will be placed into this directory.
+If project builds a [library](#PROJ_TYPE) (either [static or shared](#LIB_TYPE)), public headers (if any) will be placed into this directory.
 
 ## Multiplatform projects
 
@@ -189,6 +203,10 @@ For each supported layer, there is expected to be a subdirectory inside [hosts d
 ### CROSS_COMPILE variable
 
 When building for a custom target host other than native one, it is required to set the [`CROSS_COMPILE`](#CROSS_COMPILE) variable. This variable must contain the prefix to be added to toolchain binaries. For example, `g++` on a toolchain for `linux-arm` may be called `linux-arm-g++`. In this example, `CROSS_COMPILE` shall be equal to `linux-arm-` (NOTE the trailing dash).
+
+## Linking to external libraries
+
+TODO
 
 ## Make targets
 
@@ -326,3 +344,7 @@ SRC_FILES = src/main.c
 STRIP_RELEASE = 1
 V = 0
 ```
+
+## IDE Integration
+
+### VSCode
