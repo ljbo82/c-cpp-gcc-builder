@@ -6,71 +6,79 @@ This file inspects project's directory tree and exposes git repository informati
 
 Following are described all variables used/exported by this makefile:
 
-> **Variable details**
->
-> For each detailed variable, the following fields refer to:
->
-> * **Description:** contains descriptive information about the variable.
-> * **Mandatory:** defines if a variable must be defined during build.
-> * **Default value:** contains the value which will be assumed if variable is optional and it is not defined.
-> * **Allowed origins:** defines where variable is allowed to be defined (command line, environment, makefile, etc).
-> * **Restrictions:** Contain information about restrictions on which kind of values that can be stored in the variable.
+!!! note "Variable details"
+    For each detailed variable, the following fields refer to:
 
-<a name="GIT_COMMIT"></a>
-* **`GIT_COMMIT`**
+    * **Description:** Contains descriptive information about the variable.
 
-  * **Description:** Contains current commit for the repository. If directory is not versioned by git, variable will be undefined
-  * **Mandatory:** _(N/A)_
-  * **Default value:** _(N/A)_
-  * **Allowed origins:** _(N/A)_
-  * **Restrictions:** This is a read-only variable. Its value is set by this makefile and cannot be modified.
+    * **Required:** Defines if a variable must be defined (and it must be non-empty) during build.
 
-<a name="GIT_COMMIT_SHORT"></a>
-* **`GIT_COMMIT_SHORT`**
+    * **Default value:** Contains the value which will be assumed if variable is optional and it is not defined.
 
-  * **Description:** Contains current short commit for the repository. If directory is not versioned by git, variable will be undefined
-  * **Mandatory:** _(N/A)_
-  * **Default value:** _(N/A)_
-  * **Allowed origins:** _(N/A)_
-  * **Restrictions:** This is a read-only variable. Its value is set by this makefile and cannot be modified.
+    * **Mutable:** Some variables defined in makefiles can be updated by the build system. This field explain details about how such variables can be modified by the build system.
 
-<a name="GIT_REPO_DIR"></a>
-* **`GIT_REPO_DIR`**
+    * **Origins:** Contains the list of allowed origins for variable definition.
 
-  * **Description:** Defines directory to be inspected.
-  * **Mandatory:** no
-  * **Default value:** `.` _(current directory)_
-  * **Allowed origins:** _(any)_
-  * **Restrictions:** Value shall not contain whitespaces nor can be an empty string.
+    * **Restrictions:** Contains information about restrictions on which kind of values that can be stored in the variable.
 
-<a name="GIT_STATUS"></a>
-* **`GIT_STATUS`**
+### Input variables
 
-  * **Description:** Contains repository status. Possible values are:
+The following variables are used to customize the repository inspection:
+
+#### GIT_REPO_DIR
+
+* **Description:** Defines directory containing the repository to be inspected.
+* **Required:** No
+* **Default value:** `.` _(current directory)_
+* **Origins:** Makefile
+* **Restrictions:** Value shall not contain whitespaces nor can be result into an empty string.
+
+### Output variables
+
+The following variables are generated automatically by this makefile in order to expose repository information:
+
+#### GIT_COMMIT
+
+* **Description:** Contains current commit hash for inspected repository. If directory is not versioned by git, variable will be undefined.
+* **Required:** _(Not applicable)_
+* **Default value:** _(Not applicable)_
+* **Origins:** _(Not applicable)_
+* **Restrictions:** This is a read-only reserved variable.
+
+#### GIT_COMMIT_SHORT
+
+* **Description:** Contains current short commit for inspected repository. If directory is not versioned by git, variable will be undefined.
+* **Required:** _(Not applicable)_
+* **Default value:** _(Not applicable)_
+* **Origins:** _(Not applicable)_
+* **Restrictions:** This is a read-only reserved variable.
+
+#### GIT_STATUS
+
+* **Description:** Contains repository status. Possible values are:
 
     * `clean` : Repository does not contain uncommited changes
     * `dirty` : Repository contains uncommited changes.
 
-    If [`$(GIT_REPO_DIR)`](#GIT_REPO_DIR) is not versioned by git, variable will be undefined.
+  If directory is not versioned by git, variable will be undefined.
 
-  * **Mandatory:** _(N/A)_
-  * **Default value:** _(N/A)_
-  * **Allowed origins:** _(N/A)_
-  * **Restrictions:** This is a read-only variable. Its value is set by this makefile and cannot be modified.
+* **Required:** _(Not applicable)_
+* **Default value:** _(Not applicable)_
+* **Origins:** _(Not applicable)_
+* **Restrictions:** This is a read-only reserved variable.
 
-<a name="GIT_TAG"></a>
-* **`GIT_TAG`**
+#### GIT_TAG
 
-  * **Description:** Contains current tag for the repository. If directory is not versioned by git, variable will be undefined
-  * **Mandatory:** _(N/A)_
-  * **Default value:** _(N/A)_
-  * **Allowed origins:** _(N/A)_
-  * **Restrictions:** This is a read-only variable. Its value is set by this makefile and cannot be modified.
+* **Description:** Contains current tag for inspected repository. If directory is not versioned by git, variable will be undefined.
+* **Required:** _(Not applicable)_
+* **Default value:** _(Not applicable)_
+* **Origins:** _(Not applicable)_
+* **Restrictions:** This is a read-only reserved variable.
 
-  <a name="GIT_VERSION"></a>
-* **`GIT_VERSION`**
-  * **Description:** Contains a candidate version for the project using current repository commit/tag. If directory is not versioned by git, variable value undefined.
-  * **Mandatory:** _(N/A)_
-  * **Default value:** _(N/A)_
-  * **Allowed origins:** _(N/A)_
-  * **Restrictions:** This is a read-only variable. Its value is set by this makefile and cannot be modified.
+#### GIT_VERSION
+
+* **Description:** Contains a candidate version for the project using current repository commit/tag. If directory is not versioned by git, variable value undefined.
+* **Required:** _(Not applicable)_
+* **Default value:** _(Not applicable)_
+* **Origins:** _(Not applicable)_
+* **Restrictions:** This is a read-only reserved variable.

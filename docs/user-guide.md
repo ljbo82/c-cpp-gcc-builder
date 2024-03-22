@@ -2,65 +2,61 @@
 
 This is the main makefile exposed by the cpp-project-builder. It contains standard recipes to build C/C++/Assembly multiplatform projects using a GCC-based compiler.
 
-> **Assumptions**
+## Directories
+
+From this point onwards, the project root directory will be referred to as `<PROJ_ROOT>` and it is the directory where project's `Makefile` is located.
+
+!!! notes
+    The absolute path of `<PROJ_ROOT>` cannot have white-spaces.
+
+### Input directories
+
+When present, these directories will be used by the build system with the following purposes:
+
+#### &lt;PROJ_ROOT>/include
+
+Contains platform-independent public includes (header files) used by application during build.
+
+This directory will be added to compiler's [include search path](../variables/#include_dirs).
+
+By default, if project is a [library](../variables/#proj_type), all files contained in this directory will be copied to the [output-directories](#output-directories).
+
+!!! notes "Skip default include source directory"
+    THIS IS A FEATURE OF LAST RESORT!
+
+    Default include directory can be ignored by the build through the definition of [`SKIP_DEFAULT_INCLUDE_DIR`](#SKIP_DEFAULT_INCLUDE_DIR) variable.
+
+#### &lt;PROJ_ROOT>/src
+
+Contains platform-independent source files and private headers used by application during build. Any kind of file can be placed into this directory, but only C/C++/Assembly source files will be compiled. The file types are identified according to filename suffixes (values are case-sensitive):
+
+* C sources:**.c**
+* C++ sources: **.cpp**, **.cxx**, or **.cc**
+* Assembly sources: **.s** or **.S**
+
+This directory is also added to compiler's [include search path](#INCLUDE_DIRS).
+
+> **Skip default source directory**
 >
-> * Although complex arrangements can be made using the build system, in order make easier the explanation of the concepts, it will be assumed a project containing a single makefile responsible by the compilation/distribution process.
+> THIS IS A FEATURE OF LAST RESORT!
 >
-> * From this point onwards, the project source root directory will be referred as `$(PROJ_ROOT)` and this is the directory where project's main makefile is located.
+> Default source directory can be ignored by the build system through the definition of  [`SKIP_DEFAULT_SRC_DIR`](#SKIP_DEFAULT_SRC_DIR) variable.
+
+#### &lt;PROJ_ROOT>/hosts
+
+This directory is assumed to contain platform layers for the project.
+
+For details regarding platform layers, see [multiplatform projects](#multiplatform-projects).
+
+> **Skip default hosts directory**
 >
-> * The directory where build system is installed will be referred as `$(CPB_DIR)`.
+> THIS IS A FEATURE OF LAST RESORT!
+>
+> Default hosts directory can be ignored by the build system through the definition of [`SKIP_DEFAULT_HOSTS_DIR`](#SKIP_DEFAULT_HOSTS_DIR) variable.
 
-## Default directories
+### Output directories
 
-When present, these directories will be used (by default) with the following purposes:
-
-> NOTE: `$(PROJ_ROOT)` does not accept whitespaces
-
-* **`$(PROJ_ROOT)/include/`**
-
-  Contains platform-independent public includes (header files) used by application during build.
-
-  This directory will be added to compiler's [include search path](#INCLUDE_DIRS).
-
-  By default, if project is a [library](#PROJ_TYPE), all files contained in this directory will be copied to the [output-directories](#output-directories).
-
-  > **Skip default include source directory**
-  >
-  > THIS IS A FEATURE OF LAST RESORT!
-  >
-  > Default include directory can be ignored by the build through the definition of [`SKIP_DEFAULT_INCLUDE_DIR`](#SKIP_DEFAULT_INCLUDE_DIR) variable.
-
-* **`$(PROJ_ROOT)/src/`**
-
-  Contains platform-independent source files and private headers used by application during build. Any kind of file can be placed into this directory, but only C/C++/Assembly source files will be compiled. The file types are identified according to filename suffixes (values are case-sensitive):
-
-  * C sources:**.c**
-  * C++ sources: **.cpp**, **.cxx**, or **.cc**
-  * Assembly sources: **.s** or **.S**
-
-  This directory is also added to compiler's [include search path](#INCLUDE_DIRS).
-
-  > **Skip default source directory**
-  >
-  > THIS IS A FEATURE OF LAST RESORT!
-  >
-  > Default source directory can be ignored by the build system through the definition of  [`SKIP_DEFAULT_SRC_DIR`](#SKIP_DEFAULT_SRC_DIR) variable.
-
-* **`$(PROJ_ROOT)/hosts/`**
-
-  This directory is assumed to contain platform layers for the project.
-
-  For details regarding platform layers, see [multiplatform projects](#multiplatform-projects).
-
-  > **Skip default hosts directory**
-  >
-  > THIS IS A FEATURE OF LAST RESORT!
-  >
-  > Default hosts directory can be ignored by the build system through the definition of [`SKIP_DEFAULT_HOSTS_DIR`](#SKIP_DEFAULT_HOSTS_DIR) variable.
-
-## Output directories
-
-All generated-files produced by the building process are placed into an output base directory (defined by the variable [`O`](#O)). By default, this directory is located into `$(PROJ_ROOT)/output/`.
+All generated-files produced by the building process are placed into an output base directory (defined by the variable [`O`](#O)). By default, this directory is located into `&lt;PROJ_ROOT>/output/`.
 
 For example, in order to put output files into a directory named `/output/directory`, just override the `O` variable during the call to `make` by passing its value through command line arguments:
 
@@ -68,19 +64,18 @@ For example, in order to put output files into a directory named `/output/direct
 make O=/output/directory
 ```
 
-> **Version control**
->
-> The output base directory shall be ignored by your source code version control system if it is located inside your source tree.
+!!! notes "Version control"
+    The output base directory shall be ignored by your source code version control system if it is located inside your source tree.
 
 Inside output base directory ([`$(O)`](#O)) you will find the following directories (some of them exists only for certain [project types](#PROJ_TYPE)):
 
-* **`$(O)/build/`**
+#### $(O)/build
 
-  Build directory. This directory contains object files as well as final artifact (application executable or library).
+Build directory. This directory contains object files as well as final artifact (application executable or library).
 
-  This path can be obtained through [`O_BUILD_DIR`](#O_BUILD_DIR) read-only variable and customized through [`BUILD_SUBDIR`](#BUILD_SUBDIR) variable.
+This path can be obtained through [`O_BUILD_DIR`](#O_BUILD_DIR) read-only variable and customized through [`BUILD_SUBDIR`](#BUILD_SUBDIR) variable.
 
-* **`$(O)/dist/`**
+#### $(O)/dist
 
   Distribution directory. Final artifact (executable or library), and possibly companion files (e.g. header files, for libraries) are placed into this directory.
 
@@ -127,7 +122,7 @@ For this example project, the following layers are present (note that layer arra
 * `linux/arm/v7`
 
 
-If you are compiling this example project to `linux-arm-v7` host, select the compilation host through [`HOST`](#HOST) variable. The recommended way is to set the variable through a command line paramenter (although is perfectly legal to hardcode a value into a `$(PROJ_ROOT)/Makefile`):
+If you are compiling this example project to `linux-arm-v7` host, select the compilation host through [`HOST`](#HOST) variable. The recommended way is to set the variable through a command line paramenter (although is perfectly legal to hardcode a value into a `&lt;PROJ_ROOT>/Makefile`):
 
 ```sh
 $ make HOST=linux-arm-v7
@@ -174,22 +169,22 @@ And the following layers will be applied:
 For each supported layer, there is expected to be a subdirectory inside [hosts directory](#default-directories) with a path corresponding to the layer. This location can contain any files/subdirectories, but the following ones have special meaning for the build system:
 
 <a name="layer-src-dir"></a>
-* **`$(PROJ_ROOT)/hosts/<layer/name>/src/`**
+* **`&lt;PROJ_ROOT>/hosts/<layer/name>/src/`**
 
   If present, this directory is expected to contain layer-specific source files, which will be compiled when layer is compatible with selected [`HOST`](#HOST).
 
   > This directory will also be added to compiler's [include search path](#INCLUDE_DIRS).
 
 <a name="layer-host-mk"></a>
-* **`$(PROJ_ROOT)/hosts/<layer/name>/host.mk`**
+* **`&lt;PROJ_ROOT>/hosts/<layer/name>/host.mk`**
 
   If present, this makefile will be autoamtically included by the build system when layer is compatible with selected [`HOST`](#HOST). This is useful to add custom build flags and/or libraries for chosen layer.
 
   For example, while building a project (which has custom makefiles for the layers `linux`, `linux/arm` and `linux/arm/v7`) for the host `linux-arm-v7`, the following sequence of includes will be performed automatically by the build system:
 
-  1. `include $(PROJ_ROOT)/hosts/linux/host.mk`
-  2. `include $(PROJ_ROOT)/hosts/linux/arm/host.mk`
-  3. `include $(PROJ_ROOT)/hosts/linux/arm/v7/host.mk`
+  1. `include &lt;PROJ_ROOT>/hosts/linux/host.mk`
+  2. `include &lt;PROJ_ROOT>/hosts/linux/arm/host.mk`
+  3. `include &lt;PROJ_ROOT>/hosts/linux/arm/v7/host.mk`
 
 ### CROSS_COMPILE variable
 
@@ -236,105 +231,98 @@ graph TD;
     printVars[<b>print-vars</b>]:::printVarsClass
 ```
 
-<a name="all"></a>
-* **`all`**
+### all
 
-  Default target. Just depends on [dist](#dist) target.
+Default target. Just depends on [dist](#dist) target.
 
-<a name="clean"></a>
-* **`clean`**
+### clean
 
-  Removes all compiled artifacts.
+Removes all compiled artifacts.
 
-  Its internal rules are preceeded by the targets declared in [`PRE_CLEAN_DEPS`](#PRE_CLEAN_DEPS) variable, and are followed by the targets declared in [`POST_CLEAN_DEPS`](#POST_CLEAN_DEPS) variable.
+Its internal rules are preceeded by the targets declared in [`PRE_CLEAN_DEPS`](#PRE_CLEAN_DEPS) variable, and are followed by the targets declared in [`POST_CLEAN_DEPS`](#POST_CLEAN_DEPS) variable.
 
+### build
 
-<a name="build"></a>
-* **`build`**
+Compiles all source files and generates the target binary artifact (executable application or library).
 
-  Compiles all source files and generates the target binary artifact (executable application or library).
+Its internal rules are preceeded by the targets declared in [PRE_BUILD_DEPS](#PRE_BUILD_DEPS) variable, and are followed by the targets declared in [`POST_BUILD_DEPS`](#POST_BUILD_DEPS) variable.
 
-  Its internal rules are preceeded by the targets declared in [PRE_BUILD_DEPS](#PRE_BUILD_DEPS) variable, and are followed by the targets declared in [`POST_BUILD_DEPS`](#POST_BUILD_DEPS) variable.
+!!! notes
+    If project does not contain source files, no binary artifact will be generated (Howerver, targets declared in [PRE_BUILD_DEPS](#PRE_BUILD_DEPS) and [`POST_BUILD_DEPS`](#POST_BUILD_DEPS) will be executed)
 
-  > **NOTES**
-  >
-  > * If project does not contain source files, no binary artifact will be generated (Howerver, targets declared in [PRE_BUILD_DEPS](#PRE_BUILD_DEPS) and [`POST_BUILD_DEPS`](#POST_BUILD_DEPS) will be executed)
-  >
-<a name="dist"></a>
-* **`dist`**
+### dist
 
-  Generate distribuition tree.
+Generate distribuition tree.
 
-  Its internal rules are preceeded by the targets declared in [PRE_DIST_DEPS](#PRE_DIST_DEPS) variable, and followed by dependencies declared on [POST_DIST_DEPS](#POST_DIST_DEPS) variable.
+Its internal rules are preceeded by the targets declared in [PRE_DIST_DEPS](#PRE_DIST_DEPS) variable, and followed by dependencies declared on [POST_DIST_DEPS](#POST_DIST_DEPS) variable.
 
-  > See [`DIST_DIRS`](#DIST_DIRS) and [`DIST_FILES`](#DIST_FILES) in order to check how to add extra files/directories to the distribution.
+> See [`DIST_DIRS`](#DIST_DIRS) and [`DIST_FILES`](#DIST_FILES) in order to check how to add extra files/directories to the distribution.
 
-<a name="print-vars"></a>
-* **`print-vars`**
+### print-vars
 
-  This target is used mostly for debugging purposes. It prints the contents of the variables declared in variable [`VARS`](#VARS).
+This target is used mostly for debugging purposes. It prints the contents of the variables declared in variable [`VARS`](#VARS).
 
-  For example, to get the value of both [`SRC_DIRS`](#SRC_DIRS) and [`SRC_FILES`](#SRC_FILES):
+For example, to get the value of both [`SRC_DIRS`](#SRC_DIRS) and [`SRC_FILES`](#SRC_FILES):
 
-  ```sh
-  $ make print-vars VARS='SRC_DIRS SRC_FILES'
-  ```
+```sh
+make print-vars VARS='SRC_DIRS SRC_FILES'
+```
 
-  Generates the following kind of output:
+Generates the following kind of output:
 
-  ```
-  SRC_DIRS = src
-  SRC_FILES = src/main.c src/file1.c src/file2.c
-  ```
+```plain
+SRC_DIRS = src
+SRC_FILES = src/main.c src/file1.c src/file2.c
+```
 
-  If `VARS` is undefined, a bunch of variable's values will be displayed.
+If `VARS` is undefined, a bunch of variable's values will be displayed.
 
-  ```sh
-  $ make print-vars
-  ```
+```sh
+make print-vars
+```
 
-  Output example:
+Output example:
 
-  ```
-  AR = ar
-  ARTIFACT = hello0
-  AS = as
-  ASFLAGS = -MMD -MP -Isrc -Ioutput/libs/dist/include
-  CC = gcc
-  CFLAGS = -MMD -MP -Isrc -Ioutput/libs/dist/include -Wall -O2 -s -DUSE_SHARED_LIB
-  CROSS_COMPILE =
-  CXX = g++
-  CXXFLAGS = -MMD -MP -Isrc -Ioutput/libs/dist/include -Wall -O2 -s
-  DEBUG = 0
-  DIST_DIRS =
-  DIST_FILES =
-  DIST_MARKER =
-  HOST = linux-x64
-  HOSTS_DIRS = /home/user/Desktop/app/make/hosts
-  INCLUDE_DIRS = src output/libs/dist/include
-  LD = gcc
-  LDFLAGS = -s -Loutput/libs/dist/lib -lmylib0
-  LIB_TYPE = shared
-  O = output
-  OPTIMIZE_RELEASE = 1
-  O_BUILD_DIR = output/build
-  O_DIST_DIR = output/dist
-  POST_BUILD_DEPS =
-  POST_CLEAN_DEPS =
-  POST_DIST_DEPS =
-  PRE_BUILD_DEPS = --mylib output/libs/mylib.marker
-  PRE_CLEAN_DEPS =
-  PRE_DIST_DEPS =
-  PROJ_NAME = hello
-  PROJ_TYPE = app
-  PROJ_VERSION = 0.1.0
-  RELEASE_OPTIMIZATION_LEVEL = 2
-  SKIPPED_SRC_DIRS =
-  SKIPPED_SRC_FILES =
-  SKIP_DEFAULT_INCLUDE_DIR = 0
-  SKIP_DEFAULT_SRC_DIR = 0
-  SRC_DIRS = src
-  SRC_FILES = src/main.c
-  STRIP_RELEASE = 1
-  V = 0
-  ```
+```plain
+AR = ar
+ARTIFACT = hello0
+AS = as
+ASFLAGS = -MMD -MP -Isrc -Ioutput/libs/dist/include
+CC = gcc
+CFLAGS = -MMD -MP -Isrc -Ioutput/libs/dist/include -Wall -O2 -s -DUSE_SHARED_LIB
+CROSS_COMPILE =
+CXX = g++
+CXXFLAGS = -MMD -MP -Isrc -Ioutput/libs/dist/include -Wall -O2 -s
+DEBUG = 0
+DIST_DIRS =
+DIST_FILES =
+DIST_MARKER =
+HOST = linux-x64
+HOSTS_DIRS = /home/user/Desktop/app/make/hosts
+INCLUDE_DIRS = src output/libs/dist/include
+LD = gcc
+LDFLAGS = -s -Loutput/libs/dist/lib -lmylib0
+LIB_TYPE = shared
+O = output
+OPTIMIZE_RELEASE = 1
+O_BUILD_DIR = output/build
+O_DIST_DIR = output/dist
+POST_BUILD_DEPS =
+POST_CLEAN_DEPS =
+POST_DIST_DEPS =
+PRE_BUILD_DEPS = --mylib output/libs/mylib.marker
+PRE_CLEAN_DEPS =
+PRE_DIST_DEPS =
+PROJ_NAME = hello
+PROJ_TYPE = app
+PROJ_VERSION = 0.1.0
+RELEASE_OPTIMIZATION_LEVEL = 2
+SKIPPED_SRC_DIRS =
+SKIPPED_SRC_FILES =
+SKIP_DEFAULT_INCLUDE_DIR = 0
+SKIP_DEFAULT_SRC_DIR = 0
+SRC_DIRS = src
+SRC_FILES = src/main.c
+STRIP_RELEASE = 1
+V = 0
+```

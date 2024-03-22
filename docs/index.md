@@ -4,7 +4,7 @@ cpp-project-builder provides a build system based on makefiles containing standa
 
 ## License
 
-cpp-project-builder is distributed under MIT License. Please see the  <a href="https://github.com/ljbo82/cpp-project-builder/blob/master/LICENSE" target="_blank">LICENSE</a> file for details on copying and distribution.
+cpp-project-builder is distributed under MIT License. Please see the  [LICENSE](https://github.com/ljbo82/cpp-project-builder/blob/master/LICENSE) file for details on copying and distribution.
 
 
 ## Basic usage
@@ -72,7 +72,7 @@ Just call `make` (from `<PROJ_ROOT>` directory, or use `make -C <PROJ_ROOT>` fro
 
 For further details about the build system (e.g. how to customize build process, supporting multiple platforms, variable reference, etc.), check the [user guide](user-guide).
 
-For more examples, check the [demos](https://github.com/ljbo82/cpp-project-builder/demos).
+For more examples, check the [demos](https://github.com/ljbo82/cpp-project-builder/tree/dev/demos).
 
 ## Makefiles
 
@@ -90,10 +90,10 @@ Include this file at the end of your `<PROJ_ROOT>/Makefile`.
 
 This file provides standard targets to generate source documentation using [doxygen](https://www.doxygen.nl/index.html).
 
-See [documentation](http://ljbo82.github.io/cpp-project-builder/doxygen) for details.
+See makefile [documentation](doxygen.mk.md) for details.
 
 ### git.mk
 
 This file inspects `<PROJ_ROOT>` directory and exposes git repository information (current commit, tag, status, etc) through certain variables.
 
-See [documentation](http://ljbo82.github.io/cpp-project-builder/git) for details.
+See makefile [documentation](git.mk.md) for details.
