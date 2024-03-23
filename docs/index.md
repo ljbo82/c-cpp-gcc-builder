@@ -49,7 +49,7 @@ The basic usage is comprised by the following steps:
     * If you are developing a library, the public headers should be placed into  `<PROJ_ROOT>/include`.
 
     !!! note
-        Source and public header files can be placed anywhere inside `<PROJ_ROOT>`, but if you use [custom directories](user-guide/#custom_directories), you have to declare them explicitly in your makefile.
+        Source and public header files can be placed anywhere inside `<PROJ_ROOT>`, but if you use [custom directories](user-guide/#input-directories-and-files), you have to declare them explicitly in your makefile.
 
 3. Create a `Makefile` inside `<PROJ_ROOT>` containing [variables](variables) defining how your project shall be built (a minimal Makefile has to provide, at least, the variables [`PROJ_NAME`](variables/#proj_name) and [`PROJ_TYPE`](variables/#proj_type)).
 

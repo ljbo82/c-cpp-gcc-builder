@@ -59,36 +59,45 @@ From this point onwards, the project root directory will be referred to as `<PRO
 
 ### Input directories and files
 
-When present, these directories will be used by the build system with the following purposes:
+The build system uses the contents of certain directories to perform the build. Some of these directories are automatically detected by the build system, and others may be manually informed by the project through its makefiles.
+
+Let's discuss first the directories that are automatically detected when present. The presence of such directories is not mandatory:
 
 #### &lt;PROJ_ROOT>/include
 
-Contains platform-independent public includes (header files) used by application during build.
+This directory is automatically added to compiler's [include search path](../variables/#include_dirs). It is intentended to contain public header files used by the application.
 
-This directory will be added to compiler's [include search path](../variables/#include_dirs).
+If the project is a library, the contents of this directory will be copied into [distribution directory](#output-directories).
 
-By default, if project is a [library](../variables/#proj_type), all files contained in this directory will be copied to the [output-directories](#output-directories).
+If you want to have multiple directories being added to compiler's search path, add entries to [`INCLUDE_DIRS`](../variables/#include_dirs) variable.
 
-!!! notes "Skip default include source directory"
-    THIS IS A FEATURE OF LAST RESORT!
+!!! notes ""Low-level" way of adding directories to compiler's include search path"
+    The variables [`CFLAGS`](../variables/#cflags) and [`CXXFLAGS`](../variables/#cxxflags) can be used to add extra directories, but keep in mind that use of each variable applies to certain file types ([`CFLAGS`](../variables/#cflags) for C, and [`CXXFLAGS`](../variables/#cxxflags) for C++) and you have to now the exact way of adding directories to compilers' search path.
 
-    Default include directory can be ignored by the build through the definition of [`SKIP_DEFAULT_INCLUDE_DIR`](#SKIP_DEFAULT_INCLUDE_DIR) variable.
+	For example, in order to pass directories to GCC, you have to use the `-I` parameter. So, in order to pass these parameters to the compilers, add entries like this:
+
+        CFLAGS += -I<dir1> -I<dir2> ...
+        CXXFLAGS += -I<dir1> -I<dir2> ...
+
+!!! warning "Skip default include directory detection"
+    If the variable [`INCLUDE_DIRS`](../variables/#include_dirs) is defined while including build system's main makefile (`builder.mk`), there will be no automatic detection.
 
 #### &lt;PROJ_ROOT>/src
 
-Contains platform-independent source files and private headers used by application during build. Any kind of file can be placed into this directory, but only C/C++/Assembly source files will be compiled. The file types are identified according to filename suffixes (values are case-sensitive):
+When present, this directory is intended to have platform-independent source files (or platform-specific, if your project does not mean to support multiple platforms) and private headers used by application during build.
 
-* C sources:**.c**
-* C++ sources: **.cpp**, **.cxx**, or **.cc**
-* Assembly sources: **.s** or **.S**
+Any kind of file can be placed into this directory, but only C/C++/Assembly source files will be compiled. The file types are identified according their filename suffixes (values are case-sensitive):
 
-This directory is also added to compiler's [include search path](#INCLUDE_DIRS).
+* C sources: `*.c`
+* C++ sources: `*.cpp`, `*.cxx`, or `*.cc`
+* Assembly sources: `*.s` or `*.S`
 
-> **Skip default source directory**
->
-> THIS IS A FEATURE OF LAST RESORT!
->
-> Default source directory can be ignored by the build system through the definition of  [`SKIP_DEFAULT_SRC_DIR`](#SKIP_DEFAULT_SRC_DIR) variable.
+Addictional source directories and files cann be added by defining the variables [`SRC_DIRS`](../variables/#src_dirs) and/or [`SRC_FILES`](../variables/#src_files).
+
+This directory is also added to compiler's [include search path](../variables/#include_dirs).
+
+!!! warning "Skip default source directory detection"
+    Similarly to [`INCLUDE_DIRS`](../variables/#include_dirs), if either [`SRC_DIRS`](../variables/#src_dirs) or [`SRC_FILES`](../variables/#src_files) are defined, the default source directory (`<PROJ_ROOT>/src`) is not automatically detected.
 
 #### &lt;PROJ_ROOT>/hosts
 
@@ -101,15 +110,6 @@ For details regarding platform layers, see [multiplatform projects](#multiplatfo
 > THIS IS A FEATURE OF LAST RESORT!
 >
 > Default hosts directory can be ignored by the build system through the definition of [`SKIP_DEFAULT_HOSTS_DIR`](#SKIP_DEFAULT_HOSTS_DIR) variable.
-
-#### Extra sources
-
-TODO
-
-#### Extra includes
-
-TODO
-
 
 ### Output directories and files
 
