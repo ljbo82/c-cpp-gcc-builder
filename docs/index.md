@@ -12,8 +12,8 @@ cpp-project-builder is distributed under MIT License. Please see the  [LICENSE](
 cpp-project-builder provides a build system intended to be used by C/C++/Assembly projects in order to build source files using a GCC-based compiler.
 
 !!! note  "Assumptions"
-    * Although the build system simplifies a makefile writing process, the developer must have a basic knowledge about how [GNU Make](https://www.gnu.org/software/make/) works, and how to write makfiles. For details, check [GNU Make official documentation](https://www.gnu.org/software/make/manual/make.html).
-    * Although complex arrangements can be made using the build system, in order make easier the explanation of the concepts, it will be assumed a project containing a single makfile responsible by the compilation/distribution process.
+    * Although the build system simplifies a makefile writing process, the developer must have a basic knowledge about how [GNU Make](https://www.gnu.org/software/make/) works, and how to write makefiles. For details, check [GNU Make official documentation](https://www.gnu.org/software/make/manual/make.html).
+    * Although complex arrangements can be made using the build system, in order make easier the explanation of the concepts, it will be assumed a project containing a single makefile responsible by the compilation/distribution process.
     * From this point onwards, the project root directory will be referred to as `<PROJ_ROOT>` and it is the directory where project's `Makefile` is located.
 
 The build system can be either shared by multiple projects or emebedded directly into your project.

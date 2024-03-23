@@ -1,30 +1,63 @@
 # User guide
 
-This is the main makefile exposed by the cpp-project-builder. It contains standard recipes to build C/C++/Assembly multiplatform projects using a GCC-based compiler.
+Basically, when build system's `builder.mk` is included, it expects certain variables to be defined, and according to their values, the project build process can be customized.
 
 !!! notes
     Before reading this document, ensure you have read the [basic usage](/#basic-usage) instructions.
 
-## Project name
+## Project attributes
 
-TODO
+### Project name
 
-## Project type
+Every makefile using the build system has to provide a name to the project it refers to. The way in which a project name is defined is via the variable [`PROJ_NAME`](../variables/#proj_name).
 
-TODO
+The build system will use the project name, among other things, to define the name of artifacts that are generated during the build process.
 
-## Customizing the build
+!!! notes
+    The name assigned to generated artifacts may vary according to [selected host](#multiplatform-projects).
 
-TODO: Debug, Release, LIB_TYPE, HOST, O, V
+    Although it is a good idea to use default generated names, you may change the name of generated artifacts through the use of any of the following variables:
 
-## Directories
+    * [`ARTIFACT`](../variables/#artifact)
+    * [`LIB_NAME`](../variables/#lib_name)
+
+### Project type
+
+Along with project name, the project type is required by the build system. It will define what kind of artifact is being built. It can be a library or an application.
+
+In order to define the type of artifact to be built, define the variable [`PROJ_TYPE`](../variables/#proj_type).
+
+If your makefile intends to build a library, you can define the [type of library](#library-type) being built (static or shared). In order to specify the library type, use the variable [`LIB_TYPE`](../variables/#lib_type).
+
+### Project version
+
+On certain platforms, the version number is used to customize the filename of generated artifact. The build system understands a [semantic versioning scheme](https://semver.org/).
+
+In order to set a version to your project, use the variable [`PROJ_VERSION`](../variables/#proj_version). This variable is optional and if it is not defined, a standard value `0.1.0` will be used.
+
+!!! notes "Automatic version from git repository"
+    By including the makefile [`git.mk`](../git.mk), you can use one of the exposed variables to be used as your project version.
+
+    For example, let's assume that your project is versioned using git, and releases are tagged using semantic version.
+
+    If you want to use current tag as your project's version, you could create a makefile like this:
+
+        include $(CPB_DIR)/git.mk
+
+        PROJ_NAME = hello
+        PROJ_TYPE = lib
+        PROJ_VERSION = $(GIT_TAG)
+
+        include $(CPB_DIR)/builder.mk
+
+## Directories and files
 
 From this point onwards, the project root directory will be referred to as `<PROJ_ROOT>` and it is the directory where project's `Makefile` is located.
 
 !!! notes
     The absolute path of `<PROJ_ROOT>` cannot have white-spaces.
 
-### Input directories
+### Input directories and files
 
 When present, these directories will be used by the build system with the following purposes:
 
@@ -69,7 +102,17 @@ For details regarding platform layers, see [multiplatform projects](#multiplatfo
 >
 > Default hosts directory can be ignored by the build system through the definition of [`SKIP_DEFAULT_HOSTS_DIR`](#SKIP_DEFAULT_HOSTS_DIR) variable.
 
-### Output directories
+#### Extra sources
+
+TODO
+
+#### Extra includes
+
+TODO
+
+
+### Output directories and files
+
 
 All generated-files produced by the building process are placed into an output base directory (defined by the variable [`O`](#O)). By default, this directory is located into `&lt;PROJ_ROOT>/output/`.
 
@@ -111,108 +154,96 @@ If project is a [library](#PROJ_TYPE) (either [static or shared](#LIB_TYPE)), re
 
 If project builds a [library](#PROJ_TYPE) (either [static or shared](#LIB_TYPE)), public headers (if any) will be placed into this directory.
 
-## Multiplatform projects
+## Customizing the build
 
-The build system was created with the concept of platform layers in mind, which means that platform customizations can be made by adding a specifc layer on top of a generic one.
+Although you can fully configure the the way in which your project will be built entirely in your project's makefile, there are some aspects that would be more interesting to change just for a specific build.
 
-A layer is a directory containing makefile definitions and/or specific source files.
+### Debug vs. Release
 
-When a [HOST](#HOST) is specified, it will be factored to find supported layers. The value will be splitted by using the dash (`-`) character.
+By default, built artifacts are generated in release mode (i.e. without any debugging symbols and with some [compiler optimizations](#compiler-optimizations)). If you want to build your artifacts in debug mode (i.e. with debugging symbols and without any compiler optimizations), you have to change the variable [`DEBUG`](../variables/#debug).
 
-For example, if a [HOST](#HOST) `linux-arm-v6` is given, the following layers can be applicable if the corresponding directories are found in [layer directories](#layer-directories-and-files) (the layers are seached in following order):
+It could be perfeclty fine to force every compilation to be in debug mode by setting the corresponding variable in your project's makefile, but it would be more interesting to let the developer or CI/CD system to customize it in the moment the project is being built.
 
-* `linux`
-* `linux/arm`
-* `linux/arm/v6`
-* `linux-arm-v6` (NOTE this is a the last applicable layer if present. Usage of this kind of layer is recommended only factorizing the layer does not make sense for your project)
+In order to allow customizations, pass the [`DEBUG`](../variables/#debug) variable as command-line arguments during the build:
 
-In order to clarify the concepts, lets assume an example project which will be supporting the following hosts: `linux-x64`, and `linux-arm-v7`.
-
-For this example project, the following layers are present (note that layer arrangement is up to the developer):
-
-* `linux`
-* `linux/x64`
-* `linux/arm`
-* `linux/arm/v7`
-
-
-If you are compiling this example project to `linux-arm-v7` host, select the compilation host through [`HOST`](#HOST) variable. The recommended way is to set the variable through a command line paramenter (although is perfectly legal to hardcode a value into a `&lt;PROJ_ROOT>/Makefile`):
-
-```sh
-$ make HOST=linux-arm-v7
+```bash
+make DEBUG=1
 ```
 
-During the build, the following layers will be applied to this project:
+### Compiler optimizations
 
-| Layer          | Comments                                                                           |
-|----------------|------------------------------------------------------------------------------------|
-| `linux`        | _Linux generic definitions_                                                        |
-| `linux/arm`    | _Adds specific definitions and/or override definitions of the `linux` layer_       |
-| `linux/arm/v7` | _Adds specific definitions and/or override definitions of the `linux/arm` layer_   |
+When your project is being built in [debug mode](#debug-vs-release), by default no compiler optmizations would be applied. In the other hand, when your project is being built in release mode (this is the default mode), some compiler optimizations will be applied and binaries will be stripped by default.
 
-> Note that `linux/x64` layer will be skipped when building the for this host, since it is not a compatible layer.
+If you want to customize the optimizations done while building in release mode, the following variables can be used:
 
-Similarly, when building to `linux-x64` host, set the [`HOST`](#HOST) variable during the build:
+* [`STRIP_RELEASE`](../variables/#strip_release)
+* [`OPTIMIZE_RELEASE`](../variables/#optimize_release)
+* [`RELEASE_OPTMIZATION_LEVEL`](../variables/#release_optimization_level)
 
-```sh
-$ make HOST=linux-x64
+### Library type
+
+When building a library, two kinds of artifacts can be built: _shared libraries_ or _static libraries_.
+
+The library type is set through the variable [`LIB_TYPE`](../variables/#lib_type).
+
+Although it would be perfectly fine to enforce (via makefiles) the generated library type to be of a certain kind, it is more interesting to let the the type to be defined during build time.
+
+For example, if you want to generate an **static** library in **debug** mode, call `make` defining associated variables as command-line args:
+
+```bash
+make LIB_TYPE=static DEBUG=1
 ```
-And the following layers will be applied:
 
+### Verbose mode
 
-| Layer          | Comments                                                                      |
-|----------------|-------------------------------------------------------------------------------|
-| `linux`        | _Linux generic definitions_                                                   |
-| `linux/x64`    | _Adds specific definitions and/or override definitions of the `linux` layer_  |
+By default, when your project is being built, only basic output is generated by the build system.
 
-> Note that `linux/arm` and `linux/arm/v7` layers will be skipped when building the for this host, since they are not compatible layers.
+This is a typical output generated during a build:
 
-> **Output directory**
->
-> When building a project for multiple platforms in the same build machine, it is recommended to define distinct output directories for each supported host.
->
-> For exmple, if your project will be built for linux-x64 and windows-x64 in the same build machine, define disctinct output directories for each platform:
->
-> ```sh
-> $ make HOST=linux-x64 O=output/linux-x64
-> $ make HOST=windows-x64 O=output/windows-x64
-> ```
+```plain
+[CC] output/linux-x64/release/build/src/main.c.o
+[LD] output/linux-x64/release/build/hello
+[DIST] output/linux-x64/release/dist/bin/hello
+```
 
-### Layer directories and files
+If you want to see the real commands and corresponding flags while compiling/linking files, enable the **verbose mode** by setting the variable [`V`](../variables/#v):
 
-For each supported layer, there is expected to be a subdirectory inside [hosts directory](#default-directories) with a path corresponding to the layer. This location can contain any files/subdirectories, but the following ones have special meaning for the build system:
+```bash
+make V=1
+```
 
-<a name="layer-src-dir"></a>
-* **`&lt;PROJ_ROOT>/hosts/<layer/name>/src/`**
+This is the output generated while building the same project from above:
 
-  If present, this directory is expected to contain layer-specific source files, which will be compiled when layer is compatible with selected [`HOST`](#HOST).
+```plain
+[CC] output/linux-x64/release/build/src/main.c.o
+gcc -MMD -MP -Isrc -Wall -O2 -s -c src/main.c -o output/linux-x64/release/build/src/main.c.o
 
-  > This directory will also be added to compiler's [include search path](#INCLUDE_DIRS).
+[LD] output/linux-x64/release/build/hello
+gcc -o output/linux-x64/release/build/hello output/linux-x64/release/build/src/main.c.o -s
 
-<a name="layer-host-mk"></a>
-* **`&lt;PROJ_ROOT>/hosts/<layer/name>/host.mk`**
+[DIST] output/linux-x64/release/dist/bin/hello
+/bin/cp output/linux-x64/release/build/hello output/linux-x64/release/dist/bin/hello
+```
 
-  If present, this makefile will be autoamtically included by the build system when layer is compatible with selected [`HOST`](#HOST). This is useful to add custom build flags and/or libraries for chosen layer.
+!!! note "Checking compiler flags and variable values"
+    If you want to check what would be the values used by the build system
+    without actually triggering the build, use the make target [`print-vars`](#print-vars)
 
-  For example, while building a project (which has custom makefiles for the layers `linux`, `linux/arm` and `linux/arm/v7`) for the host `linux-arm-v7`, the following sequence of includes will be performed automatically by the build system:
+### Output directory
 
-  1. `include &lt;PROJ_ROOT>/hosts/linux/host.mk`
-  2. `include &lt;PROJ_ROOT>/hosts/linux/arm/host.mk`
-  3. `include &lt;PROJ_ROOT>/hosts/linux/arm/v7/host.mk`
+See [output directories](#output-directories).
 
-### CROSS_COMPILE variable
+### Selecting a host
 
-When building for a custom target host other than native one, it is required to set the [`CROSS_COMPILE`](#CROSS_COMPILE) variable. This variable must contain the prefix to be added to toolchain binaries. For example, `g++` on a toolchain for `linux-arm` may be called `linux-arm-g++`. In this example, `CROSS_COMPILE` shall be equal to `linux-arm-` (NOTE the trailing dash).
+See [multiplatform projects](#multiplatform-projects).
 
-## Linking to external libraries
-
-TODO
 
 ## Make targets
 
 The following diagram shows all targets exposed by this makefile and their dependencies:
 
-> NOTE: Dashed arrows represent execution of one target after another (target pointed by the arrow is executed before the target at arrow base), and not a dependency between targets.
+!!! note
+    Dashed lines represent execution of one target after another, and not a dependency between them.
 
 ```mermaid
 graph TD;
@@ -344,6 +375,103 @@ SRC_FILES = src/main.c
 STRIP_RELEASE = 1
 V = 0
 ```
+
+## Multiplatform projects
+
+The build system was created with the concept of platform layers in mind, which means that platform customizations can be made by adding a specifc layer on top of a generic one.
+
+A layer is a directory containing makefile definitions and/or specific source files.
+
+When a [HOST](#HOST) is specified, it will be factored to find supported layers. The value will be splitted by using the dash (`-`) character.
+
+For example, if a [HOST](#HOST) `linux-arm-v6` is given, the following layers can be applicable if the corresponding directories are found in [layer directories](#layer-directories-and-files) (the layers are seached in following order):
+
+* `linux`
+* `linux/arm`
+* `linux/arm/v6`
+* `linux-arm-v6` (NOTE this is a the last applicable layer if present. Usage of this kind of layer is recommended only factorizing the layer does not make sense for your project)
+
+In order to clarify the concepts, lets assume an example project which will be supporting the following hosts: `linux-x64`, and `linux-arm-v7`.
+
+For this example project, the following layers are present (note that layer arrangement is up to the developer):
+
+* `linux`
+* `linux/x64`
+* `linux/arm`
+* `linux/arm/v7`
+
+
+If you are compiling this example project to `linux-arm-v7` host, select the compilation host through [`HOST`](#HOST) variable. The recommended way is to set the variable through a command line paramenter (although is perfectly legal to hardcode a value into a `&lt;PROJ_ROOT>/Makefile`):
+
+```sh
+$ make HOST=linux-arm-v7
+```
+
+During the build, the following layers will be applied to this project:
+
+| Layer          | Comments                                                                           |
+|----------------|------------------------------------------------------------------------------------|
+| `linux`        | _Linux generic definitions_                                                        |
+| `linux/arm`    | _Adds specific definitions and/or override definitions of the `linux` layer_       |
+| `linux/arm/v7` | _Adds specific definitions and/or override definitions of the `linux/arm` layer_   |
+
+> Note that `linux/x64` layer will be skipped when building the for this host, since it is not a compatible layer.
+
+Similarly, when building to `linux-x64` host, set the [`HOST`](#HOST) variable during the build:
+
+```sh
+$ make HOST=linux-x64
+```
+And the following layers will be applied:
+
+
+| Layer          | Comments                                                                      |
+|----------------|-------------------------------------------------------------------------------|
+| `linux`        | _Linux generic definitions_                                                   |
+| `linux/x64`    | _Adds specific definitions and/or override definitions of the `linux` layer_  |
+
+> Note that `linux/arm` and `linux/arm/v7` layers will be skipped when building the for this host, since they are not compatible layers.
+
+> **Output directory**
+>
+> When building a project for multiple platforms in the same build machine, it is recommended to define distinct output directories for each supported host.
+>
+> For exmple, if your project will be built for linux-x64 and windows-x64 in the same build machine, define disctinct output directories for each platform:
+>
+> ```sh
+> $ make HOST=linux-x64 O=output/linux-x64
+> $ make HOST=windows-x64 O=output/windows-x64
+> ```
+
+### Layer directories and files
+
+For each supported layer, there is expected to be a subdirectory inside [hosts directory](#default-directories) with a path corresponding to the layer. This location can contain any files/subdirectories, but the following ones have special meaning for the build system:
+
+<a name="layer-src-dir"></a>
+* **`&lt;PROJ_ROOT>/hosts/<layer/name>/src/`**
+
+  If present, this directory is expected to contain layer-specific source files, which will be compiled when layer is compatible with selected [`HOST`](#HOST).
+
+  > This directory will also be added to compiler's [include search path](#INCLUDE_DIRS).
+
+<a name="layer-host-mk"></a>
+* **`&lt;PROJ_ROOT>/hosts/<layer/name>/host.mk`**
+
+  If present, this makefile will be autoamtically included by the build system when layer is compatible with selected [`HOST`](#HOST). This is useful to add custom build flags and/or libraries for chosen layer.
+
+  For example, while building a project (which has custom makefiles for the layers `linux`, `linux/arm` and `linux/arm/v7`) for the host `linux-arm-v7`, the following sequence of includes will be performed automatically by the build system:
+
+  1. `include &lt;PROJ_ROOT>/hosts/linux/host.mk`
+  2. `include &lt;PROJ_ROOT>/hosts/linux/arm/host.mk`
+  3. `include &lt;PROJ_ROOT>/hosts/linux/arm/v7/host.mk`
+
+### CROSS_COMPILE variable
+
+When building for a custom target host other than native one, it is required to set the [`CROSS_COMPILE`](#CROSS_COMPILE) variable. This variable must contain the prefix to be added to toolchain binaries. For example, `g++` on a toolchain for `linux-arm` may be called `linux-arm-g++`. In this example, `CROSS_COMPILE` shall be equal to `linux-arm-` (NOTE the trailing dash).
+
+## Linking to external libraries
+
+TODO
 
 ## IDE Integration
 

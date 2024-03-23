@@ -24,7 +24,7 @@ Generated documentation will placed into [`$(O_DOC_DIR)`](#o_doc_dir) directory.
 The following diagram shows all targets exposed by this makefile and their dependencies:
 
 !!! note
-    Dashed lines represent execution of one target after another, and not a dependency between targets.
+    Dashed lines represent execution of one target after another, and not a dependency between them.
 
 ```mermaid
 graph LR;
