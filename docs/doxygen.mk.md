@@ -62,9 +62,9 @@ The following variables controls how documentation should be generated:
 
 #### DOC_DIR
 
-* **Description:** Defines the path of the directory (relative to [output directory](../user-guide/#output-directories)), which will contain generated documentation.
+* **Description:** Defines the path of the directory, which will contain generated documentation.
 * **Required:** No
-* **Default value:** `doc`
+* **Default value:** `$(O_BASE)/doc`
 * **Origins:** _(any)_.
 * **Restrictions:** Value shall not contain whitespaces nor can be an empty string.
 
@@ -94,12 +94,4 @@ The following variables controls how documentation should be generated:
 
 ### Output variables
 
-The following variables are generated automatically by this makefile:
-
-#### O_DOC_DIR
-
-* **Description:** Read-only variable containing the final directory where generated documentation will be placed (`$(O)/$(DOC_DIR)`).
-* **Required:** _(Not applicable)_
-* **Default value:** _(Not applicable)_
-* **Origins:** _(Not applicable)_
-* **Restrictions:** This is a read-only reserved variable.
+This makefile does not produce any output variables.

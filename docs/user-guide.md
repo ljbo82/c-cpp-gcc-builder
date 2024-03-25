@@ -1,6 +1,6 @@
 # User guide
 
-Basically, when build system's `builder.mk` is included, it expects certain variables to be defined, and according to their values, the project build process can be customized.
+Basically, when `builder.mk` is included, it expects certain variables to be defined, and according to their values, the project build process can be customized.
 
 !!! notes
     Before reading this document, ensure you have read the [basic usage](/#basic-usage) instructions.
@@ -9,36 +9,36 @@ Basically, when build system's `builder.mk` is included, it expects certain vari
 
 ### Project name
 
-Every makefile using the build system has to provide a name to the project it refers to. The way in which a project name is defined is via the variable [`PROJ_NAME`](../variables/#proj_name).
+Every project using the build system has to provide its a name. The way in which a project name is defined is via the variable [`PROJ_NAME`](../variables/#proj_name).
 
 The build system will use the project name, among other things, to define the name of artifacts that are generated during the build process.
 
 !!! notes
-    The name assigned to generated artifacts may vary according to [selected host](#multiplatform-projects).
+    The filename of generated artifacts may vary according to [selected host](#multiplatform-projects).
 
-    Although it is a good idea to use default generated names, you may change the name of generated artifacts through the use of any of the following variables:
+    Although it is a good idea to accept default generated names, you may change the name of generated artifacts through the use of any of the following variables:
 
     * [`ARTIFACT`](../variables/#artifact)
     * [`LIB_NAME`](../variables/#lib_name)
 
 ### Project type
 
-Along with project name, the project type is required by the build system. It will define what kind of artifact is being built. It can be a library or an application.
+Along with project name, the project type is required by the build system. It defines the kind of artifact to be built. It can be a library or an application.
 
 In order to define the type of artifact to be built, define the variable [`PROJ_TYPE`](../variables/#proj_type).
 
-If your makefile intends to build a library, you can define the [type of library](#library-type) being built (static or shared). In order to specify the library type, use the variable [`LIB_TYPE`](../variables/#lib_type).
+If your makefile intends to build a library, you can define the type of library being built (static or shared) by defining the variable [`LIB_TYPE`](../variables/#lib_type).
 
 ### Project version
 
-On certain platforms, the version number is used to customize the filename of generated artifact. The build system understands a [semantic versioning scheme](https://semver.org/).
+On certain platforms, the version number is used to customize the filename of generated artifacts. The build system understands the [semantic versioning scheme](https://semver.org/).
 
-In order to set a version to your project, use the variable [`PROJ_VERSION`](../variables/#proj_version). This variable is optional and if it is not defined, a standard value `0.1.0` will be used.
+In order to set a version to your project, use the variable [`PROJ_VERSION`](../variables/#proj_version). This variable is optional and if it is not defined, a standard value `0.1.0` will be assumed.
 
 !!! notes "Automatic version from git repository"
-    By including the makefile [`git.mk`](../git.mk), you can use one of the exposed variables to be used as your project version.
+    By including the makefile [`git.mk`](../git.mk), you can use one of its exposed variables to be used as your project version.
 
-    For example, let's assume that your project is versioned using git, and releases are tagged using semantic version.
+    For example, let's assume that your project is versioned using git, and releases are tagged with semantic version values.
 
     If you want to use current tag as your project's version, you could create a makefile like this:
 
@@ -54,105 +54,109 @@ In order to set a version to your project, use the variable [`PROJ_VERSION`](../
 
 From this point onwards, the project root directory will be referred to as `<PROJ_ROOT>` and it is the directory where project's `Makefile` is located.
 
-!!! notes
+!!! Warning
     The absolute path of `<PROJ_ROOT>` cannot have white-spaces.
 
 ### Input directories and files
 
 The build system uses the contents of certain directories to perform the build. Some of these directories are automatically detected by the build system, and others may be manually informed by the project through its makefiles.
 
-Let's discuss first the directories that are automatically detected when present. The presence of such directories is not mandatory:
-
 #### &lt;PROJ_ROOT>/include
 
-This directory is automatically added to compiler's [include search path](../variables/#include_dirs). It is intentended to contain public header files used by the application.
+When present, this directory is automatically added to compiler's [include search path](../variables/#include_dirs). It is intentended to contain public header files used by the application.
 
-If the project is a library, the contents of this directory will be copied into [distribution directory](#output-directories).
+!!! notes "Adding directories to compiler search path using compiler flags"
+    The variables [`CFLAGS`](../variables/#cflags) and [`CXXFLAGS`](../variables/#cxxflags) can be used to add directories to compiler search path, but keep in mind that each variable applies accordingly to the type of source file being built ([`CFLAGS`](../variables/#cflags) for C, and [`CXXFLAGS`](../variables/#cxxflags) for C++), and you have to know the exact way of adding directories to compilers' search path.
+
+    For example, in order to add directories to GCC search path, you have to use the `-I` parameter.
+
+	So, in order to pass these parameters to the compilers, define the variables like this:
+
+        CFLAGS += -Idirectory1
+        CXXFLAGS += -Idirectory1
 
 If you want to have multiple directories being added to compiler's search path, add entries to [`INCLUDE_DIRS`](../variables/#include_dirs) variable.
 
-!!! notes ""Low-level" way of adding directories to compiler's include search path"
-    The variables [`CFLAGS`](../variables/#cflags) and [`CXXFLAGS`](../variables/#cxxflags) can be used to add extra directories, but keep in mind that use of each variable applies to certain file types ([`CFLAGS`](../variables/#cflags) for C, and [`CXXFLAGS`](../variables/#cxxflags) for C++) and you have to now the exact way of adding directories to compilers' search path.
-
-	For example, in order to pass directories to GCC, you have to use the `-I` parameter. So, in order to pass these parameters to the compilers, add entries like this:
-
-        CFLAGS += -I<dir1> -I<dir2> ...
-        CXXFLAGS += -I<dir1> -I<dir2> ...
-
 !!! warning "Skip default include directory detection"
-    If the variable [`INCLUDE_DIRS`](../variables/#include_dirs) is defined while including build system's main makefile (`builder.mk`), there will be no automatic detection.
+    If the variable [`INCLUDE_DIRS`](../variables/#include_dirs) is defined, there will be no automatic detection of `<PROJ_ROOT>/include`.
+
+!!! notes
+    If project is a library, `<PROJ_ROOT>/include` is present, and `INCLUDE_DIRS` is not set, then this directory will be automatically added to the list of [distribution directories](../variables/#dist_dirs).
+
 
 #### &lt;PROJ_ROOT>/src
 
-When present, this directory is intended to have platform-independent source files (or platform-specific, if your project does not mean to support multiple platforms) and private headers used by application during build.
+When present, this directory is intended to have platform-independent source files (or platform-specific, if your project does not mean to support multiple platforms), and private headers used by application during build.
 
-Any kind of file can be placed into this directory, but only C/C++/Assembly source files will be compiled. The file types are identified according their filename suffixes (values are case-sensitive):
+Any kind of file can be placed into this directory, but only C/C++/Assembly source files will be recognized to be compiled. The file types are identified according their filename suffixes (values are case-sensitive):
 
 * C sources: `*.c`
 * C++ sources: `*.cpp`, `*.cxx`, or `*.cc`
 * Assembly sources: `*.s` or `*.S`
 
-Addictional source directories and files cann be added by defining the variables [`SRC_DIRS`](../variables/#src_dirs) and/or [`SRC_FILES`](../variables/#src_files).
+Addictional source directories and files can be added by defining the variables [`SRC_DIRS`](../variables/#src_dirs) and/or [`SRC_FILES`](../variables/#src_files).
 
 This directory is also added to compiler's [include search path](../variables/#include_dirs).
 
 !!! warning "Skip default source directory detection"
-    Similarly to [`INCLUDE_DIRS`](../variables/#include_dirs), if either [`SRC_DIRS`](../variables/#src_dirs) or [`SRC_FILES`](../variables/#src_files) are defined, the default source directory (`<PROJ_ROOT>/src`) is not automatically detected.
+    Similarly to [`INCLUDE_DIRS`](../variables/#include_dirs), if either [`SRC_DIRS`](../variables/#src_dirs) or [`SRC_FILES`](../variables/#src_files) are defined, the default source directory is not automatically detected.
 
 #### &lt;PROJ_ROOT>/hosts
 
-This directory is assumed to contain platform layers for the project.
+When present, this directory is assumed to contain platform layers for the project.
 
-For details regarding platform layers, see [multiplatform projects](#multiplatform-projects).
+If you want to have platforms layers spread across multiple directories, add entries to [`HOSTS_DIRS`](../variables/#hosts_dirs).
 
-> **Skip default hosts directory**
->
-> THIS IS A FEATURE OF LAST RESORT!
->
-> Default hosts directory can be ignored by the build system through the definition of [`SKIP_DEFAULT_HOSTS_DIR`](#SKIP_DEFAULT_HOSTS_DIR) variable.
+For details about what platform layers are and how to use them in oder to add support to multiple platforms in your project, see [multiplatform projects](#multiplatform-projects).
 
 ### Output directories and files
 
+All files produced by the building process are placed into an output directory (defined by the variable [`O`](#O)).
 
-All generated-files produced by the building process are placed into an output base directory (defined by the variable [`O`](#O)). By default, this directory is located into `&lt;PROJ_ROOT>/output/`.
+By default, this directory is located into `$(O_BASE)/$(HOST)/<debug or release>`.
 
-For example, in order to put output files into a directory named `/output/directory`, just override the `O` variable during the call to `make` by passing its value through command line arguments:
+!!! notes "Output-base directory"
+    If the variable [`O`](#O) is not defined, the output-base directory (defined in variable [`O_BASE`](../variables/#o_base)) is `<PROJ_ROOT>/output`. If variable [`O`](#O) is manually defined, the value of [`O_BASE`](../variables/#o_base) will be the same of [`O`](#O).
+
+    Since this directory contains files produced while building the project, it is strongly recommened to ignore it in your version control system.
+
+For example, in order to put generated files into directory `./result` (NOTE: paths are always relative to current working directory), just set the [`O`](#O) variable (either in a makefile, or via command-line). Via command-line, the call to `make` would be:
 
 ```sh
-make O=/output/directory
+make O=result
 ```
 
-!!! notes "Version control"
-    The output base directory shall be ignored by your source code version control system if it is located inside your source tree.
-
-Inside output base directory ([`$(O)`](#O)) you will find the following directories (some of them exists only for certain [project types](#PROJ_TYPE)):
+Inside the output directory ([`O`](../variables/#o)), you may find the following directories:
 
 #### $(O)/build
 
-Build directory. This directory contains object files as well as final artifact (application executable or library).
+This is the build directory. This directory contains object files as well as the final artifact (application executable or library).
 
-This path can be obtained through [`O_BUILD_DIR`](#O_BUILD_DIR) read-only variable and customized through [`BUILD_SUBDIR`](#BUILD_SUBDIR) variable.
+Files are put into this directory during the execution of [`build`](#build) target.
+
+This path can be referred to by the variable [`O_BUILD_DIR`](#O_BUILD_DIR).
 
 #### $(O)/dist
 
 Distribution directory. Final artifact (executable or library), and possibly companion files (e.g. header files, for libraries) are placed into this directory.
 
-This path can be obtained through [`O_DIST_DIR`](#O_DIST_DIR) read-only variable and customized through [`DIST_SUBDIR`](#DIST_SUBDIR) variable.
+Files are put into this directory during the execution of [`dist`](#dist) target.
 
-!!! notes "Additional distribution files"
-    Additional directories and/or files to be distributed along with resulting distribution can be added through usage of [`DIST_DIRS`](#DIST_DIRS) and [`DIST_FILES`](#DIST_FILES) variables.
+This path can be referred to by the variable [`O_DIST_DIR`](#O_DIST_DIR).
+
+If you want to add additional files and/or directories to the distribution directory (e.g. images, configuration files, etc), use the variables [`DIST_FILES`](../variables/#dist_files) and/or [`DIST_DIRS`](../variables/#dist_dirs).
 
 ##### $(O)/dist/bin
 
-If project is an [application executable](#PROJ_TYPE), resulting distribution binary will be placed into this directory.
+If the project is an [application executable](../variables/#proj_type), generated executable will be placed into this directory.
 
 ##### $(O)/dist/lib
 
-If project is a [library](#PROJ_TYPE) (either [static or shared](#LIB_TYPE)), resulting binary will be placed into this directory.
+If the project is a [library](../variables/#proj_type) (either [static or shared](../variables/#lib_type)), generated library will be placed into this directory.
 
 ##### $(O)/dist/include
 
-If project builds a [library](#PROJ_TYPE) (either [static or shared](#LIB_TYPE)), public headers (if any) will be placed into this directory.
+If the project is a [library](../variables/#proj_type) (either [static or shared](#LIB_TYPE)), [public headers](#proj_rootinclude) (if present) will be placed into this directory.
 
 ## Customizing the build
 
