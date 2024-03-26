@@ -5,6 +5,29 @@ Basically, when `builder.mk` is included, it expects certain variables to be def
 !!! notes
     Before reading this document, ensure you have read the [basic usage](/#basic-usage) instructions.
 
+## Checking compatibility
+
+When using a shared build system, it is recommend to check if build system provides all the features expected by your project.
+
+In order to check if a shared build system is supported by your project, define the variable [`CPB_MIN_VERSION`](../variables/#cpb_min_version) with the minimum accepted version.
+
+If shared build system's is incompatible with the minimum expected version, a fail will be raised.
+
+For example, if your project defines:
+
+```makefile
+CPB_MIN_VERSION = 1.0.2
+```
+
+The compatibility for the following build system versions would be:
+
+| Build system version | Compatibility                            |
+|----------------------|------------------------------------------|
+| 1.0.**1**            | Rejected (older version)                 |
+| 1.0.2                | Accepted (same version)                  |
+| 1.0.3                | Accepted (Newer version)                 |
+| **2**.0.0            | Rejected (major version is incompatible) |
+
 ## Project attributes
 
 ### Project name
