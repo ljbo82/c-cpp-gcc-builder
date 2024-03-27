@@ -8,7 +8,9 @@ nav:
   - Variable reference: variables.md
   - Extra Makefiles:
     - doxygen.mk: doxygen.mk.md
+    - functions.mk: functions.mk.md
     - git.mk: git.mk.md
+    - native.mk: native.mk.md
 markdown_extensions:
   admonition:
   toc:

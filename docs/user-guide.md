@@ -1,3 +1,5 @@
+!!! danger "Review status: IN PROGRESS"
+
 # User guide
 
 Basically, when `builder.mk` is included, it expects certain variables to be defined, and according to their values, the project build process can be customized.

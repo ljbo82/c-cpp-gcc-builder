@@ -1,6 +1,20 @@
+!!! hint "Review status: OK"
+
 # git.mk
 
-This file inspects project's directory tree and exposes git repository information (current commit, tag, status, etc) through output variables.
+This file inspects `<PROJ_ROOT>` directory and exposes git repository information (current commit, tag, status, etc) through certain variables.
+
+## Basic usage
+
+When this makefile is included, it will expose git repository (if applicable) information through output variables.
+
+```Makefile
+include $(CPB_DIR)/git.mk
+```
+
+## Make targets
+
+_This makefile does not expose any target._
 
 ## Variables
 
@@ -82,3 +96,7 @@ The following variables are generated automatically by this makefile in order to
 * **Default value:** _(Not applicable)_
 * **Origins:** _(Not applicable)_
 * **Restrictions:** This is a read-only reserved variable.
+
+## Functions
+
+_This makefile does not expose any function._

@@ -27,7 +27,7 @@ ifndef CPB_DIR
     $(error [CPB_DIR] Missing value)
 endif
 
-CPB_MIN_VERSION := 1.0.0
+CPB_MIN_VERSION := 0.1.0
 
 PROJ_NAME := hello
 PROJ_TYPE := app

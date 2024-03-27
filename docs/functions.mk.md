@@ -1,12 +1,107 @@
+!!! danger "Review status: IN PROGRESS"
+
 # functions.mk
 
-This file provides utility functions that can be used by other makefiles (using [`$(call)`](https://www.gnu.org/software/make/manual/html_node/Call-Function.html)).
+This makefile exposes utility makefile functions used by the build system, which can also be used by your project.
 
-## Exposed functions
+## Basic usage
+
+By including this makefile it will expose several utility functions which can be invoked via GNU Make [`$(call)`](https://www.gnu.org/software/make/manual/html_node/Call-Function.html) function.
+
+```Makefile
+include $(CPB_DIR)/functions.mk
+```
+
+!!! note
+    This makefile is automatically included by `builder.mk`
+
+## Make targets
+
+_This makefile does not expose any target._
+
+## Variables
+
+_This makefile does not expect nor expose any variables (except [functions](#functions))._
+
+## Functions
 
 Following are listed exposed functions:
 
 ### Text functions
+
+#### FN_SPLIT
+
+#### FN_TOKEN
+
+#### FN_UNIQUE
+
+#### FN_EQ
+
+#### FN_REVERSE
+
+#### FN_HOST_FACTORIZE
+
+#### FN_NUMBER_CMP
+
+### Semantic versioning
+
+#### FN_SEMVER_CHECK
+
+#### FN_SEMVER_MAJOR
+
+#### FN_SEMVER_MINOR
+
+#### FN_SEMVER_PATCH
+
+#### FN_SEMVER_CMP
+
+### File system functions
+
+#### FN_FIND_FILES
+
+#### FN_REL_DIR
+
+#### FN_IS_INSIDE_DIR
+
+### Makefile utilities
+
+#### FN_SHELL
+
+#### FN_CHECK_ORIGIN
+
+#### FN_CHECK_OPTIONS
+
+#### FN_CHECK_NON_EMPTY
+
+#### FN_CHECK_NO_WHITESPACE
+
+#### FN_CHECK_RESERVED
+
+Checks if a reserved variable is defined elsewhere
+
+**Syntax:**
+
+```Makefile
+$(call FN_CHECK_RESERVED,varName,errorMessage=?)
+```
+
+**Parameters:**
+
+| Parameter | Details |
+|-----------|---------|
+| varName | Variable name |
+
+
+### Colored output
+
+#### FN_COLORED_TEXT
+
+#### FN_LOG
+
+#### FN_LOG_INFO
+
+
+
 
 * **`$(call FN_SPLIT,baseString,delimiter,cutIndex)`**
 

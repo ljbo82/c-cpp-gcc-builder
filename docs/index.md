@@ -1,6 +1,12 @@
+!!! hint "Review status: OK"
+
 # cpp-project-builder
 
 cpp-project-builder provides a build system based on makefiles containing standard recipes to build C/C++/Assembly multiplatform projects using a GCC-based compiler.
+
+!!! warning
+    This documentation is under heavily development!
+
 
 ## License
 
@@ -88,12 +94,30 @@ Include this file at the end of your `<PROJ_ROOT>/Makefile`.
 
 ### doxygen.mk
 
-This file provides standard targets to generate source documentation using [doxygen](https://www.doxygen.nl/index.html).
+This makefile provides a target to generate source documentation using [doxygen](https://www.doxygen.nl/index.html).
 
 See makefile [documentation](doxygen.mk.md) for details.
+
+### functions.mk
+
+This makefile exposes utility makefile functions used by the build system, which can also be used by your project.
+
+!!! note
+    This makefile is automatically included by `builder.mk`
+
+See makefile [documentation](functions.mk.md) for details.
 
 ### git.mk
 
 This file inspects `<PROJ_ROOT>` directory and exposes git repository information (current commit, tag, status, etc) through certain variables.
 
 See makefile [documentation](git.mk.md) for details.
+
+### native.mk
+
+This makefile tries to detect native host and exposes information through output variables.
+
+!!! note
+    This makefile is automatically included by `builder.mk` if [`HOST`](variables/#host) variable is not defined.
+
+See makefile [documentation](native.mk.md) for details.
