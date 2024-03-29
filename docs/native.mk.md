@@ -14,8 +14,8 @@ When this makefile is included, it tries to detect native host and expose inform
 include $(CPB_DIR)/native.mk
 ```
 
-!!! notes
-    This makefile is automatically included by `builder.mk` if [`HOST`](../variables/#host) variable is not defined.
+!!! Note
+    This makefile is automatically included by `builder.mk`.
 
 ## Make targets
 

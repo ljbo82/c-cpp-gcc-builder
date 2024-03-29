@@ -118,6 +118,6 @@ See makefile [documentation](git.mk.md) for details.
 This makefile tries to detect native host and exposes information through output variables.
 
 !!! note
-    This makefile is automatically included by `builder.mk` if [`HOST`](variables/#host) variable is not defined.
+    This makefile is automatically included by `builder.mk`.
 
 See makefile [documentation](native.mk.md) for details.

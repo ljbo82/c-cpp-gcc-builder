@@ -4,12 +4,15 @@
 
 Basically, when `builder.mk` is included, it expects certain variables to be defined, and according to their values, the project build process can be customized.
 
-!!! notes
+!!! note
     Before reading this document, ensure you have read the [basic usage](/#basic-usage) instructions.
 
 ## Checking compatibility
 
 When using a shared build system, it is recommend to check if build system provides all the features expected by your project.
+
+!!! note
+    If you are embedding the build system directly into your project source tree, usually there is no need to check for build system version compatibility.
 
 In order to check if a shared build system is supported by your project, define the variable [`CPB_MIN_VERSION`](../variables/#cpb_min_version) with the minimum accepted version.
 
