@@ -501,6 +501,10 @@ For each supported layer, there is expected to be a subdirectory inside [hosts d
 
 When building for a custom target host other than native one, it is required to set the [`CROSS_COMPILE`](#CROSS_COMPILE) variable. This variable must contain the prefix to be added to toolchain binaries. For example, `g++` on a toolchain for `linux-arm` may be called `linux-arm-g++`. In this example, `CROSS_COMPILE` shall be equal to `linux-arm-` (NOTE the trailing dash).
 
+### External toolchains
+
+TODO (mention extras/arduino)
+
 ## Linking to external libraries
 
 TODO

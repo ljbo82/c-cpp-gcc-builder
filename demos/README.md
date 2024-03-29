@@ -2,6 +2,10 @@
 
  This directory contains example projects using [cpp-project-builder](http://ljbo82.github.io/cpp-project-builder) build system:
 
+* **`arduino/`**
+
+    Contains an example of an arduino project using this build system. The project can be built also for windows or linux PC.
+
 * **`c-app/`**
 
    Contains an example of a pure-C application executable project.
