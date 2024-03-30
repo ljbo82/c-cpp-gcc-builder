@@ -46,6 +46,6 @@ DIST_FILES += $(O)/build/libB.a:lib/libB.a
 DIST_FILES += $(LIBS_DIR)/libB/b.h:include/b.h
 
 $(O)/build/libB.a: $(LIBS_DIR)/libB/b.c $(LIBS_DIR)/libB/b.h
-	$(VERBOSE)$(MAKE) -C $(LIBS_DIR)/libB BUILD_DIR=$(abspath $(O)/build) CC=$(CROSS_COMPILE)$(CC) AR=$(CROSS_COMPILE)$(AR)
+	$(V_PREFIX)$(MAKE) -C $(LIBS_DIR)/libB BUILD_DIR=$(abspath $(O)/build) CC=$(CROSS_COMPILE)$(CC) AR=$(CROSS_COMPILE)$(AR)
 
 include $(CPB_DIR)/builder.mk

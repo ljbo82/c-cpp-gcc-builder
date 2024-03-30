@@ -61,7 +61,7 @@ The basic usage is comprised by the following steps:
 
 4. At the end of your `<PROJ_ROOT>/Makefile`, include the file `builder.mk` provided by the build system:
 
-        include $(CPB_DIR)/builder.mk
+    <pre><code class="language-makefile hljs">include $(CPB_DIR)/builder.mk</code></pre>
 
 Following above guidelines, a minimal `Makefile` would look like this:
 

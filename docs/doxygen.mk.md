@@ -64,33 +64,41 @@ The following variables controls how documentation should be generated:
 #### DOC_DIR
 
 * **Description:** Defines the path of the directory, which will contain generated documentation.
-* **Required:** No
-* **Default value:** `$(O_BASE)/doc`
-* **Origins:** _(any)_.
+* **Required:** No.
+* **Default value:** <tt style="color:#E74C3C">[$(O_BASE)](../variables/#o_base)/doc</tt>.
+* **Origins:** Makefile.
+* **Restrictions:** Value shall not contain whitespaces nor can be an empty string.
+
+#### DOXYARGS
+
+* **Description:** Extra arguments to be passed to doxygen.
+* **Required:** No.
+* **Default value:** Undefined.
+* **Origins:** Makefile.
 * **Restrictions:** Value shall not contain whitespaces nor can be an empty string.
 
 #### DOXYFILE
 
 * **Description:** Defines the path of the `Doxyfile` which will be parsed by doxygen.
-* **Required:** No
-* **Default value:** `Doxyfile`
-* **Origins:** _(any)_
+* **Required:** No.
+* **Default value:** `Doxyfile`.
+* **Origins:** Makefile.
 * **Restrictions:** Value shall not contain whitespaces nor can be an empty string.
 
 #### POST_DOC_DEPS
 
 * **Description:** Contains a list of targets to be called AFTER documentation is generated.
-* **Required:** No
-* **Default value:** _(undefined)_
-* **Origins:** makefile
+* **Required:** No.
+* **Default value:** Undefined.
+* **Origins:** Makefile.
 * **Restrictions:** Since variable is intended to hold a list of values (whitespace-delimited string), it is recommend to use the `+=` operator while adding values to the variable.
 
 #### PRE_DOC_DEPS
 
 * **Description:** Contains a list of targets to be called BEFORE documentation is generated.
-* **Required:** No
-* **Default value:** _(undefined)_
-* **Origins:** makefile
+* **Required:** No.
+* **Default value:** Undefined.
+* **Origins:** Makefile.
 * **Restrictions:** Since variable is intended to hold a list of values (whitespace-delimited string), it is recommend to use the `+=` operator while adding values to the variable.
 
 ### Output variables

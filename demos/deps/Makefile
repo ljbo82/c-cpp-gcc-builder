@@ -46,7 +46,7 @@ POST_CLEAN_DEPS += --post-clean
 
 .PHONY: --post-clean
 --post-clean:
-	$(VERBOSE) find $(LIBS_DIR) -type d -name $(O) | xargs -I{} rm -rf {}
+	$(V_PREFIX) find $(LIBS_DIR) -type d -name $(O) | xargs -I{} rm -rf {}
 # ==============================================================================
 
 include $(CPB_DIR)/builder.mk

@@ -50,26 +50,26 @@ The following variables are generated automatically by this makefile in order to
 
 #### NATIVE_OS
 
-* **Description:** Contains detected native operting system. If it would not be possible to detect it, variable will be empty/undefined.
-* **Required:**  _(Not applicable)_
-* **Default value:**  _(Not applicable)_
-* **Origins:**  _(Not applicable)_
+* **Description:** Contains detected native operting system.
+* **Required:**  Not applicable (variable is set by the build system).
+* **Default value:** Detected native operting system. If it would not be possible to detect it, variable will be empty/undefined.
+* **Origins:**  Not applicable (variable is set by the build system).
 * **Restrictions:** This is a read-only reserved variable.
 
 #### NATIVE_ARCH
 
-* **Description:** Contains detected native CPU architecture. If it would not be possible to detect it, variable will be empty/undefined.
-* **Required:** _(Not applicable)_
-* **Default value:** _(Not applicable)_
-* **Origins:** _(Not applicable)_
+* **Description:** Contains detected native CPU architecture.
+* **Required:** Not applicable (variable is set by the build system).
+* **Default value:** Detected native CPU architecture. If it would not be possible to detect it, variable will be empty/undefined.
+* **Origins:** Not applicable (variable is set by the build system).
 * **Restrictions:** This is a read-only reserved variable.
 
 #### NATIVE_HOST
 
-* **Description:** Contains detected native HOST (a combination of [`NATIVE_OS`](#native_os) and [`NATIVE_ARCH`](#native_arch)). If it would not be possible to detect it, variable will be empty/undefined.
-* **Required:** _(Not applicable)_
-* **Default value:** _(Not applicable)_
-* **Origins:** _(Not applicable)_
+* **Description:** Contains detected native HOST.
+* **Required:** Not applicable (variable is set by the build system).
+* **Default value:** Detected native HOST (a combination of [`NATIVE_OS`](#native_os) and [`NATIVE_ARCH`](#native_arch)). If it would not be possible to detect it, variable will be empty/undefined.
+* **Origins:** Not applicable (variable is set by the build system).
 * **Restrictions:** This is a read-only reserved variable.
 
 ## Functions
