@@ -4,6 +4,8 @@
 
 This file inspects `<PROJ_ROOT>` directory and exposes git repository information (current commit, tag, status, etc) through certain variables.
 
+--------------------------------------------------------------------------------
+
 ## Basic usage
 
 When this makefile is included, it will expose git repository (if applicable) information through output variables.
@@ -12,9 +14,13 @@ When this makefile is included, it will expose git repository (if applicable) in
 include $(CPB_DIR)/git.mk
 ```
 
+--------------------------------------------------------------------------------
+
 ## Make targets
 
 _This makefile does not expose any target._
+
+--------------------------------------------------------------------------------
 
 ## Variables
 
@@ -28,8 +34,6 @@ Following are described all variables used/exported by this makefile:
     * **Required:** Defines if a variable must be defined (and it must be non-empty) during build.
 
     * **Default value:** Contains the value which will be assumed if variable is optional and it is not defined.
-
-    * **Mutable:** Some variables defined in makefiles can be updated by the build system. This field explain details about how such variables can be modified by the build system.
 
     * **Origins:** Contains the list of allowed origins for variable definition.
 
@@ -46,6 +50,8 @@ The following variables are used to customize the repository inspection:
 * **Default value:** `.` (current directory).
 * **Origins:** Makefile.
 * **Restrictions:** Value shall not contain whitespaces nor can be result into an empty string.
+
+--------------------------------------------------------------------------------
 
 ### Output variables
 
@@ -95,6 +101,8 @@ The following variables are generated automatically by this makefile in order to
 * **Default value:** Candidate version for the project using current repository commit/tag. If directory is not versioned by git, variable value undefined.
 * **Origins:** Not applicable (variable is set by the build system).
 * **Restrictions:** This is a read-only reserved variable.
+
+--------------------------------------------------------------------------------
 
 ## Functions
 

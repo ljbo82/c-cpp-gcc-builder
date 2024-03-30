@@ -4,6 +4,8 @@
 
 This makefile exposes utility makefile functions used by the build system, which can also be used by your project.
 
+--------------------------------------------------------------------------------
+
 ## Basic usage
 
 By including this makefile it will expose several utility functions which can be invoked via GNU Make [`$(call)`](https://www.gnu.org/software/make/manual/html_node/Call-Function.html) function.
@@ -15,13 +17,19 @@ include $(CPB_DIR)/functions.mk
 !!! note
     This makefile is automatically included by `builder.mk`
 
+--------------------------------------------------------------------------------
+
 ## Make targets
 
 _This makefile does not expose any target._
 
+--------------------------------------------------------------------------------
+
 ## Variables
 
 _This makefile does not expect nor expose any variables (except [functions](#functions))._
+
+--------------------------------------------------------------------------------
 
 ## Functions
 
@@ -118,6 +126,8 @@ $(call FN_UNIQUE,word1 word2 ...)
 |--------------  ---|----------------|
 | `word1 word2 ...` | List of words. |
 
+--------------------------------------------------------------------------------
+
 ### Semantic versioning
 
 #### FN_SEMVER_CHECK
@@ -206,6 +216,8 @@ $(call FN_SEMVER_PATCH,semanticVersion)
 |-------------------|--------------------------|
 | `semanticVersion` | Semantic version string. |
 
+--------------------------------------------------------------------------------
+
 ### File system functions
 
 #### FN_FIND_FILES
@@ -262,6 +274,8 @@ $(call FN_REL_DIR,fromDir,toDir)
 |-----------|-----------------------------|
 | `fromDir` | Departure directory path.   |
 | `toDir`   | Destination directory path. |
+
+--------------------------------------------------------------------------------
 
 ### General utilities
 
@@ -424,6 +438,8 @@ $(call FN_SHELL,cmd,[errorMessage])
 |------------------|-----------------------------------------------------------------------------------------------------------------------------|
 | `cmd`            | Shell command to execute                                                                                                    |
 | `errorMessage`   | Optional error message. If value is suppressed or an empty value is given,<br/>a standardized message will be used instead. |
+
+--------------------------------------------------------------------------------
 
 ### Colored output
 

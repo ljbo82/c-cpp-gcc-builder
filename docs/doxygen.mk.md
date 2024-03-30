@@ -4,6 +4,8 @@
 
 This makefile provides a target to generate source documentation using [doxygen](https://www.doxygen.nl/index.html).
 
+--------------------------------------------------------------------------------
+
 ## Basic usage
 
 If your project contains a `Doxyfile`, include this makefile:
@@ -20,6 +22,8 @@ make doc
 
 Generated documentation will be placed into [`$(DOC_DIR)`](#doc_dir) directory.
 
+--------------------------------------------------------------------------------
+
 ## Make targets
 
 The following diagram shows all targets exposed by this makefile and their dependencies:
@@ -29,14 +33,20 @@ The following diagram shows all targets exposed by this makefile and their depen
 
 ```mermaid
 graph LR;
-    doc(<b>doc</b>);
+    doc(<b><a href="#doc">doc</a></b>);
     postDocDeps("<a href="#post_doc_deps">$(POST_DOC_DEPS)</a>");
     intDoc(<i>Internal execution</i>);
     preDocDeps("<a href='#pre_doc_deps'>$(PRE_DOC_DEPS)</a>");
 
     doc-->postDocDeps-.->intDoc-->preDocDeps
-    doc-->intDoc
 ```
+<br/>
+
+### doc
+
+This target will trigger [doxygen](https://www.doxygen.nl/index.html) to generate documentation by parsing [provided Doxyfile](#doxyfile).
+
+--------------------------------------------------------------------------------
 
 ## Variables
 
@@ -50,8 +60,6 @@ Following are described all variables used/exported by this makefile:
     * **Required:** Defines if a variable must be defined (and it must be non-empty) during build.
 
     * **Default value:** Contains the value which will be assumed if variable is optional and it is not defined.
-
-    * **Mutable:** Some variables defined in makefiles can be updated by the build system. This field explain details about how such variables can be modified by the build system.
 
     * **Origins:** Contains the list of allowed origins for variable definition.
 
@@ -91,7 +99,7 @@ The following variables controls how documentation should be generated:
 * **Required:** No.
 * **Default value:** Undefined.
 * **Origins:** Makefile.
-* **Restrictions:** Since variable is intended to hold a list of values (whitespace-delimited string), it is recommend to use the `+=` operator while adding values to the variable.
+* **Restrictions:** None.
 
 #### PRE_DOC_DEPS
 
@@ -99,11 +107,15 @@ The following variables controls how documentation should be generated:
 * **Required:** No.
 * **Default value:** Undefined.
 * **Origins:** Makefile.
-* **Restrictions:** Since variable is intended to hold a list of values (whitespace-delimited string), it is recommend to use the `+=` operator while adding values to the variable.
+* **Restrictions:** None.
+
+--------------------------------------------------------------------------------
 
 ### Output variables
 
 _This makefile does not expose any output variable._
+
+--------------------------------------------------------------------------------
 
 ## Functions
 

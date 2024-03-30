@@ -22,8 +22,6 @@ This document contain details about all variables known by the build system.
 
     * **Default value:** Contains the value which will be assumed if variable is optional and it is not defined.
 
-    * **Mutable:** Some variables defined in makefiles can be updated by the build system. This field explain details about how such variables can be modified by the build system.
-
     * **Origins:** Contains the list of allowed origins for variable definition.
 
     * **Restrictions:** Contains information about restrictions on which kind of values that can be stored in the variable.
@@ -33,6 +31,8 @@ This document contain details about all variables known by the build system.
     The build system declare internal private variables that are not intended to be used by projects. All of those private variables, have their names prefixed with `cpb_` prefix. Please avoid using/defining variables with names beginning with such prefix.
 
     The build system checks for usage of critical known private variables and, most of the time, any attempt to define such variables will result in an error raised by the build system.
+
+--------------------------------------------------------------------------------
 
 ## Project definition
 
@@ -44,6 +44,8 @@ The following variables defines the project.
 
 ### PROJ_VERSION
 
+--------------------------------------------------------------------------------
+
 ## Source management
 
 The following variables provide a way to inform the build system about source files.
@@ -52,40 +54,29 @@ The following variables provide a way to inform the build system about source fi
 
 * **Description:** Contains list of directories to be added to compiler's include search path.
 * **Required:** No.
-* **Default value:** Varies according to the presence of certain directories and selected [`HOST`](#host).
-* **Mutable:** Yes.
+* **Default value:** If [`PROJ_TYPE`](#proj_type) is `lib` and `<PROJ_ROOT>/include` directory exists, the default value is `include`. Otherwise, the variable is left undefined.
 * **Origins:** Makefile.
-* **Restrictions:**
-    * If this variable is explicity defined, the [default include directory](../user-guide/#default_include_dir), if present, will not be automatically added to the list.
-    * Since this is a mutable list, values should be appended.
-    * A list is composed by values delimited by whitespaces (this is a GNU make restriction). For this reason, paths containing spaces are not supported.
+* **Restrictions:** A list is composed by values delimited by whitespaces (this is a GNU make restriction). For this reason, paths containing spaces are not supported.
 
 ### DIST_DIRS
 
-* **Description:** Contains a list of entries defining extra directories, whose files which will copied into [`$(O_DIST_DIR)`](#o_dist_dir).
-    * Each entry in this variable has the syntax `ORIGIN_DIR[:DEST_DIR]` (all files recursively contained in `ORIGIN_DIR` will be copied into <tt style="color:#E74C3C">[$(O_DIST_DIR)](#o_dist_dir)/DEST_DIR</tt>).
-        * Note that `DEST_DIR` component is optional for entries. Its default value is the same as `ORIGIN_DIR`.
-
+* **Description:** Contains a list of entries defining extra directories, whose files which will copied into [`$(O_DIST_DIR)`](#o_dist_dir):
+    * Each entry in this variable has the syntax `ORIGIN_DIR[:DEST_DIR]` (all files recursively contained in `ORIGIN_DIR` will be copied into <tt style="color:#E74C3C">$([O_DIST_DIR](#o_dist_dir))/DEST_DIR</tt>. Note that `DEST_DIR` component is optional for entries. Its default value is the same as `ORIGIN_DIR`).
 * **Required:** No.
-* **Default value:** Varies according to [`$(HOST)`](#host) and [`PROJ_TYPE`](#proj_type).
-* **Mutable:** Yes.
+* **Default value:** If [`INCLUDE_DIRS`](#include_dirs) variable is not defined, `<PROJ_ROOT>/include` directory exists, and [`PROJ_TYPE`](#proj_type) equals to `lib`, then the default value will be `include:include`. Otherwise, the variable is left undefined.
 * **Origins:** Makefile.
-* **Restrictions:**
-    * Since this is a mutable list, values should be appended.
-    * A list is composed by values delimited by whitespaces (this is a GNU make restriction). For this reason, paths containing spaces are not supported.
+* **Restrictions:** A list is composed by values delimited by whitespaces (this is a GNU make restriction). For this reason, paths containing spaces are not supported.
 
 ### DIST_FILES
 
-* **Description:** Contains a list of extra files which shall be individually copied into [`$(O_DIST_DIR)`](#o_dist_dir).
-    * Each entry in this variable has the syntax `ORIGIN_FILE[:DEST_FILE]` (an origin file will be copied into <tt style="color:#E74C3C">[$(O_DIST_DIR)](#o_dist_dir)/DEST_FILE</tt>).
-        * Note that `DEST_FILE` component is optional for entries. Its default value is <tt style="color:#E74C3C">$([basename](https://www.gnu.org/software/make/manual/make.html#index-basename-1) ORIGIN_FILE)</tt>.
+* **Description:** Contains a list of extra files which shall be individually copied into [`$(O_DIST_DIR)`](#o_dist_dir):
+    * Each entry in this variable has the syntax `ORIGIN_FILE[:DEST_FILE]` (an origin file will be copied into <tt style="color:#E74C3C">$([O_DIST_DIR](#o_dist_dir))/DEST_FILE</tt>. Note that `DEST_FILE` component is optional for entries. Its default value is <tt style="color:#E74C3C">$([notdir](https://www.gnu.org/software/make/manual/make.html#index-notdir) ORIGIN_FILE)</tt>).
 * **Required:** No
-* **Default value:** Varies according to [`$(HOST)`](#host), [`PROJ_TYPE`](#proj_type), and [`DIST_DIRS`](#dist_dirs).
-* **Mutable:** Yes.
+* **Default value:** Varies according to [`HOST`](#host), [`PROJ_TYPE`](#proj_type), and [`DIST_DIRS`](#dist_dirs):
+    * Generated artifacts (executables and libraries) are added to the default value. The filename of such artifact varies according to [`HOST`](#host) and [`PROJ_TYPE`](#proj_type) (for example, executables in windows platforms have the `.exe` suffix; shared libraries in linux have the `.so` suffix, while in windows it is `.dll`).
+    * If [`DIST_DIRS`](#dist_dirs) is set, then for all files contained in these directories, there will be an corresponding entry in `DIST_FILES` default value.
 * **Origins:** Makefile.
-* **Restrictions:**
-    * Since this is a mutable list, values should be appended.
-    * A list is composed by values delimited by whitespaces (this is a GNU make restriction). For this reason, paths containing spaces are not supported.
+* **Restrictions:** A list is composed by values delimited by whitespaces (this is a GNU make restriction). For this reason, paths containing spaces are not supported.
 
 ### SRC_DIRS
 
@@ -95,22 +86,34 @@ The following variables provide a way to inform the build system about source fi
 
 ### SKIPPED_SRC_FILES
 
+--------------------------------------------------------------------------------
+
 ## Build configuration
 
-The following variables configures the building process.
+The following variables configures the build process.
 
 ### ARTIFACT
 
-### BUILD_DEPS
+* **Description:** Defines the actual filename for target artifact. Set this variable to override auto-generated value.
+* **Required:** No.
+* **Default value:** Varies according to [`HOST`](#host), [`PROJ_NAME`](#proj_name), [`PROJ_TYPE`](#proj_type), [`LIB_TYPE`](#lib_type) (for libraries), and [`PROJ_VERSION`](#proj_version):
+    * If there is no default support for [`HOST`](#host), the default artifact name is `a.out`.
+    * Executables files in Linux/mac OS are named <tt style="color:#E74C3C">$([PROJ_NAME]())</tt>
+    * Executables files in Windows are named <tt style="color:#E74C3C">$([PROJ_NAME]()).exe</tt>
+    * Static libraries are named <tt style="color:#E74C3C">lib$([LIB_NAME](#lib_name)).a</tt> in either Linux, Windows, or mac OS.
+    * Shared libraries files in Linux are named <tt style="color:#E74C3C">lib$([LIB_NAME](#lib_name)).so</tt>
+	* Shared libraries files in mac OS are named <tt style="color:#E74C3C">lib$([LIB_NAME](#lib_name)).dylib</tt>
+	* Shared libraries files in Windows are named <tt style="color:#E74C3C">$([LIB_NAME](#lib_name)).dll</tt>
+* **Origins:** Makefile
+* **Restrictions:** Value shall not contain whitespaces nor can be an empty string.
 
 ### DEBUG
 
-* **Description:** Enables/Disables the debug mode for the build.
+* **Description:** Enables/Disables the debug mode for the build. By default:
     * While bulding in debug mode (i.e. when `DEBUG = 1`), debug symbols will be added to generated binary artifact.
-    * In release mode (i.e. when `DEBUG = 0`), Debugging symbols are, by default, [stripped](#strip_release) from generated binary and [compiler optimizations](#release_optimization_level) will be applied during building process.
+    * In release mode (i.e. when `DEBUG = 0`), debugging symbols are not included in generated binary, and artifact is [stripped](#strip_release).
 * **Required:** No.
 * **Default value:** `0` (i.e. release mode).
-* **Mutable:** No.
 * **Origins:** The variable can be declared through any origin, although it is strongly recommended to define this variable through command-line parameters.
 * **Restrictions:** Accepted values are `1` (enable debug mode) or `0` (disables debug mode / enables release mode).
 
@@ -119,7 +122,6 @@ The following variables configures the building process.
 * **Description:** Sets the target host for compilation (see [multiplatform projects](../user-guide/#multiplatform-projects)).
 * **Required:** No.
 * **Default value:** Native host identified by [native-host.mk](../native.mk) or value is left undefined if native host was not detected.
-* **Mutable:** No.
 * **Origins:** Any, although it is strongly recommended to define this variable through command-line parameters.
 * **Restrictions:**
     * The value should hold a single word (NOTE: dashes are used to factorize host and identify compatible [platform layers](../user-guide/#multiplatform-projects)).
@@ -127,12 +129,17 @@ The following variables configures the building process.
 
 ### LIB_NAME
 
+* **Description:** Sets the base name for libraries..
+* **Required:** Yes if [`PROJ_TYPE`](#proj_type) equals to `lib`. Otherwise, variable is not required.
+* **Default value:** If [`PROJ_TYPE`](#proj_type) equals to `lib` the default value will be <tt style="color:#E74C3C">$([PROJ_NAME](#proj_name))$([call](https://www.gnu.org/software/make/manual/make.html#Call-Function) [FN_SEMVER_MAJOR](../functions.mk/#fn_semver_major),$([PROJ_VERSION](#proj_version)))</tt>. Otherwise, the variable is left undefined.
+* **Origins:** Makefile.
+* **Restrictions:** Whitespaces are not allowed.
+
 ### LIB_TYPE
 
 * **Description:** For library projects (i.e. when [`PROJ_TYPE`](#proj_type) equals to `lib`), the variable defines the type of generated library.
 * **Required:** No.
 * **Default value:** Depends on [`HOST`](#host). Usually, on systems supporting shared libraries, the default value will be `shared`.
-* **Mutable:** No.
 * **Origins:** Any, although it is strongly recommended to define this variable through command-line parameters.
 * **Restrictions:** Accepted values are `static` (for a static library) or `shared` (for a shared library).
 
@@ -140,8 +147,7 @@ The following variables configures the building process.
 
 * **Description:** Sets the [output directory](../user-guide/#output-directories), where all generated artifacts during build, will be placed into.
 * **Required:** No.
-* **Default value:** <tt style="color:#E74C3C">[$(O_BASE)](#o_base)/[$(HOST)](#host)/&lt;debug|release></tt>
-* **Mutable:** No.
+* **Default value:** <tt style="color:#E74C3C">$([O_BASE](#o_base))/$([HOST](#host))/&lt;debug|release></tt>
 * **Origins:** Any, although it is strongly recommended to define this variable through command-line parameters.
 * **Restrictions:**
     * Value shall not contain whitespaces nor can be an empty string.
@@ -152,7 +158,6 @@ The following variables configures the building process.
 * **Description:** Defines the base [output directory](../user-guide/#output-directories).
 * **Required:** Not applicable (variable is set by the build system).
 * **Default value:** If [`O`](#o) variable is defined, the value of this variable will be the same as [`O`](#o). Otherwise, the default value will be `output`.
-* **Mutable:** Not applicable (variable is set by the build system).
 * **Origins:** Not applicable (variable is set by the build system).
 * **Restrictions:** This is a read-only reserved variable.
 
@@ -160,23 +165,43 @@ The following variables configures the building process.
 
 * **Description:** Contains the path where compiled intermediate files (e.g. object files) are placed.
 * **Required:** Not applicable (variable is set by the build system).
-* **Default value:** <tt style="color:#E74C3C">[$(O)](#o)/build/[$(BUILD_SUBDIR)](#build_subdir)</tt>
-* **Mutable:** Not applicable (variable is set by the build system).
-* **Origins:** Not applicable.
+* **Default value:** <tt style="color:#E74C3C">$([O](#o))/build/$([BUILD_SUBDIR](#build_subdir))</tt>
+* **Origins:** Not applicable (variable is set by the build system).
 * **Restrictions:** This is a read-only reserved variable.
 
 ### O_DIST_DIR
 
 * **Description:** Contains the path where distribution files (e.g. artifact, library companion headers, etc) are placed.
 * **Required:** Not applicable (variable is set by the build system).
-* **Default value:** <tt style="color:#E74C3C">[$(O)](#o)/dist/[$(DIST_SUBDIR)](#dist_subdir)</tt>
-* **Mutable:** Not applicable (variable is set by the build system).
+* **Default value:** <tt style="color:#E74C3C">$([O](#o))/dist/$([DIST_SUBDIR](#dist_subdir))</tt>
 * **Origins:** Not applicable (variable is set by the build system).
 * **Restrictions:** This is a read-only reserved variable.
 
 ### RELEASE_OPTIMIZATION_LEVEL
 
+* **Description:**  Defines the optimization level that shall be applied for release artifacts (when [`DEBUG`](#debug) is `0`).
+* **Required:** No.
+* **Default value:** if [`DEBUG`](#debug) is `1`, variable is left undefined. If release mode is set (i.e. [`DEBUG`](#debug) is `0`), default value is `2` (optimize even more).
+* **Origins:** Makefile.
+* **Restrictions:** Accepted values are any of the following (check [GCC documentation](https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html) for details):
+    * `0` (no optimization);
+    * `1` (optmize);
+    * `2` (optimize even more);
+    * `3` (optimize yet more);
+    * `s` (optimizes for size);
+    * `fast` (disregard strict standards compliance);
+    * `g` (optimize debugging experience);
+    * `z` (optimize aggressively for size rather than speed).
+
 ### STRIP_RELEASE
+
+* **Description:**  Defines if release artifacts (i.e. when [`DEBUG`](#debug) is `0`) shall be stripped.
+* **Required:** No.
+* **Default value:** if [`DEBUG`](#debug) is `1`, variable is left undefined. If release mode is set (i.e. [`DEBUG`](#debug) is `0`), default value is `1` (strips release artifacts).
+* **Origins:** Makefile.
+* **Restrictions:**  Accepted values are `0` (do NOT strip release artifacts) and `1` (strip release artifacts).
+
+--------------------------------------------------------------------------------
 
 ## Compiler management
 
@@ -206,9 +231,13 @@ These variables are generally used for cross-compilation. For native build, thes
 
 ### LDFLAGS
 
+--------------------------------------------------------------------------------
+
 ## Build system management
 
 The following variables allows changes in the default behavior of the build system.
+
+### BUILD_DEPS
 
 ### BUILD_SUBDIR
 
@@ -221,7 +250,6 @@ The following variables allows changes in the default behavior of the build syst
 * **Description:** Creates a marker file (empty file) which will touched every time the any of the the [distribution files](../user-guide/#dist) were changed. This is useful to create dependencies on sub-make.
 * **Required:** No.
 * **Default value:**: Undefined.
-* **Mutable:** No.
 * **Origins:** Any.
 * **Restrictions:**
     * Value shall not have whitespaces.
@@ -233,13 +261,36 @@ The following variables allows changes in the default behavior of the build syst
 
 ### POST_BUILD_DEPS
 
+* **Description:** Contains a list of targets to be executed AFTER target artifact is built (see [`build`](../user-guide/#build) target).
+* **Required:** No.
+* **Default value:** Depends on select [`HOST`](#host) and [`PROJ_TYPE`](#proj_type).
+* **Origins:** Makefile.
+* **Restrictions:** Since this is a mutable list, values should be appended.
+
+### POST_CLEAN_DEPS
+
+* **Description:** Contains a list of targets to be executed AFTER [`clean`](../user-guide/#clean) target.
+* **Required:** No.
+* **Default value:**  Undefined.
+* **Origins:** Makefile.
+* **Restrictions:** Since variable is intended to hold a list of values (whitespace-delimited string), it is recommend to use the `+=` operator while adding values to the variable.
+
+
 ### POST_DIST_DEPS
 
 ### POST_EVAL
 
 ### POST_INCLUDES
 
+* **Description:** Contains a list of makefiles that should be included by the build system after [platform layers](../user-guides/#multiplatform-projects) were parsed. This is useful to define targets depending on variables which are defined only after all platform layers were processed.
+* **Required:** No.
+* **Default value:** Undefined.
+* **Origins:** Makefile.
+* **Restrictions:** Since this is a mutable list, values should be appended.
+
 ### PRE_BUILD_DEPS
+
+### PRE_CLEAN_DEPS
 
 ### PRE_DIST_DEPS
 
@@ -255,7 +306,6 @@ The following variables allows changes in the default behavior of the build syst
     * When enabled, each compiler command executed by the build system will be displayed in standard output during `make` command invocation.
 * **Required:** No.
 * **Default value:** `0` (non-verbose mode).
-* **Mutable:** No.
 * **Origins:** Any, although it is strongly recommended to define this variable through command-line parameters.
 * **Restrictions:** Accepted values are `1` (enables verbose mode) or `0` (disables verbose mode).
 
@@ -269,7 +319,6 @@ The following variables allows changes in the default behavior of the build syst
 * **Default value:** Depends on the value of [`V`](#v):
     *  If verbose mode is enabled, this variable will be empty. Otherwise value will be `@` (tells make to suppress command echoing).
 
-* **Mutable:** Not applicable (variable is set by the build system).
 * **Origins:** Not applicable (variable is set by the build system).
 * **Restrictions:** This is a read-only reserved variable.
 
@@ -281,9 +330,10 @@ The following variables allows changes in the default behavior of the build syst
 
 * **Required:** No.
 * **Default value:** (A predefined list of variable names which varies according to included makefiles).
-* **Mutable:** No.
 * **Origins:** Any, although it is strongly recommended to define this variable through command line parameters.
 * **Restrictions:** Value cannot be empty.
+
+--------------------------------------------------------------------------------
 
 ## Depedency management
 
@@ -312,10 +362,6 @@ The build system can automatically build dependencies. Use the following variabl
 
 
 
-
-
-
-
 ### LIBS
 
 * **Description:** List of libraries the project must link agains. Each e  make syntax definitions which will be parsed after [`platform layers`](#multiplatform-projects) were parsed. This is useful to define targets depending on variables which will be fully defined later.
@@ -325,40 +371,9 @@ The build system can automatically build dependencies. Use the following variabl
     * `LIB_PROJECT_DIR`: When defined, the library will be compiled along with the project. This component contains the path to the directory where the library project is located (is assumed that library project is using cpp-project-builder to manage its building process).
 * **Required:** No
 * **Default value:** Undefined
-* **Mutable:** No
 * **Origins:** makefile
 * **Restrictions:**
   * In order to achive flexibility on multiplatform projects, it is strongly recommeded to append values to this variable (using `+=` makefile operator) instead of setting a value directly.
-
-### POST_INCLUDES
-
-* **Description:** Contains a list of make files that should be included by the build system after [`platform layers`](#multiplatform-projects) were parsed. This is useful to define targets depending on variables which are defined only after all platform layers were processed.
-* **Required:** No
-* **Default value:** Undefined
-* **Mutable:** No
-* **Origins:** makefile
-* **Restrictions:**
-  * Since variable is intended to hold a list of values (whitespace-delimited string), it is recommend to use the `+=` operator while adding values to the variable.
-
-### POST_BUILD_DEPS
-
-* **Description:** Contains a list of targets to be executed AFTER target artifact is built (see [`build`](#build) target).
-  * See [make targets](#make-targets)
-* **Required:** No
-* **Default value:** _Depends on select target host and [`PROJ_TYPE`](#PROJ_TYPE)._
-* **Mutable:** No
-* **Origins:** makefile
-* **Restrictions:** Since variable is intended to hold a list of values (whitespace-delimited string), it is recommend to use the `+=` operator while adding values to the variable.
-
-### POST_CLEAN_DEPS
-
-* **Description:** Contains a list of targets to be executed AFTER [`clean`](#clean) target.
-  * See [make targets](#make-targets)
-* **Required:** No
-* **Default value:**  Undefined
-* **Mutable:** No
-* **Origins:** makefile
-* **Restrictions:** Since variable is intended to hold a list of values (whitespace-delimited string), it is recommend to use the `+=` operator while adding values to the variable.
 
 ### POST_DIST_DEPS
 
@@ -366,7 +381,6 @@ The build system can automatically build dependencies. Use the following variabl
   * See [make targets](#make-targets)
 * **Required:** No
 * **Default value:**  Undefined
-* **Mutable:** No
 * **Origins:** makefile
 * **Restrictions:** Since variable is intended to hold a list of values (whitespace-delimited string), it is recommend to use the `+=` operator while adding values to the variable.
 
@@ -376,7 +390,6 @@ The build system can automatically build dependencies. Use the following variabl
   * See [make targets](#make-targets)
 * **Required:** No
 * **Default value:**  Undefined
-* **Mutable:** No
 * **Origins:** makefile
 * **Restrictions:** Since variable is intended to hold a list of values (whitespace-delimited string), it is recommend to use the `+=` operator while adding values to the variable.
 
@@ -386,7 +399,6 @@ The build system can automatically build dependencies. Use the following variabl
   * See [make targets](#make-targets)
 * **Required:** No
 * **Default value:**  Undefined
-* **Mutable:** No
 * **Origins:** makefile
 * **Restrictions:** Since variable is intended to hold a list of values (whitespace-delimited string), it is recommend to use the `+=` operator while adding values to the variable.
 
@@ -396,7 +408,6 @@ The build system can automatically build dependencies. Use the following variabl
   * See [make targets](#make-targets)
 * **Required:** No
 * **Default value:**  Undefined
-* **Mutable:** No
 * **Origins:** makefile
 * **Restrictions:** Since variable is intended to hold a list of values (whitespace-delimited string), it is recommend to use the `+=` operator while adding values to the variable.
 
@@ -406,7 +417,6 @@ The build system can automatically build dependencies. Use the following variabl
   * Its value will be used (on `linux`, `osx`, and `windows` hosts) to set the name of [final artifact](#ARTIFACT) if it is left undefined.
 * **Required:** yes
 * **Default value:** Undefined
-* **Mutable:** yes
 * **Origins:** makefile
 * **Restrictions:** Value shall not contain whitespaces nor can be an empty string.
 
@@ -416,7 +426,6 @@ The build system can automatically build dependencies. Use the following variabl
     * Its value will be used (on `linux`, `osx`, and `windows` hosts) to set the name of [final artifact](#ARTIFACT) if it is left undefined.
 * **Required:** yes
 * **Default value:** Undefined
-* **Mutable:** yes
 * **Origins:** makefile
 * **Restrictions:** Accepted values are:
     * `app` (for an application executable);
@@ -428,7 +437,6 @@ The build system can automatically build dependencies. Use the following variabl
 * **Description:** Defines the semantic version for the project. Its value will be used to set the name of [final artifact](#ARTIFACT) if it is left undefined (on `linux`, `osx`, and `windows` hosts).
 * **Required:** No
 * **Default value:** `0.1.0`
-* **Mutable:** yes
 * **Origins:** makefile
 * **Restrictions:** Value must be a valid semantic version.
 
@@ -437,7 +445,6 @@ The build system can automatically build dependencies. Use the following variabl
 * **Description:** Contains whitespace-separated list of directories containing source files to be compiled (see [`SRC_FILES`](#SRC_FILES)).
 * **Required:** No
 * **Default value:** _Depends on selected [target host](#HOST), the presence of [default source directory](#default-directories) and [layer-specific source directories](#layer-directories-and-files)._
-* **Mutable:** No
 * **Origins:** makefile
 * **Restrictions:**
   * This variable will be modified by build system in order to include detected default directories
@@ -450,23 +457,17 @@ The build system can automatically build dependencies. Use the following variabl
 * **Description:** Contains whitespace-separated list of files to be compiled.
 * **Required:** No
 * **Default value:** _Depends on selected [target host](#HOST), the presence of [default source directory](#default-directories) and [layer-specific source directories](#layer-directories-and-files)._
-* **Mutable:** No
 * **Origins:** makefile
 * **Restrictions:**
     * This variable will be modified by build system in order to include detected source files.
     * In order to achive flexibility on multiplatform projects, it is strongly recommeded to append values to this variable (using `+=` makefile operator) instead of setting a value directly.
     * A list is composed by values delimited by whitespaces (this is a GNU make restriction). For this reason, paths containing spaces are not supported.
 
-## Compiler management
-
-The following variables allows compiler configuration:
-
 ### AR
 
 * **Description:** Contains the name of archiver executable.
 * **Required:** No
 * **Default value:** `ar`
-* **Mutable:** No
 * **Origins:** _Any_
 * **Restrictions:**
     * Value cannot be empty.
@@ -477,7 +478,6 @@ The following variables allows compiler configuration:
 * **Description:** Contains the name of assembler executable.
 * **Required:** No
 * **Default value:** `as`
-* **Mutable:** No
 * **Origins:** _Any_
 * **Restrictions:** Value cannot be empty.
   * Modifications are rarely needed (when cross compiling, the name of executable is usually customized through [`CROSS_COMPILE`](#CROSS_COMPILE) variable).
@@ -487,7 +487,6 @@ The following variables allows compiler configuration:
 * **Description:** Flags to be passed to the assembler.
 * **Required:** No
 * **Default value:** _Depends on build configuration and [project type](#PROJ_TYPE)._
-* **Mutable:** No
 * **Origins:** _enviroment_, _file_
 * **Restrictions:** In order to achive flexibility on multiplatform projects, it is strongly recommeded to append values to this variable instead of setting a value directly.
 
@@ -496,7 +495,6 @@ The following variables allows compiler configuration:
 * **Description:** Contains the name of C compiler executable.
 * **Required:** No
 * **Default value:** `gcc`
-* **Mutable:** No
 * **Origins:** _Any_
 * **Restrictions:** Value cannot be empty.
   * Modifications are rarely needed (when cross compiling, the name of executable is usually customized through [`CROSS_COMPILE`](#CROSS_COMPILE) variable).
@@ -506,7 +504,6 @@ The following variables allows compiler configuration:
 * **Description:** Flags to be passed to the C compiler.
 * **Required:** No
 * **Default value:** _Depends on build configuration and [project type](#PROJ_TYPE)._
-* **Mutable:** No
 * **Origins:** _enviroment_, _file_
 * **Restrictions:** In order to achive flexibility on multiplatform projects, it is strongly recommeded to append values to this variable instead of setting a value directly.
 
@@ -515,7 +512,6 @@ The following variables allows compiler configuration:
 * **Description:** Contains the prefix to be added to toolchain executables.
 * **Required:** No
 * **Default value:** Undefined
-* **Mutable:** No
 * **Origins:** _Any_
 * **Restrictions:** Cannot be left undefined for cross compilation.
 
@@ -524,7 +520,6 @@ The following variables allows compiler configuration:
 * **Description:** Contains the name of C++ compiler executable.
 * **Required:** No
 * **Default value:** `g++`
-* **Mutable:** No
 * **Origins:** _Any_
 * **Restrictions:** Value cannot be empty.
   * Modifications are rarely needed (when cross compiling, the name of executable is usually customized through [`CROSS_COMPILE`](#CROSS_COMPILE) variable).
@@ -534,7 +529,6 @@ The following variables allows compiler configuration:
 * **Description:** Flags to be passed to the C++ compiler.
 * **Required:** No
 * **Default value:** _Depends on build configuration and [project type](#PROJ_TYPE)._
-* **Mutable:** No
 * **Origins:** _enviroment_, _file_
 * **Restrictions:** In order to achive flexibility on multiplatform projects, it is strongly recommeded to append values to this variable instead of setting a value directly.
 
@@ -543,7 +537,6 @@ The following variables allows compiler configuration:
 * **Description:** Contains the name of linker executable.
 * **Required:** No
 * **Default value:** `gcc` _(for pure C or Assemlby projects)_, `g++` _(for projects containing C++ sources)_.
-* **Mutable:** No
 * **Origins:** _Any_
 * **Restrictions:** Value cannot be empty.
   * Modifications are rarely needed (when cross compiling, the name of executable is usually customized through [`CROSS_COMPILE`](#CROSS_COMPILE) variable).
@@ -553,24 +546,8 @@ The following variables allows compiler configuration:
 * **Description:** Flags to be passed to the linker.
 * **Required:** No
 * **Default value:** _Depends on build configuration and [project type](#PROJ_TYPE)._
-* **Mutable:** No
 * **Origins:** _enviroment_, _file_
 * **Restrictions:** In order to achive flexibility on multiplatform projects, it is strongly recommeded to append values to this variable instead of setting a value directly.
-
-## Advanced Variables
-
-The following variables shall be changed as a feature of last resort, since they override common behavior expected for the build system:
-
-### ARTIFACT
-
-* **Description**  Defines the actual filename for target artifact.
-* **Required:** No
-* **Default value:** _Varies according to [`$(HOST)`](#HOST), [`$(PROJ_NAME)`](#PROJ_NAME), [`$(PROJ_TYPE)`](#PROJ_TYPE), [`$(LIB_TYPE)`](#LIB_TYPE) (for libraries), and [`$(PROJ_VERSION)`](#PROJ_VERSION)._
-  * If [`$(HOST)`](#HOST) is not supported, defaults to `a.out`.
-* **Mutable:** No
-* **Origins:** makefile
-* **Restrictions:** Value shall not contain whitespaces nor can be an empty string.
-  * Note that default value depends on many variables. It is not recommended to change the artifact name unless you have a really good reason to do so.
 
 ### BUILD_SUBDIR
 
@@ -578,7 +555,6 @@ The following variables shall be changed as a feature of last resort, since they
   * Changing this value is useful to isolate object files when building dependencies (e.g. libraries) prior to project build.
 * **Required:** No
 * **Default value:**  Undefined
-* **Mutable:** yes
 * **Origins:** _Any, although it is strongly recommended to define this variable through command-line parameters._
 * **Restrictions:**
   * Value shall not contain whitespaces
@@ -589,7 +565,6 @@ The following variables shall be changed as a feature of last resort, since they
 * **Description:** Sets the path of a subdirectory inside [distribution directory](#output-directories) (`$(O)/dist`).
 * **Required:** No
 * **Default value:**  Undefined
-* **Mutable:** yes
 * **Origins:** _Any, although it is strongly recommended to define this variable through command-line parameters._
 * **Restrictions:**
   * Value shall not contain whitespaces
@@ -600,38 +575,18 @@ The following variables shall be changed as a feature of last resort, since they
 * **Description:** Defines a list of [base directories for layers](#layer-directories-and-files).
 * **Required:** No
 * **Default value:** _(Depends on selected HOST)_
-* **Mutable:** yes
 * **Origins:** makefile
 * **Restrictions:** Since value is a list of paths, paths shall not contain whitespaces.
 
 ### LIBS_SUBDIR
 
-* **Description:** Sets the path of a subdirectory inside [`$(O)`](#output-directories) where libraries declared in [$(LIBS)](#LIBS) shall be built.
+* **Description:** Sets the path of a subdirectory inside [`$(O)`](#o) where libraries declared in [$(LIBS)](#LIBS) shall be built.
 * **Required:** No
 * **Default value:** if [`$(PROJ_TYPE)`](#PROJ_TYPE) is `app`, default value is `libs`. Otherwise, default value is an empty string.
-* **Mutable:** yes
 * **Origins:** _Any_
 * **Restrictions:**
   * Value shall not contain whitespaces
   * Since this directory will be created inside [`$(O)`](#output-directories) directory, passing relative paths resulting in a directory other than [`$(O)`](#output-directories) is not allowed (an error will be raised by the build system)
-
-### OPTIMIZE_RELEASE
-
-* **Description:**  Defines if release artifacts (when [`DEBUG`](#DEBUG) is `0`) shall be optimized (using compiler optimizations). Optimization level is defined through [`RELEASE_OPTIMIZATION_LEVEL`](#RELEASE_OPTIMIZATION_LEVEL) variable).
-* **Required:** No
-* **Default value:** `1`
-* **Mutable:** No
-* **Origins:** makefile
-* **Restrictions:**  Accepted values are `0` (disables release optimization) and `1` (enables release optimization).
-
-### RELEASE_OPTIMIZATION_LEVEL
-
-* **Description:**  Defines the optimization level that shall be applied for  release artifacts (when [`DEBUG`](#DEBUG) is `0`) if `$(OPTIMIZE_RELEASE)` is `1`.
-* **Required:** No
-* **Default value:** `2`
-* **Mutable:** No
-* **Origins:** _(any)_
-* **Restrictions:** Values must be according to compiler accepted values.
 
 ### SKIP_DEFAULT_HOSTS_DIR
 
@@ -639,7 +594,6 @@ The following variables shall be changed as a feature of last resort, since they
   * Once ignored, this directory still can be used as an include directory, but rather their usage must be declared explicitly (through [`HOSTS_DIRS`](#HOSTS_DIRS) variable).
 * **Required:** No
 * **Default value:** `0`
-* **Mutable:** yes
 * **Origins:** makefile
 * **Restrictions:** Accepted values are **`0`** (do NOT skip default hosts directory) or **`1`** (skip default hosts directory).
 
@@ -649,7 +603,6 @@ The following variables shall be changed as a feature of last resort, since they
   * Once ignored, this directory still can be used as an include directory, but rather their usage must be declared explicitly (through [`INCLUDE_DIRS`](#INCLUDE_DIRS) variable).
 * **Required:** No
 * **Default value:** `0`
-* **Mutable:** No
 * **Origins:** makefile
 * **Restrictions:** Accepted values are **`0`** (do NOT skip default include directory) or **`1`** (skip default include directory).
 
@@ -659,7 +612,6 @@ The following variables shall be changed as a feature of last resort, since they
   * Once ignored, this directory still can be used as a source  directory, but rather their usage must be declared explicitly (through [`SRC_DIRS`](#SRC_DIRS) variable).
 * **Required:** No
 * **Default value:** `0`
-* **Mutable:** No
 * **Origins:** makefile
 * **Restrictions:** Accepted values are **`0`** (do NOT skip default source directory) or **`1`** (skip default source directory).
 
@@ -668,7 +620,6 @@ The following variables shall be changed as a feature of last resort, since they
 * **Description:** This variable constains a list of directories that shall be skipped while looking for source files.
 * **Required:** No
 * **Default value:** Undefined
-* **Mutable:** No
 * **Origins:** makefile
 * **Restrictions:** A list is composed by values delimited by whitespaces (this is a GNU make restriction). For this reason, paths containing spaces are not supported.
 
@@ -677,15 +628,5 @@ The following variables shall be changed as a feature of last resort, since they
 * **Description:** This variable constains a list of source files that shall be skipped during build.
 * **Required:** No
 * **Default value:** Undefined
-* **Mutable:** No
 * **Origins:** makefile
 * **Restrictions:** A list is composed by values delimited by whitespaces (this is a GNU make restriction). For this reason, paths containing spaces are not supported.
-
-### STRIP_RELEASE
-
-* **Description:**  Defines if release artifacts (when [`DEBUG`](#DEBUG) is `0`) shall be stripped.
-* **Required:** No
-* **Default value:** `1`
-* **Mutable:** No
-* **Origins:** makefile
-* **Restrictions:**  Accepted values are `0` (do NOT strip release artifacts) and `1` (strip release artifacts)
