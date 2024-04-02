@@ -32,7 +32,4 @@ CPB_MIN_VERSION := 0.1.0
 PROJ_NAME = Z
 PROJ_TYPE = lib
 
-# Without setting LIB_NAME, library name would be Z0
-LIB_NAME ?= Z
-
 include $(CPB_DIR)/builder.mk

@@ -36,9 +36,6 @@ endif
 PROJ_NAME = X
 PROJ_TYPE = lib
 
-# Without setting LIB_NAME, library name would be X0
-LIB_NAME ?= X
-
 LIBS += A:$(LIBS_DIR)/libA
 
 # NOTE: LibB builds in non-standard way

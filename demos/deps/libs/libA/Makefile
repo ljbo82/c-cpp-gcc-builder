@@ -32,9 +32,6 @@ CPB_MIN_VERSION := 0.1.0
 PROJ_NAME = A
 PROJ_TYPE = lib
 
-# Without setting LIB_NAME, library name would be A0
-LIB_NAME = A
-
 LIBS += m
 SRC_DIRS += .
 DIST_FILES += a.h:include/a.h

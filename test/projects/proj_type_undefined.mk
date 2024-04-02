@@ -24,6 +24,5 @@
 # For more information, please refer to <http://unlicense.org/>
 
 PROJ_NAME = hello
-PROJ_VERSION = 1.2.3
 
 include ../../core/project.mk

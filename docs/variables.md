@@ -56,13 +56,6 @@ The following variables defines the project.
     * `app` (for an application executable);
     * `lib` (for a library. See  [`LIB_TYPE`](#lib_type));
 
-### PROJ_VERSION
-
-* **Description:** Defines the semantic version for the project.
-* **Required:** No.
-* **Default value:** `0.1.0`
-* **Origins:** Makefile
-* **Restrictions:** Value must be a valid semantic version (see [FN_SEMVER_CHECK](../functions.mk/#fn_semver_check)).
 --------------------------------------------------------------------------------
 
 ## Source management
@@ -133,7 +126,7 @@ The following variables configures the build process.
 
 * **Description:** Defines the actual filename for target artifact. Set this variable to override auto-generated value.
 * **Required:** No.
-* **Default value:** Varies according to [`HOST`](#host), [`PROJ_NAME`](#proj_name), [`PROJ_TYPE`](#proj_type), [`LIB_TYPE`](#lib_type) (for libraries), and [`PROJ_VERSION`](#proj_version):
+* **Default value:** Varies according to [`HOST`](#host), [`PROJ_NAME`](#proj_name), [`PROJ_TYPE`](#proj_type), [`LIB_TYPE`](#lib_type) (for libraries):
     * If there is no default support for [`HOST`](#host), the default artifact name is `a.out`.
     * Executables files in Linux/mac OS are named <tt style="color:#E74C3C">$([PROJ_NAME]())</tt>
     * Executables files in Windows are named <tt style="color:#E74C3C">$([PROJ_NAME]()).exe</tt>
@@ -168,7 +161,7 @@ The following variables configures the build process.
 
 * **Description:** Sets the base name for libraries..
 * **Required:** Yes if [`PROJ_TYPE`](#proj_type) equals to `lib`. Otherwise, variable is not required.
-* **Default value:** If [`PROJ_TYPE`](#proj_type) equals to `lib` the default value will be <tt style="color:#E74C3C">$([PROJ_NAME](#proj_name))$([call](https://www.gnu.org/software/make/manual/make.html#Call-Function) [FN_SEMVER_MAJOR](../functions.mk/#fn_semver_major),$([PROJ_VERSION](#proj_version)))</tt>. Otherwise, the variable is left undefined.
+* **Default value:** If [`PROJ_TYPE`](#proj_type) equals to `lib` the default value will be <tt style="color:#E74C3C">$([PROJ_NAME](#proj_name))</tt>. Otherwise, the variable is left undefined.
 * **Origins:** Makefile.
 * **Restrictions:** Whitespaces are not allowed.
 

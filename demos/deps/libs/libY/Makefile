@@ -36,9 +36,6 @@ endif
 PROJ_NAME = Y
 PROJ_TYPE = lib
 
-# Without setting LIB_NAME, library name would be Y0
-LIB_NAME ?= Y
-
 LIBS += Z:$(LIBS_DIR)/libZ
 
 include $(CPB_DIR)/builder.mk

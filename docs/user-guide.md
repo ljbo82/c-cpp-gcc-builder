@@ -57,27 +57,6 @@ In order to define the type of artifact to be built, define the variable [`PROJ_
 
 If your makefile intends to build a library, you can define the type of library being built (static or shared) by defining the variable [`LIB_TYPE`](../variables/#lib_type).
 
-### Project version
-
-On certain platforms, the version number is used to customize the filename of generated artifacts. The build system understands the [semantic versioning scheme](https://semver.org/).
-
-In order to set a version to your project, use the variable [`PROJ_VERSION`](../variables/#proj_version). This variable is optional and if it is not defined, a standard value `0.1.0` will be assumed.
-
-!!! notes "Automatic version from git repository"
-    By including the makefile [`git.mk`](../git.mk), you can use one of its exposed variables to be used as your project version.
-
-    For example, let's assume that your project is versioned using git, and releases are tagged with semantic version values.
-
-    If you want to use current tag as your project's version, you could create a makefile like this:
-
-        include $(CPB_DIR)/git.mk
-
-        PROJ_NAME = hello
-        PROJ_TYPE = lib
-        PROJ_VERSION = $(GIT_TAG)
-
-        include $(CPB_DIR)/builder.mk
-
 ## Directories and files
 
 From this point onwards, the project root directory will be referred to as `<PROJ_ROOT>` and it is the directory where project's `Makefile` is located.
@@ -394,7 +373,6 @@ PRE_CLEAN_DEPS =
 PRE_DIST_DEPS =
 PROJ_NAME = hello
 PROJ_TYPE = app
-PROJ_VERSION = 0.1.0
 RELEASE_OPTIMIZATION_LEVEL = 2
 SKIPPED_SRC_DIRS =
 SKIPPED_SRC_FILES =
