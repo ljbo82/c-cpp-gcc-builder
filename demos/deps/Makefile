@@ -42,11 +42,11 @@ LIBS += X:$(LIBS_DIR)/libX
 
 # ==============================================================================
 # Ensures that all library source directories are cleared
-POST_CLEAN_DEPS += --post-clean
+POST_CLEAN_ALL_DEPS += --post-clean-all
 
-.PHONY: --post-clean
---post-clean:
-	$(V_PREFIX) find $(LIBS_DIR) -type d -name $(O) | xargs -I{} rm -rf {}
+.PHONY: --post-clean-all
+--post-clean-all:
+	$(V_PREFIX) find $(LIBS_DIR) -type d -name output | xargs -I{} rm -rf {}
 # ==============================================================================
 
 include $(CPB_DIR)/builder.mk

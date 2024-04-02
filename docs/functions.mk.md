@@ -134,7 +134,7 @@ $(call FN_UNIQUE,word1 word2 ...)
 
 Checks if a semantic version string is valid.
 
-If given value is valid, returns it. Otherwise, returns an empty value.
+If given value is valid, returns it. Otherwise, raises an error. Only numbers are accepted for major.minor.patch.
 
 **Syntax:**
 

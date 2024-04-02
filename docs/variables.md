@@ -40,10 +40,29 @@ The following variables defines the project.
 
 ### PROJ_NAME
 
+* **Description:** Defines project name.
+* **Required:** Yes.
+* **Default value:** Undefined.
+* **Origins:** Makefile
+* **Restrictions:** Value shall not contain whitespaces nor can be an empty string.
+
 ### PROJ_TYPE
+
+* **Description:** Defines the project type.
+* **Required:** Yes.
+* **Default value:** Undefined.
+* **Origins:** Makefile.
+* **Restrictions:** Accepted values are:
+    * `app` (for an application executable);
+    * `lib` (for a library. See  [`LIB_TYPE`](#lib_type));
 
 ### PROJ_VERSION
 
+* **Description:** Defines the semantic version for the project.
+* **Required:** No.
+* **Default value:** `0.1.0`
+* **Origins:** Makefile
+* **Restrictions:** Value must be a valid semantic version (see [FN_SEMVER_CHECK](../functions.mk/#fn_semver_check)).
 --------------------------------------------------------------------------------
 
 ## Source management
@@ -56,7 +75,9 @@ The following variables provide a way to inform the build system about source fi
 * **Required:** No.
 * **Default value:** If [`PROJ_TYPE`](#proj_type) is `lib` and `<PROJ_ROOT>/include` directory exists, the default value is `include`. Otherwise, the variable is left undefined.
 * **Origins:** Makefile.
-* **Restrictions:** A list is composed by values delimited by whitespaces (this is a GNU make restriction). For this reason, paths containing spaces are not supported.
+* **Restrictions:**
+    * A list is composed by values delimited by whitespaces (this is a GNU make restriction). For this reason, paths containing spaces are not supported.
+    * The build system may append add values to this variable.
 
 ### DIST_DIRS
 
@@ -65,20 +86,36 @@ The following variables provide a way to inform the build system about source fi
 * **Required:** No.
 * **Default value:** If [`INCLUDE_DIRS`](#include_dirs) variable is not defined, `<PROJ_ROOT>/include` directory exists, and [`PROJ_TYPE`](#proj_type) equals to `lib`, then the default value will be `include:include`. Otherwise, the variable is left undefined.
 * **Origins:** Makefile.
-* **Restrictions:** A list is composed by values delimited by whitespaces (this is a GNU make restriction). For this reason, paths containing spaces are not supported.
+* **Restrictions:**
+    * A list is composed by values delimited by whitespaces (this is a GNU make restriction). For this reason, paths containing spaces are not supported.
+    * The build system may append add values to this variable.
 
 ### DIST_FILES
 
 * **Description:** Contains a list of extra files which shall be individually copied into [`$(O_DIST_DIR)`](#o_dist_dir):
-    * Each entry in this variable has the syntax `ORIGIN_FILE[:DEST_FILE]` (an origin file will be copied into <tt style="color:#E74C3C">$([O_DIST_DIR](#o_dist_dir))/DEST_FILE</tt>. Note that `DEST_FILE` component is optional for entries. Its default value is <tt style="color:#E74C3C">$([notdir](https://www.gnu.org/software/make/manual/make.html#index-notdir) ORIGIN_FILE)</tt>).
+    * Each entry in this variable has the syntax `ORIGIN_FILE[:DEST_FILE]` (an `ORIGIN_FILE` will be copied into <tt style="color:#E74C3C">$([O_DIST_DIR](#o_dist_dir))/DEST_FILE</tt>. Note that `DEST_FILE` component is optional for entries. Its default value is <tt style="color:#E74C3C">$([notdir](https://www.gnu.org/software/make/manual/make.html#index-notdir) ORIGIN_FILE)</tt>).
 * **Required:** No
 * **Default value:** Varies according to [`HOST`](#host), [`PROJ_TYPE`](#proj_type), and [`DIST_DIRS`](#dist_dirs):
     * Generated artifacts (executables and libraries) are added to the default value. The filename of such artifact varies according to [`HOST`](#host) and [`PROJ_TYPE`](#proj_type) (for example, executables in windows platforms have the `.exe` suffix; shared libraries in linux have the `.so` suffix, while in windows it is `.dll`).
     * If [`DIST_DIRS`](#dist_dirs) is set, then for all files contained in these directories, there will be an corresponding entry in `DIST_FILES` default value.
 * **Origins:** Makefile.
-* **Restrictions:** A list is composed by values delimited by whitespaces (this is a GNU make restriction). For this reason, paths containing spaces are not supported.
+* **Restrictions:**
+    * A list is composed by values delimited by whitespaces (this is a GNU make restriction). For this reason, paths containing spaces are not supported.
+    * The build system may append add values to this variable.
 
 ### SRC_DIRS
+
+* **Description:** Contains whitespace-separated list of directories containing source files to be compiled. If you want to specify individual files, use [`SRC_FILES`](#src_files) instead.
+* **Required:** No.
+* **Default value:** If `<PROJ_ROOT>/src` directory exists, the default value is `src`. Otherwise, the variable is left undefined.
+* **Origins:** Makefile.
+* **Restrictions:**
+    * A list is composed by values delimited by whitespaces (this is a GNU make restriction). For this reason, paths containing spaces are not supported.
+    * The build system may append add values to this variable.
+    * Directories must be located inside [`$(CURDIR)`](https://www.gnu.org/software/make/manual/make.html#index-CURDIR). If this condition is not met, an error will be raised by the build system.
+
+
+
 
 ### SRC_FILES
 
@@ -294,10 +331,6 @@ The following variables allows changes in the default behavior of the build syst
 
 ### PRE_DIST_DEPS
 
-### SKIP_DIR_INSPECTION
-
-### TOOLCHAIN
-
 ### TOOLCHAIN_DIRS
 
 ### V
@@ -410,47 +443,6 @@ The build system can automatically build dependencies. Use the following variabl
 * **Default value:**  Undefined
 * **Origins:** makefile
 * **Restrictions:** Since variable is intended to hold a list of values (whitespace-delimited string), it is recommend to use the `+=` operator while adding values to the variable.
-
-### PROJ_NAME
-
-* **Description:** Defines project name.
-  * Its value will be used (on `linux`, `osx`, and `windows` hosts) to set the name of [final artifact](#ARTIFACT) if it is left undefined.
-* **Required:** yes
-* **Default value:** Undefined
-* **Origins:** makefile
-* **Restrictions:** Value shall not contain whitespaces nor can be an empty string.
-
-### PROJ_TYPE
-
-* **Description:** Defines the project type.
-    * Its value will be used (on `linux`, `osx`, and `windows` hosts) to set the name of [final artifact](#ARTIFACT) if it is left undefined.
-* **Required:** yes
-* **Default value:** Undefined
-* **Origins:** makefile
-* **Restrictions:** Accepted values are:
-    * `app` (for an application executable);
-    * `lib` (for a library. See  [`LIB_TYPE`](#LIB_TYPE));
-    * `custom` (used for custom build logic);
-
-### PROJ_VERSION
-
-* **Description:** Defines the semantic version for the project. Its value will be used to set the name of [final artifact](#ARTIFACT) if it is left undefined (on `linux`, `osx`, and `windows` hosts).
-* **Required:** No
-* **Default value:** `0.1.0`
-* **Origins:** makefile
-* **Restrictions:** Value must be a valid semantic version.
-
-### SRC_DIRS
-
-* **Description:** Contains whitespace-separated list of directories containing source files to be compiled (see [`SRC_FILES`](#SRC_FILES)).
-* **Required:** No
-* **Default value:** _Depends on selected [target host](#HOST), the presence of [default source directory](#default-directories) and [layer-specific source directories](#layer-directories-and-files)._
-* **Origins:** makefile
-* **Restrictions:**
-  * This variable will be modified by build system in order to include detected default directories
-  * In order to achive flexibility on multiplatform projects, it is strongly recommeded to append values to this variable (using `+=` makefile operator) instead of setting a value directly
-  * A list is composed by values delimited by whitespaces (this is a GNU make restriction). For this reason, paths containing spaces are not supported
-  * Directories must be located inside [`$(CURDIR)`](https://www.gnu.org/software/make/manual/make.html#index-CURDIR) (if this condition is not met, an error will be raised by the build system)
 
 ### SRC_FILES
 
