@@ -324,8 +324,6 @@ The following variables allows changes in the default behavior of the build syst
 
 ### PRE_DIST_DEPS
 
-### TOOLCHAIN_DIRS
-
 ### V
 
 * **Description:** Enables/Disables the verbose mode.
