@@ -200,6 +200,25 @@ $(call FN_SEMVER_MINOR,semanticVersion)
 |-------------------|--------------------------|
 | `semanticVersion` | Semantic version string. |
 
+
+#### FN_SEMVER_MIN_CHECK
+
+Checks if a version is compatible with a minimum one.  If version is not compatible, it raises an error.
+
+**Syntax:**
+
+```Makefile
+$(call FN_SEMVER_MIN_CHECK,minVersion,version,[errorMessage])
+```
+
+**Parameters:**
+
+| Parameter      | Details                            |
+|----------------|------------------------------------|
+| `minVersion`   | Minimum accepted version.          |
+| `version`      | Tested version.                    |
+| `errorMessage` | Optional customized error message. |
+
 #### FN_SEMVER_PATCH
 
 Returns the patch component for given version.
