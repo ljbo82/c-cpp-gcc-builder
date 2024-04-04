@@ -46,6 +46,8 @@ The following variables defines the project.
 * **Origins:** Makefile
 * **Restrictions:** Value shall not contain whitespaces nor can be an empty string.
 
+--------------------------------------------------------------------------------
+
 ### PROJ_TYPE
 
 * **Description:** Defines the project type.
@@ -55,6 +57,16 @@ The following variables defines the project.
 * **Restrictions:** Accepted values are:
     * `app` (for an application executable);
     * `lib` (for a library. See  [`LIB_TYPE`](#lib_type));
+
+--------------------------------------------------------------------------------
+
+### PROJ_VERSION
+
+* **Description:** Defines the project version.
+* **Required:** No.
+* **Default value:** Undefined.
+* **Origins:** Makefile.
+* **Restrictions:** Value must be a valid semantic value (see [fn_semver](../functions.mk/#fn_semver)).
 
 --------------------------------------------------------------------------------
 
@@ -72,6 +84,8 @@ The following variables provide a way to inform the build system about source fi
     * A list is composed by values delimited by whitespaces (this is a GNU make restriction). For this reason, paths containing spaces are not supported.
     * The build system may append add values to this variable.
 
+--------------------------------------------------------------------------------
+
 ### DIST_DIRS
 
 * **Description:** Contains a list of entries defining extra directories, whose files which will copied into [`$(O_DIST_DIR)`](#o_dist_dir):
@@ -82,6 +96,8 @@ The following variables provide a way to inform the build system about source fi
 * **Restrictions:**
     * A list is composed by values delimited by whitespaces (this is a GNU make restriction). For this reason, paths containing spaces are not supported.
     * The build system may append add values to this variable.
+
+--------------------------------------------------------------------------------
 
 ### DIST_FILES
 
@@ -96,6 +112,8 @@ The following variables provide a way to inform the build system about source fi
     * A list is composed by values delimited by whitespaces (this is a GNU make restriction). For this reason, paths containing spaces are not supported.
     * The build system may append add values to this variable.
 
+--------------------------------------------------------------------------------
+
 ### SRC_DIRS
 
 * **Description:** Contains whitespace-separated list of directories containing source files to be compiled. If you want to specify individual files, use [`SRC_FILES`](#src_files) instead.
@@ -107,12 +125,15 @@ The following variables provide a way to inform the build system about source fi
     * The build system may append add values to this variable.
     * Directories must be located inside [`$(CURDIR)`](https://www.gnu.org/software/make/manual/make.html#index-CURDIR). If this condition is not met, an error will be raised by the build system.
 
-
-
+--------------------------------------------------------------------------------
 
 ### SRC_FILES
 
+--------------------------------------------------------------------------------
+
 ### SKIPPED_SRC_DIRS
+
+--------------------------------------------------------------------------------
 
 ### SKIPPED_SRC_FILES
 
@@ -137,6 +158,8 @@ The following variables configures the build process.
 * **Origins:** Makefile
 * **Restrictions:** Value shall not contain whitespaces nor can be an empty string.
 
+--------------------------------------------------------------------------------
+
 ### DEBUG
 
 * **Description:** Enables/Disables the debug mode for the build. By default:
@@ -146,6 +169,8 @@ The following variables configures the build process.
 * **Default value:** `0` (i.e. release mode).
 * **Origins:** The variable can be declared through any origin, although it is strongly recommended to define this variable through command-line parameters.
 * **Restrictions:** Accepted values are `1` (enable debug mode) or `0` (disables debug mode / enables release mode).
+
+--------------------------------------------------------------------------------
 
 ### HOST
 
@@ -157,13 +182,19 @@ The following variables configures the build process.
     * The value should hold a single word (NOTE: dashes are used to factorize host and identify compatible [platform layers](../user-guide/#multiplatform-projects)).
     * When defined, value cannot be empty.
 
+--------------------------------------------------------------------------------
+
 ### LIB_NAME
 
 * **Description:** Sets the base name for libraries..
-* **Required:** Yes if [`PROJ_TYPE`](#proj_type) equals to `lib`. Otherwise, variable is not required.
-* **Default value:** If [`PROJ_TYPE`](#proj_type) equals to `lib` the default value will be <tt style="color:#E74C3C">$([PROJ_NAME](#proj_name))</tt>. Otherwise, the variable is left undefined.
+* **Required:** Yes (only if [`PROJ_TYPE`](#proj_type) equals to `lib`. Otherwise, variable is not required).
+* **Default value:** If [`PROJ_TYPE`](#proj_type) does NOT equal to `lib`, the default value will be undefined. Otherwise:
+    * If [PROJ_VERSION](#proj_version) is defined, the default value is <tt style="color:#E74C3C">$([PROJ_NAME](#proj_name))$(call [fn_semver_major](../functions.mk/#fn_semver_major),[PROJ_VERSION](#proj_version))</tt>.
+    * If [PROJ_VERSION](#proj_version) is not defined, the default value is  <tt style="color:#E74C3C">$([PROJ_NAME](#proj_name))</tt>.
 * **Origins:** Makefile.
 * **Restrictions:** Whitespaces are not allowed.
+
+--------------------------------------------------------------------------------
 
 ### LIB_TYPE
 
@@ -172,6 +203,8 @@ The following variables configures the build process.
 * **Default value:** Depends on [`HOST`](#host). Usually, on systems supporting shared libraries, the default value will be `shared`.
 * **Origins:** Any, although it is strongly recommended to define this variable through command-line parameters.
 * **Restrictions:** Accepted values are `static` (for a static library) or `shared` (for a shared library).
+
+--------------------------------------------------------------------------------
 
 ### O
 
@@ -183,6 +216,8 @@ The following variables configures the build process.
     * Value shall not contain whitespaces nor can be an empty string.
 	* Value shall not equal to `<PROJ_ROOT>`.
 
+--------------------------------------------------------------------------------
+
 ### O_BASE
 
 * **Description:** Defines the base [output directory](../user-guide/#output-directories).
@@ -190,6 +225,8 @@ The following variables configures the build process.
 * **Default value:** If [`O`](#o) variable is defined, the value of this variable will be the same as [`O`](#o). Otherwise, the default value will be `output`.
 * **Origins:** Not applicable (variable is set by the build system).
 * **Restrictions:** This is a read-only reserved variable.
+
+--------------------------------------------------------------------------------
 
 ### O_BUILD_DIR
 
@@ -199,6 +236,8 @@ The following variables configures the build process.
 * **Origins:** Not applicable (variable is set by the build system).
 * **Restrictions:** This is a read-only reserved variable.
 
+--------------------------------------------------------------------------------
+
 ### O_DIST_DIR
 
 * **Description:** Contains the path where distribution files (e.g. artifact, library companion headers, etc) are placed.
@@ -206,6 +245,8 @@ The following variables configures the build process.
 * **Default value:** <tt style="color:#E74C3C">$([O](#o))/dist/$([DIST_SUBDIR](#dist_subdir))</tt>
 * **Origins:** Not applicable (variable is set by the build system).
 * **Restrictions:** This is a read-only reserved variable.
+
+--------------------------------------------------------------------------------
 
 ### RELEASE_OPTIMIZATION_LEVEL
 
@@ -222,6 +263,8 @@ The following variables configures the build process.
     * `fast` (disregard strict standards compliance);
     * `g` (optimize debugging experience);
     * `z` (optimize aggressively for size rather than speed).
+
+--------------------------------------------------------------------------------
 
 ### STRIP_RELEASE
 
@@ -241,23 +284,43 @@ These variables are generally used for cross-compilation. For native build, thes
 
 ### AR
 
+--------------------------------------------------------------------------------
+
 ### ARFLAGS
+
+--------------------------------------------------------------------------------
 
 ### AS
 
+--------------------------------------------------------------------------------
+
 ### ASFLAGS
+
+--------------------------------------------------------------------------------
 
 ### CC
 
+--------------------------------------------------------------------------------
+
 ### CFLAGS
+
+--------------------------------------------------------------------------------
 
 ### CROSS_COMPILE
 
+--------------------------------------------------------------------------------
+
 ### CXX
+
+--------------------------------------------------------------------------------
 
 ### CXXFLAGS
 
+--------------------------------------------------------------------------------
+
 ### LD
+
+--------------------------------------------------------------------------------
 
 ### LDFLAGS
 
@@ -269,11 +332,19 @@ The following variables allows changes in the default behavior of the build syst
 
 ### BUILD_DEPS
 
+--------------------------------------------------------------------------------
+
 ### BUILD_SUBDIR
+
+--------------------------------------------------------------------------------
 
 ### CPB_MIN_VERSION
 
+--------------------------------------------------------------------------------
+
 ### CPB_VERSION
+
+--------------------------------------------------------------------------------
 
 ### DIST_MARKER
 
@@ -285,9 +356,15 @@ The following variables allows changes in the default behavior of the build syst
     * Value shall not have whitespaces.
     * The value contains a path relative to [`$(O)`](#o) directory. Passing relative paths resulting in a directory outside [`$(O)`](#o) is not allowed (an error will be raised by the build system).
 
+--------------------------------------------------------------------------------
+
 ### DIST_SUBDIR
 
+--------------------------------------------------------------------------------
+
 ### HOSTS_DIRS
+
+--------------------------------------------------------------------------------
 
 ### POST_BUILD_DEPS
 
@@ -297,6 +374,8 @@ The following variables allows changes in the default behavior of the build syst
 * **Origins:** Makefile.
 * **Restrictions:** Since this is a mutable list, values should be appended.
 
+--------------------------------------------------------------------------------
+
 ### POST_CLEAN_DEPS
 
 * **Description:** Contains a list of targets to be executed AFTER [`clean`](../user-guide/#clean) target.
@@ -305,10 +384,15 @@ The following variables allows changes in the default behavior of the build syst
 * **Origins:** Makefile.
 * **Restrictions:** Since variable is intended to hold a list of values (whitespace-delimited string), it is recommend to use the `+=` operator while adding values to the variable.
 
+--------------------------------------------------------------------------------
 
 ### POST_DIST_DEPS
 
+--------------------------------------------------------------------------------
+
 ### POST_EVAL
+
+--------------------------------------------------------------------------------
 
 ### POST_INCLUDES
 
@@ -318,11 +402,19 @@ The following variables allows changes in the default behavior of the build syst
 * **Origins:** Makefile.
 * **Restrictions:** Since this is a mutable list, values should be appended.
 
+--------------------------------------------------------------------------------
+
 ### PRE_BUILD_DEPS
+
+--------------------------------------------------------------------------------
 
 ### PRE_CLEAN_DEPS
 
+--------------------------------------------------------------------------------
+
 ### PRE_DIST_DEPS
+
+--------------------------------------------------------------------------------
 
 ### V
 
@@ -332,6 +424,8 @@ The following variables allows changes in the default behavior of the build syst
 * **Default value:** `0` (non-verbose mode).
 * **Origins:** Any, although it is strongly recommended to define this variable through command-line parameters.
 * **Restrictions:** Accepted values are `1` (enables verbose mode) or `0` (disables verbose mode).
+
+--------------------------------------------------------------------------------
 
 ### V_PREFIX
 
@@ -345,6 +439,8 @@ The following variables allows changes in the default behavior of the build syst
 
 * **Origins:** Not applicable (variable is set by the build system).
 * **Restrictions:** This is a read-only reserved variable.
+
+--------------------------------------------------------------------------------
 
 ### VARS
 
@@ -365,23 +461,22 @@ The build system can automatically build dependencies. Use the following variabl
 
 ### LIBS
 
+--------------------------------------------------------------------------------
+
 ### LIB_MAKEFILE
 
+--------------------------------------------------------------------------------
+
 ### LIB_MKDIR
+
+--------------------------------------------------------------------------------
 
 ### LIB_MKFLAGS
 
 
 
 
-
-
-
-
-
 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-
 
 
 
