@@ -37,33 +37,37 @@ Following are listed exposed functions:
 
 ### Text functions
 
-#### FN_EQ
+#### fn_eq
 
 Checks if two strings are equal each other.
-
-If strings are equal, returns the string. Otherwise, returns an empty value.
 
 **Syntax:**
 
 ```Makefile
-$(call FN_EQ,srt1,str2)
+$(call fn_eq,srt1,str2)
 ```
 
 **Parameters:**
 
-| Parameter | Details         |
-|-----------|-----------------|
-| `srt1`    | First string.   |
-| `str2`    | Second string.  |
+| Parameter | Details        |
+|-----------|----------------|
+| `srt1`    | First string.  |
+| `str2`    | Second string. |
 
-#### FN_REVERSE
+**Return value:**
+
+If strings are equal, returns the string. Otherwise, returns an empty value.
+
+--------------------------------------------------------------------------------
+
+#### fn_reverse
 
 Reverses a list of words.
 
 **Syntax:**
 
 ```Makefile
-$(call FN_REVERSE,word1 word2 ...)
+$(call fn_reverse,word1 word2 ...)
 ```
 
 **Parameters:**
@@ -72,14 +76,20 @@ $(call FN_REVERSE,word1 word2 ...)
 |--------------  ---|----------------|
 | `word1 word2 ...` | List of words. |
 
-#### FN_SPLIT
+**Return value:**
+
+A reversed list of words.
+
+--------------------------------------------------------------------------------
+
+#### fn_split
 
 Explodes a delimited word into a list of words.
 
 **Syntax:**
 
 ```Makefile
-$(call FN_SPLIT,delimitedWord,delimiter,[tokenPrefix])
+$(call fn_split,delimitedWord,delimiter,[tokenPrefix])
 ```
 
 **Parameters:**
@@ -90,14 +100,20 @@ $(call FN_SPLIT,delimitedWord,delimiter,[tokenPrefix])
 | `delimiter`     | Delimiter used to explode the string into a list of words.                                                                                                                                         |
 | `tokenPrefix`   | Optional token prefix to be added for each word.<br/> Since GNU Make ignores empty words, a token prefix can be used to force<br/>split of empty tokens (afterwards token prefix shall be removed).|
 
-#### FN_TOKEN
+**Return value:**
+
+A list of words as a result of exploding given string using given delimiter.
+
+--------------------------------------------------------------------------------
+
+#### fn_token
 
 Returns a token on delimited word (i.e. explodes the word into a list of words and returns a word of generated list).
 
 **Syntax:**
 
 ```Makefile
-$(call FN_TOKEN,delimitedWord,delimiter,index)
+$(call fn_token,delimitedWord,delimiter,index)
 ```
 
 **Parameters:**
@@ -108,7 +124,13 @@ $(call FN_TOKEN,delimitedWord,delimiter,index)
 | `delimiter`     | Delimiter used to explode the word into a list of words.         |
 | `index`         | Index of word to get from generated list (first element is `1`). |
 
-#### FN_UNIQUE
+**Return value:**
+
+The corresponding word of exploded string.
+
+--------------------------------------------------------------------------------
+
+#### fn_unique
 
 Returns a string removing duplicate words without sorting.
 
@@ -117,7 +139,7 @@ This function differs from GNU Make [`$(sort)`](https://www.gnu.org/software/mak
 **Syntax:**
 
 ```Makefile
-$(call FN_UNIQUE,word1 word2 ...)
+$(call fn_unique,word1 word2 ...)
 ```
 
 **Parameters:**
@@ -126,56 +148,93 @@ $(call FN_UNIQUE,word1 word2 ...)
 |--------------  ---|----------------|
 | `word1 word2 ...` | List of words. |
 
+**Return value:**
+
+The string without duplicate words
+
 --------------------------------------------------------------------------------
 
 ### Semantic versioning
 
-#### FN_SEMVER_CHECK
+#### fn_semver
 
 Checks if a semantic version string is valid.
 
-If given value is valid, returns it. Otherwise, raises an error. Only numbers are accepted for major.minor.patch.
+A valid semantic version matches with the following regex:
+
+```text
+<major>[.<minor>[.<patch>]][-<metadata>]
+```
+
+* `major` must be a numeric value.
+* `minor` must be a numeric value.
+* `patch` must be a numeric value.
+* `metadata` must match with the regex `[A-Za-z0-9_\.\-]+`
 
 **Syntax:**
 
 ```Makefile
-$(call FN_SEMVER_CHECK,semanticVersion)
+$(call fn_semver,semanticVersion,[errorMessage])
 ```
 
 **Parameters:**
 
-| Parameter         | Details                  |
-|-------------------|--------------------------|
-| `semanticVersion` | Semantic version string. |
+| Parameter         | Details                            |
+|-------------------|------------------------------------|
+| `semanticVersion` | Semantic version string.           |
+| `errorMessage`    | Optional customized error message. |
 
-#### FN_SEMVER_CMP
+**Return value:**
 
-Compares two semantic versions. If tested version is compatible with a minimum one, returns tested version. Otherwise returns an empty value.
+If given value is valid, returns it. Otherwise, raises an error.
 
-!!! Note
-    The components of inspected semantic version values (major, minor, and patch) must be numeric values.
+--------------------------------------------------------------------------------
+
+#### fn_semver_cmp
+
+Compares two semantic versions.
+
+See [fn_semver](#fn_semver).
 
 **Syntax:**
 
 ```Makefile
-$(call FN_SEMVER_CMP,testVer,MinVer)
+$(call fn_semver_cmp,v1,v2)
 ```
 
 **Parameters:**
 
-| Parameter | Details                   |
-|-----------|---------------------------|
-| `testVer` | Tested version.           |
-| `MinVer`  | Minimal accepted version. |
+| Parameter      | Details         |
+|----------------|-----------------|
+| `v1`           | First version.  |
+| `v2`           | Second version. |
 
-#### FN_SEMVER_MAJOR
+**Return value:**
+
+| Return value | If                                                                                       |
+|--------------|------------------------------------------------------------------------------------------|
+| `-3`         | `v1.major < v2.major`.                                                                   |
+| `3`          | `v1.major > v2.major`.                                                                   |
+| `-2`         | `v1.major == v2.major and v1.minor < v2.minor`.                                          |
+| `2`          | `v1.major == v2.major and v1.minor > v2.minor`.                                          |
+| `-1`         | `v1.major == v2.major, v1.minor == v2.minor and v1.patch < v2.patch`.                    |
+| `1`          | `v1.major == v2.major, v1.minor == v2.minor and v1.patch > v2.patch`.                    |
+| `0`          | Versions are equal (NOTE: any [metadata](#fn_semver_metadata) is ignored in comparison). |
+
+If any of provided versions is invalid, an error will be raised.
+
+--------------------------------------------------------------------------------
+
+#### fn_semver_major
 
 Returns the major component for given version.
 
+See [fn_semver](#fn_semver).
+
 **Syntax:**
 
 ```Makefile
-$(call FN_SEMVER_MAJOR,semanticVersion)
+$(call fn_semver_major,semanticVersion)
 ```
 
 **Parameters:**
@@ -184,14 +243,46 @@ $(call FN_SEMVER_MAJOR,semanticVersion)
 |-------------------|--------------------------|
 | `semanticVersion` | Semantic version string. |
 
-#### FN_SEMVER_MINOR
+**Return value:**
+
+The major component of given version.
+
+--------------------------------------------------------------------------------
+
+#### fn_semver_metadata
+
+Returns the metadata component for given version.
+
+See [fn_semver](#fn_semver).
+
+**Syntax:**
+
+```Makefile
+$(call fn_semver_metadata,semanticVersion)
+```
+
+**Parameters:**
+
+| Parameter         | Details                  |
+|-------------------|--------------------------|
+| `semanticVersion` | Semantic version string. |
+
+**Return value:**
+
+The metadata component of given version.
+
+--------------------------------------------------------------------------------
+
+#### fn_semver_minor
 
 Returns the minor component for given version.
 
+See [fn_semver](#fn_semver).
+
 **Syntax:**
 
 ```Makefile
-$(call FN_SEMVER_MINOR,semanticVersion)
+$(call fn_semver_minor,semanticVersion)
 ```
 
 **Parameters:**
@@ -200,15 +291,22 @@ $(call FN_SEMVER_MINOR,semanticVersion)
 |-------------------|--------------------------|
 | `semanticVersion` | Semantic version string. |
 
+**Return value:**
 
-#### FN_SEMVER_MIN_CHECK
+The minor component of given version.
 
-Checks if a version is compatible with a minimum one.  If version is not compatible, it raises an error.
+--------------------------------------------------------------------------------
+
+#### fn_semver_check_compat
+
+Checks if a version is compatible with a minimum one. If version is not compatible, it raises an error.
+
+See [fn_semver](#fn_semver).
 
 **Syntax:**
 
 ```Makefile
-$(call FN_SEMVER_MIN_CHECK,minVersion,version,[errorMessage])
+$(call fn_semver_check_compat,minVersion,version,[errorMessage])
 ```
 
 **Parameters:**
@@ -219,14 +317,22 @@ $(call FN_SEMVER_MIN_CHECK,minVersion,version,[errorMessage])
 | `version`      | Tested version.                    |
 | `errorMessage` | Optional customized error message. |
 
-#### FN_SEMVER_PATCH
+**Return value:**
+
+_This function does not return any value._
+
+--------------------------------------------------------------------------------
+
+#### fn_semver_patch
 
 Returns the patch component for given version.
+
+See [fn_semver](#fn_semver).
 
 **Syntax:**
 
 ```Makefile
-$(call FN_SEMVER_PATCH,semanticVersion)
+$(call fn_semver_patch,semanticVersion)
 ```
 
 **Parameters:**
@@ -235,20 +341,22 @@ $(call FN_SEMVER_PATCH,semanticVersion)
 |-------------------|--------------------------|
 | `semanticVersion` | Semantic version string. |
 
+**Return value:**
+
+The patch component of given version.
+
 --------------------------------------------------------------------------------
 
 ### File system functions
 
-#### FN_FIND_FILES
+#### fn_find_files
 
 Lists files in a directory.
-
-This function returns the list of files in given directory (by default recursively) through a call to the [`find`](https://man7.org/linux/man-pages/man1/find.1.html) command.
 
 **Syntax:**
 
 ```Makefile
-$(call FN_FIND_FILES,directory,[findFlags])
+$(call fn_find_files,directory,[findFlags])
 ```
 
 **Parameters:**
@@ -258,16 +366,20 @@ $(call FN_FIND_FILES,directory,[findFlags])
 | `directory` | Path to the directory which will be inspected.     |
 | `findFlags` | Optional flags to be passed to the `find` command. |
 
-#### FN_IS_INSIDE_DIR
+**Return value:**
+
+This function returns the list of files in given directory (by default recursively) through a call to the [`find`](https://man7.org/linux/man-pages/man1/find.1.html) command.
+
+--------------------------------------------------------------------------------
+
+#### fn_is_inside_dir
 
 Checks if a path is inside a directory.
-
-If given path correspond to a path inside given directory, return the path. Otherwise, returns an empty value.
 
 **Syntax:**
 
 ```Makefile
-$(call FN_IS_INSIDE_DIR,parentDir,path)
+$(call fn_is_inside_dir,parentDir,path)
 ```
 
 **Parameters:**
@@ -277,14 +389,20 @@ $(call FN_IS_INSIDE_DIR,parentDir,path)
 | `parentDir` | Directory which should be parent of given `path`. |
 | `path`      | Tested path.                                      |
 
-#### FN_REL_DIR
+**Return value:**
+
+If given path correspond to a path inside given directory, return the path. Otherwise, returns an empty value.
+
+--------------------------------------------------------------------------------
+
+#### fn_rel_dir
 
 Returns the relative path for going from `fromDir` to `toDir`.
 
 **Syntax:**
 
 ```Makefile
-$(call FN_REL_DIR,fromDir,toDir)
+$(call fn_rel_dir,fromDir,toDir)
 ```
 
 **Parameters:**
@@ -294,11 +412,15 @@ $(call FN_REL_DIR,fromDir,toDir)
 | `fromDir` | Departure directory path.   |
 | `toDir`   | Destination directory path. |
 
+**Return value:**
+
+Returns the relative path for going from `fromDir` to `toDir`.
+
 --------------------------------------------------------------------------------
 
 ### General utilities
 
-#### FN_CHECK_NO_WHITESPACE
+#### fn_check_no_whitespace
 
 Ensures a variable value has no whitespaces.
 
@@ -307,7 +429,7 @@ If a variable value has whitespaces, an error will be raised.
 **Syntax:**
 
 ```Makefile
-$(call FN_CHECK_NO_WHITESPACE,varName,[errorMessage])
+$(call fn_check_no_whitespace,varName,[errorMessage])
 ```
 
 **Parameters:**
@@ -317,7 +439,13 @@ $(call FN_CHECK_NO_WHITESPACE,varName,[errorMessage])
 | `varName`      | Variable name                                                                                                               |
 | `errorMessage` | Optional error message. If value is suppressed or an empty value is given,<br/>a standardized message will be used instead. |
 
-#### FN_CHECK_NON_EMPTY
+**Return value:**
+
+_This function does not return any value._
+
+--------------------------------------------------------------------------------
+
+#### fn_check_non_empty
 
 Checks if a variable, which should NOT be empty, has an empty value.
 
@@ -326,7 +454,7 @@ If variable has an empty value, an error will be raised.
 **Syntax:**
 
 ```Makefile
-$(call FN_CHECK_NON_EMPTY,varName,[errorMessage])
+$(call fn_check_non_empty,varName,[errorMessage])
 ```
 
 **Parameters:**
@@ -336,7 +464,13 @@ $(call FN_CHECK_NON_EMPTY,varName,[errorMessage])
 | `varName`      | Variable name                                                                                                               |
 | `errorMessage` | Optional error message. If value is suppressed or an empty value is given,<br/>a standardized message will be used instead. |
 
-#### FN_CHECK_OPTIONS
+**Return value:**
+
+_This function does not return any value._
+
+--------------------------------------------------------------------------------
+
+#### fn_check_options
 
 Ensures the contents of a variable is one among a list of accepted values.
 
@@ -345,7 +479,7 @@ If variable contents has an unexpected value, an error will be raised.
 **Syntax:**
 
 ```Makefile
-$(call FN_CHECK_OPTIONS,varName,acceptedOptions,[errorMessage])
+$(call fn_check_options,varName,acceptedOptions,[errorMessage])
 ```
 
 **Parameters:**
@@ -356,7 +490,13 @@ $(call FN_CHECK_OPTIONS,varName,acceptedOptions,[errorMessage])
 | `acceptedOptions` | List of accepted words for variable contents.                                                                               |
 | `errorMessage`    | Optional error message. If value is suppressed or an empty value is given,<br/>a standardized message will be used instead. |
 
-#### FN_CHECK_ORIGIN
+**Return value:**
+
+_This function does not return any value._
+
+--------------------------------------------------------------------------------
+
+#### fn_check_origin
 
 Ensures the [origin](https://www.gnu.org/software/make/manual/make.html#Origin-Function) of an variable.
 
@@ -365,7 +505,7 @@ If a variable has an unexpected origin, an error will be raised.
 **Syntax:**
 
 ```Makefile
-$(call FN_CHECK_ORIGIN,varName,expectedOrigin,[errorMessage])
+$(call fn_check_origin,varName,expectedOrigin,[errorMessage])
 ```
 
 **Parameters:**
@@ -376,7 +516,13 @@ $(call FN_CHECK_ORIGIN,varName,expectedOrigin,[errorMessage])
 | `expectedOrigin` | Accepted origin for the variable.                                                                                           |
 | `errorMessage`   | Optional error message. If value is suppressed or an empty value is given,<br/>a standardized message will be used instead. |
 
-#### FN_CHECK_RESERVED
+**Return value:**
+
+_This function does not return any value._
+
+--------------------------------------------------------------------------------
+
+#### fn_check_reserved
 
 Ensures a variable is not defined until the call the function.
 
@@ -385,7 +531,7 @@ If variable is defined in the moment of calling this function, it will raise an 
 **Syntax:**
 
 ```Makefile
-$(call FN_CHECK_RESERVED,varName,[errorMessage])
+$(call fn_check_reserved,varName,[errorMessage])
 ```
 
 **Parameters:**
@@ -395,7 +541,13 @@ $(call FN_CHECK_RESERVED,varName,[errorMessage])
 | `varName`      | Variable name                                                                                                               |
 | `errorMessage` | Optional error message. If value is suppressed or an empty value is given,<br/>a standardized message will be used instead. |
 
-#### FN_HOST_FACTORIZE
+**Return value:**
+
+_This function does not return any value._
+
+--------------------------------------------------------------------------------
+
+#### fn_host_factorize
 
 Factorizes a host string (used to decompose host string into a list of compatible layers).
 
@@ -404,7 +556,7 @@ For example, the value `linux-arm-v7` can be decomposed into `linux`, `linux/arm
 **Syntax:**
 
 ```Makefile
-$(call FN_HOST_FACTORIZE,hostString,[delimiter],[replacement])
+$(call fn_host_factorize,hostString,[delimiter],[replacement])
 ```
 
 **Parameters:**
@@ -415,21 +567,20 @@ $(call FN_HOST_FACTORIZE,hostString,[delimiter],[replacement])
 | `delimiter`   | Optional token delimiter for `hostString` (defaults to `-`).                          |
 | `replacement` | Optional replacement for delimiters while factorizing `hostString` (defaults to `/`). |
 
-#### FN_NUMBER_CMP
+**Return value:**
 
-Numeric comparison of two numbers. Returns the following values:
+A list of decomposed compatible layers for given `hostString`.
 
-| Returned value | If                        |
-|----------------|---------------------------|
-| `0`            | first == second           |
-| `1`            | first > second            |
-| `-1`           | first < second            |
-| `?`            | Invalid values were given |
+--------------------------------------------------------------------------------
+
+#### fn_number_cmp
+
+Numeric comparison of two numbers.
 
 **Syntax:**
 
 ```Makefile
-$(call FN_NUMBER_CMP,[first],[second])
+$(call fn_number_cmp,[first],[second])
 ```
 
 **Parameters:**
@@ -439,7 +590,18 @@ $(call FN_NUMBER_CMP,[first],[second])
 | `first`   | First number. If empty, `0` (zero) will be assumed.  |
 | `second`  | Second number. If empty, `0` (zero) will be assumed. |
 
-#### FN_SHELL
+**Return value:**
+
+| Returned value | If                        |
+|----------------|---------------------------|
+| `0`            | first == second           |
+| `1`            | first > second            |
+| `-1`           | first < second            |
+| `?`            | Invalid values were given |
+
+--------------------------------------------------------------------------------
+
+#### fn_shell
 
 Executes a shell command and returns execution output.
 
@@ -448,7 +610,7 @@ This function differs from [`$(shell)`](https://www.gnu.org/software/make/manual
 **Syntax:**
 
 ```Makefile
-$(call FN_SHELL,cmd,[errorMessage])
+$(call fn_shell,cmd,[errorMessage])
 ```
 
 **Parameters:**
@@ -458,11 +620,15 @@ $(call FN_SHELL,cmd,[errorMessage])
 | `cmd`            | Shell command to execute                                                                                                    |
 | `errorMessage`   | Optional error message. If value is suppressed or an empty value is given,<br/>a standardized message will be used instead. |
 
+**Return value:**
+
+Output of given `cmd` execution.
+
 --------------------------------------------------------------------------------
 
 ### Colored output
 
-#### FN_COLORED_TEXT
+#### fn_colored_text
 
 Generate a colored string.
 
@@ -472,7 +638,7 @@ Generate a colored string.
 **Syntax:**
 
 ```Makefile
-$(call FN_COLORED_TEXT,[ansiColor],msg)
+$(call fn_colored_text,[ansiColor],msg)
 ```
 
 **Parameters:**
@@ -482,7 +648,13 @@ $(call FN_COLORED_TEXT,[ansiColor],msg)
 | `ansiColor` | Optional ANSI color code (e.g. for bold bright green would be `92;1`). |
 | `msg`       | Message to be printed to stdout.                                       |
 
-#### FN_LOG
+**Return value:**
+
+If terminal support color output, return escaped colored `msg`. If either `ansiColor` is not provided, or terminal does not support color output, returns `msg`.
+
+--------------------------------------------------------------------------------
+
+#### fn_log
 
 Generates an echo command for a log message.
 
@@ -493,7 +665,7 @@ Generates an echo command for a log message.
  **Syntax:**
 
 ```Makefile
-$(call FN_LOG,[color],msg)
+$(call fn_log,[color],msg)
 ```
 
 **Parameters:**
@@ -503,7 +675,13 @@ $(call FN_LOG,[color],msg)
 | `ansiColor` | Optional ANSI color code (e.g. for bold bright green would be `92;1`). |
 | `msg`       | Message to be printed to stdout.                                       |
 
-#### FN_LOG_INFO
+**Return value:**
+
+The echo command string for a log message.
+
+--------------------------------------------------------------------------------
+
+#### fn_log_info
 
 Generates an echo command for INFO log message.
 
@@ -514,7 +692,7 @@ Generates an echo command for INFO log message.
  **Syntax:**
 
 ```Makefile
-$(call FN_LOG_INFO,[useColor],msg)
+$(call fn_log_info,[useColor],msg)
 ```
 
 **Parameters:**
@@ -523,3 +701,8 @@ $(call FN_LOG_INFO,[useColor],msg)
 |------------|------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `useColor` | Defines if generated command should use colored text. Defaults to `0` (no color output).<br/>Any other non-empty value will cause the use of colored text. |
 | `msg`      | Message to be printed to stdout.                                                                                                                           |
+
+
+**Return value:**
+
+The echo command string for a INFO log message.
