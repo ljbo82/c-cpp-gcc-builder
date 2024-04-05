@@ -77,6 +77,8 @@ The following variables controls how documentation should be generated:
 * **Origins:** Makefile.
 * **Restrictions:** Value shall not contain whitespaces nor can be an empty string.
 
+--------------------------------------------------------------------------------
+
 #### DOXYARGS
 
 * **Description:** Extra arguments to be passed to doxygen.
@@ -84,6 +86,8 @@ The following variables controls how documentation should be generated:
 * **Default value:** Undefined.
 * **Origins:** Makefile.
 * **Restrictions:** Value shall not contain whitespaces nor can be an empty string.
+
+--------------------------------------------------------------------------------
 
 #### DOXYFILE
 
@@ -93,6 +97,8 @@ The following variables controls how documentation should be generated:
 * **Origins:** Makefile.
 * **Restrictions:** Value shall not contain whitespaces nor can be an empty string.
 
+--------------------------------------------------------------------------------
+
 #### POST_DOC_DEPS
 
 * **Description:** Contains a list of targets to be called AFTER documentation is generated.
@@ -100,6 +106,8 @@ The following variables controls how documentation should be generated:
 * **Default value:** Undefined.
 * **Origins:** Makefile.
 * **Restrictions:** None.
+
+--------------------------------------------------------------------------------
 
 #### PRE_DOC_DEPS
 

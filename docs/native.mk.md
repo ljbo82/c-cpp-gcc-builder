@@ -62,6 +62,8 @@ The following variables are generated automatically by this makefile in order to
 * **Origins:**  Not applicable (variable is set by the build system).
 * **Restrictions:** This is a read-only reserved variable.
 
+--------------------------------------------------------------------------------
+
 #### NATIVE_ARCH
 
 * **Description:** Contains detected native CPU architecture.
@@ -69,6 +71,8 @@ The following variables are generated automatically by this makefile in order to
 * **Default value:** Detected native CPU architecture. If it would not be possible to detect it, variable will be empty/undefined.
 * **Origins:** Not applicable (variable is set by the build system).
 * **Restrictions:** This is a read-only reserved variable.
+
+--------------------------------------------------------------------------------
 
 #### NATIVE_HOST
 

@@ -65,6 +65,8 @@ The following variables are generated automatically by this makefile in order to
 * **Origins:** Not applicable (variable is set by the build system).
 * **Restrictions:** This is a read-only reserved variable.
 
+--------------------------------------------------------------------------------
+
 #### GIT_COMMIT_SHORT
 
 * **Description:** Contains current short commit for inspected repository.
@@ -72,6 +74,8 @@ The following variables are generated automatically by this makefile in order to
 * **Default value:** Current short commit for inspected repository. If directory is not versioned by git, variable will be undefined.
 * **Origins:** Not applicable (variable is set by the build system).
 * **Restrictions:** This is a read-only reserved variable.
+
+--------------------------------------------------------------------------------
 
 #### GIT_STATUS
 
@@ -86,6 +90,8 @@ The following variables are generated automatically by this makefile in order to
 * **Origins:** Not applicable (variable is set by the build system).
 * **Restrictions:** This is a read-only reserved variable.
 
+--------------------------------------------------------------------------------
+
 #### GIT_TAG
 
 * **Description:** Contains current tag for inspected repository.
@@ -93,6 +99,8 @@ The following variables are generated automatically by this makefile in order to
 * **Default value:** Current tag for inspected repository. If directory is not versioned by git, variable will be undefined.
 * **Origins:** Not applicable (variable is set by the build system).
 * **Restrictions:** This is a read-only reserved variable.
+
+--------------------------------------------------------------------------------
 
 #### GIT_VERSION
 
