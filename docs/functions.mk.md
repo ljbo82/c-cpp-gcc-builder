@@ -1,5 +1,3 @@
-!!! hint "Review status: OK"
-
 # functions.mk
 
 This makefile exposes utility makefile functions used by the build system, which can also be used by your project.
@@ -15,7 +13,7 @@ include $(CPB_DIR)/functions.mk
 ```
 
 !!! note
-    This makefile is automatically included by `builder.mk`
+    This makefile is automatically included by [builder.mk](../user-guide), [git.mk](../git.mk), and [doxygen.mk](../doxygen.mk).
 
 --------------------------------------------------------------------------------
 
@@ -35,390 +33,7 @@ _This makefile does not expect nor expose any variables (except [functions](#fun
 
 Following are listed exposed functions:
 
-### Text functions
-
-#### fn_eq
-
-Checks if two strings are equal each other.
-
-**Syntax:**
-
-```Makefile
-$(call fn_eq,srt1,str2)
-```
-
-**Parameters:**
-
-| Parameter | Details        |
-|-----------|----------------|
-| `srt1`    | First string.  |
-| `str2`    | Second string. |
-
-**Return value:**
-
-If strings are equal, returns the string. Otherwise, returns an empty value.
-
---------------------------------------------------------------------------------
-
-#### fn_reverse
-
-Reverses a list of words.
-
-**Syntax:**
-
-```Makefile
-$(call fn_reverse,word1 word2 ...)
-```
-
-**Parameters:**
-
-| Parameter         | Details        |
-|--------------  ---|----------------|
-| `word1 word2 ...` | List of words. |
-
-**Return value:**
-
-A reversed list of words.
-
---------------------------------------------------------------------------------
-
-#### fn_split
-
-Explodes a delimited word into a list of words.
-
-**Syntax:**
-
-```Makefile
-$(call fn_split,delimitedWord,delimiter,[tokenPrefix])
-```
-
-**Parameters:**
-
-| Parameter       | Details                                                                                                                                                                                            |
-|-----------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `delimitedWord` | Delimited word which will be exploded into a list of words.                                                                                                                                        |
-| `delimiter`     | Delimiter used to explode the string into a list of words.                                                                                                                                         |
-| `tokenPrefix`   | Optional token prefix to be added for each word.<br/> Since GNU Make ignores empty words, a token prefix can be used to force<br/>split of empty tokens (afterwards token prefix shall be removed).|
-
-**Return value:**
-
-A list of words as a result of exploding given string using given delimiter.
-
---------------------------------------------------------------------------------
-
-#### fn_token
-
-Returns a token on delimited word (i.e. explodes the word into a list of words and returns a word of generated list).
-
-**Syntax:**
-
-```Makefile
-$(call fn_token,delimitedWord,delimiter,index)
-```
-
-**Parameters:**
-
-| Parameter       | Details                                                          |
-|-----------------|------------------------------------------------------------------|
-| `delimitedWord` | Delimited word which will be exploded into a list of words.      |
-| `delimiter`     | Delimiter used to explode the word into a list of words.         |
-| `index`         | Index of word to get from generated list (first element is `1`). |
-
-**Return value:**
-
-The corresponding word of exploded string.
-
---------------------------------------------------------------------------------
-
-#### fn_unique
-
-Returns a string removing duplicate words without sorting.
-
-This function differs from GNU Make [`$(sort)`](https://www.gnu.org/software/make/manual/make.html#Text-Functions) in terms of sorting. `$(sort)` removes duplicate words sorting resulting string. This function only remove duplicate words preserving original ordering or words.
-
-**Syntax:**
-
-```Makefile
-$(call fn_unique,word1 word2 ...)
-```
-
-**Parameters:**
-
-| Parameter         | Details        |
-|--------------  ---|----------------|
-| `word1 word2 ...` | List of words. |
-
-**Return value:**
-
-The string without duplicate words
-
---------------------------------------------------------------------------------
-
-### Semantic versioning
-
-#### fn_semver
-
-Checks if a semantic version string is valid.
-
-A valid semantic version matches with the following regex:
-
-```text
-<major>[.<minor>[.<patch>]][-<metadata>]
-```
-
-* `major` must be a numeric value.
-* `minor` must be a numeric value.
-* `patch` must be a numeric value.
-* `metadata` must match with the regex `[A-Za-z0-9_\.\-]+`
-
-**Syntax:**
-
-```Makefile
-$(call fn_semver,semanticVersion,[errorMessage])
-```
-
-**Parameters:**
-
-| Parameter         | Details                            |
-|-------------------|------------------------------------|
-| `semanticVersion` | Semantic version string.           |
-| `errorMessage`    | Optional customized error message. |
-
-**Return value:**
-
-If given value is valid, returns it. Otherwise, raises an error.
-
---------------------------------------------------------------------------------
-
-#### fn_semver_cmp
-
-Compares two semantic versions.
-
-See [fn_semver](#fn_semver).
-
-**Syntax:**
-
-```Makefile
-$(call fn_semver_cmp,v1,v2)
-```
-
-**Parameters:**
-
-| Parameter      | Details         |
-|----------------|-----------------|
-| `v1`           | First version.  |
-| `v2`           | Second version. |
-
-**Return value:**
-
-| Return value | If                                                                                       |
-|--------------|------------------------------------------------------------------------------------------|
-| `-3`         | `v1.major < v2.major`.                                                                   |
-| `3`          | `v1.major > v2.major`.                                                                   |
-| `-2`         | `v1.major == v2.major and v1.minor < v2.minor`.                                          |
-| `2`          | `v1.major == v2.major and v1.minor > v2.minor`.                                          |
-| `-1`         | `v1.major == v2.major, v1.minor == v2.minor and v1.patch < v2.patch`.                    |
-| `1`          | `v1.major == v2.major, v1.minor == v2.minor and v1.patch > v2.patch`.                    |
-| `0`          | Versions are equal (NOTE: any [metadata](#fn_semver_metadata) is ignored in comparison). |
-
-If any of provided versions is invalid, an error will be raised.
-
---------------------------------------------------------------------------------
-
-#### fn_semver_major
-
-Returns the major component for given version.
-
-See [fn_semver](#fn_semver).
-
-**Syntax:**
-
-```Makefile
-$(call fn_semver_major,semanticVersion)
-```
-
-**Parameters:**
-
-| Parameter         | Details                  |
-|-------------------|--------------------------|
-| `semanticVersion` | Semantic version string. |
-
-**Return value:**
-
-The major component of given version.
-
---------------------------------------------------------------------------------
-
-#### fn_semver_metadata
-
-Returns the metadata component for given version.
-
-See [fn_semver](#fn_semver).
-
-**Syntax:**
-
-```Makefile
-$(call fn_semver_metadata,semanticVersion)
-```
-
-**Parameters:**
-
-| Parameter         | Details                  |
-|-------------------|--------------------------|
-| `semanticVersion` | Semantic version string. |
-
-**Return value:**
-
-The metadata component of given version.
-
---------------------------------------------------------------------------------
-
-#### fn_semver_minor
-
-Returns the minor component for given version.
-
-See [fn_semver](#fn_semver).
-
-**Syntax:**
-
-```Makefile
-$(call fn_semver_minor,semanticVersion)
-```
-
-**Parameters:**
-
-| Parameter         | Details                  |
-|-------------------|--------------------------|
-| `semanticVersion` | Semantic version string. |
-
-**Return value:**
-
-The minor component of given version.
-
---------------------------------------------------------------------------------
-
-#### fn_semver_check_compat
-
-Checks if a version is compatible with a minimum one. If version is not compatible, it raises an error.
-
-See [fn_semver](#fn_semver).
-
-**Syntax:**
-
-```Makefile
-$(call fn_semver_check_compat,minVersion,version,[errorMessage])
-```
-
-**Parameters:**
-
-| Parameter      | Details                            |
-|----------------|------------------------------------|
-| `minVersion`   | Minimum accepted version.          |
-| `version`      | Tested version.                    |
-| `errorMessage` | Optional customized error message. |
-
-**Return value:**
-
-_This function does not return any value._
-
---------------------------------------------------------------------------------
-
-#### fn_semver_patch
-
-Returns the patch component for given version.
-
-See [fn_semver](#fn_semver).
-
-**Syntax:**
-
-```Makefile
-$(call fn_semver_patch,semanticVersion)
-```
-
-**Parameters:**
-
-| Parameter         | Details                  |
-|-------------------|--------------------------|
-| `semanticVersion` | Semantic version string. |
-
-**Return value:**
-
-The patch component of given version.
-
---------------------------------------------------------------------------------
-
-### File system functions
-
-#### fn_find_files
-
-Lists files in a directory.
-
-**Syntax:**
-
-```Makefile
-$(call fn_find_files,directory,[findFlags])
-```
-
-**Parameters:**
-
-| Parameter   | Details                                            |
-|-------------|----------------------------------------------------|
-| `directory` | Path to the directory which will be inspected.     |
-| `findFlags` | Optional flags to be passed to the `find` command. |
-
-**Return value:**
-
-This function returns the list of files in given directory (by default recursively) through a call to the [`find`](https://man7.org/linux/man-pages/man1/find.1.html) command.
-
---------------------------------------------------------------------------------
-
-#### fn_is_inside_dir
-
-Checks if a path is inside a directory.
-
-**Syntax:**
-
-```Makefile
-$(call fn_is_inside_dir,parentDir,path)
-```
-
-**Parameters:**
-
-| Parameter   | Details                                           |
-|-------------|---------------------------------------------------|
-| `parentDir` | Directory which should be parent of given `path`. |
-| `path`      | Tested path.                                      |
-
-**Return value:**
-
-If given path correspond to a path inside given directory, return the path. Otherwise, returns an empty value.
-
---------------------------------------------------------------------------------
-
-#### fn_rel_dir
-
-Returns the relative path for going from `fromDir` to `toDir`.
-
-**Syntax:**
-
-```Makefile
-$(call fn_rel_dir,fromDir,toDir)
-```
-
-**Parameters:**
-
-| Parameter | Details                     |
-|-----------|-----------------------------|
-| `fromDir` | Departure directory path.   |
-| `toDir`   | Destination directory path. |
-
-**Return value:**
-
-Returns the relative path for going from `fromDir` to `toDir`.
-
---------------------------------------------------------------------------------
-
-### General utilities
+### Validations
 
 #### fn_check_no_whitespace
 
@@ -445,7 +60,7 @@ _This function does not return any value._
 
 --------------------------------------------------------------------------------
 
-#### fn_check_non_empty
+#### fn_check_not_empty
 
 Checks if a variable, which should NOT be empty, has an empty value.
 
@@ -454,7 +69,7 @@ If variable has an empty value, an error will be raised.
 **Syntax:**
 
 ```Makefile
-$(call fn_check_non_empty,varName,[errorMessage])
+$(call fn_check_not_empty,varName,[errorMessage])
 ```
 
 **Parameters:**
@@ -547,6 +162,31 @@ _This function does not return any value._
 
 --------------------------------------------------------------------------------
 
+### Text functions
+
+#### fn_eq
+
+Checks if two strings are equal each other.
+
+**Syntax:**
+
+```Makefile
+$(call fn_eq,srt1,str2)
+```
+
+**Parameters:**
+
+| Parameter | Details        |
+|-----------|----------------|
+| `srt1`    | First string.  |
+| `str2`    | Second string. |
+
+**Return value:**
+
+If strings are equal, returns the string. Otherwise, returns an empty value.
+
+--------------------------------------------------------------------------------
+
 #### fn_host_factorize
 
 Factorizes a host string (used to decompose host string into a list of compatible layers).
@@ -570,6 +210,419 @@ $(call fn_host_factorize,hostString,[delimiter],[replacement])
 **Return value:**
 
 A list of decomposed compatible layers for given `hostString`.
+
+--------------------------------------------------------------------------------
+
+#### fn_reverse
+
+Reverses a list of words.
+
+**Syntax:**
+
+```Makefile
+$(call fn_reverse,word1 word2 ...)
+```
+
+**Parameters:**
+
+| Parameter         | Details        |
+|--------------  ---|----------------|
+| `word1 word2 ...` | List of words. |
+
+**Return value:**
+
+A reversed list of words.
+
+--------------------------------------------------------------------------------
+
+#### fn_split
+
+Explodes a delimited word into a list of words.
+
+**Syntax:**
+
+```Makefile
+$(call fn_split,delimitedWord,delimiter,[tokenPrefix])
+```
+
+**Parameters:**
+
+| Parameter       | Details                                                                                                                                                                                            |
+|-----------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `delimitedWord` | Delimited word which will be exploded into a list of words.                                                                                                                                        |
+| `delimiter`     | Delimiter used to explode the string into a list of words.                                                                                                                                         |
+| `tokenPrefix`   | Optional token prefix to be added for each word.<br/> Since GNU Make ignores empty words, a token prefix can be used to force<br/>split of empty tokens (afterwards token prefix shall be removed).|
+
+**Return value:**
+
+A list of words as a result of exploding given string using given delimiter.
+
+--------------------------------------------------------------------------------
+
+#### fn_text
+
+Generate a colored string.
+
+!!! Note
+    Real color support relies on terminal support. If there is no support, colors are ignored.
+
+**Syntax:**
+
+```Makefile
+$(call fn_text,[ansiColor],msg)
+```
+
+**Parameters:**
+
+| Parameter   | Description                                                            |
+|-------------|------------------------------------------------------------------------|
+| `ansiColor` | Optional ANSI color code (e.g. for bold bright green would be `92;1`). |
+| `msg`       | Message to be printed to stdout.                                       |
+
+**Return value:**
+
+If terminal support color output, return colored `msg`. If either `ansiColor` is not provided, or terminal does not support color output, returns `msg`.
+
+--------------------------------------------------------------------------------
+
+#### fn_token
+
+Returns a token on delimited word (i.e. explodes the word into a list of words and returns a word of generated list).
+
+**Syntax:**
+
+```Makefile
+$(call fn_token,delimitedWord,delimiter,index)
+```
+
+**Parameters:**
+
+| Parameter       | Details                                                          |
+|-----------------|------------------------------------------------------------------|
+| `delimitedWord` | Delimited word which will be exploded into a list of words.      |
+| `delimiter`     | Delimiter used to explode the word into a list of words.         |
+| `index`         | Index of word to get from generated list (first element is `1`). |
+
+**Return value:**
+
+The corresponding word of exploded string.
+
+--------------------------------------------------------------------------------
+
+#### fn_unique
+
+Returns a string removing duplicate words without sorting.
+
+This function differs from GNU Make [`$(sort)`](https://www.gnu.org/software/make/manual/make.html#Text-Functions) in terms of sorting. `$(sort)` removes duplicate words sorting resulting string. This function only remove duplicate words preserving original ordering or words.
+
+**Syntax:**
+
+```Makefile
+$(call fn_unique,word1 word2 ...)
+```
+
+**Parameters:**
+
+| Parameter         | Details        |
+|--------------  ---|----------------|
+| `word1 word2 ...` | List of words. |
+
+**Return value:**
+
+The string without duplicate words
+
+--------------------------------------------------------------------------------
+
+### Semantic versioning
+
+#### fn_semver
+
+Checks if a semantic version string is valid.
+
+A valid semantic version matches with the following regex:
+
+```text
+<major>[.<minor>[.<patch>]][-<metadata>]
+```
+
+* `major` must be a numeric value.
+* `minor` must be a numeric value. If omitted, it is assumed `0` for comparisons.
+* `patch` must be a numeric value. If omitted, it is assumed `0` for comparisons.
+* `metadata` must match with the regex `[A-Za-z0-9_\.\-]+`
+
+**Syntax:**
+
+```Makefile
+$(call fn_semver,semanticVersion,[errorMessage])
+```
+
+**Parameters:**
+
+| Parameter         | Details                            |
+|-------------------|------------------------------------|
+| `semanticVersion` | Semantic version string.           |
+| `errorMessage`    | Optional customized error message. |
+
+**Return value:**
+
+If given value is valid, returns it. Otherwise, raises an error.
+
+--------------------------------------------------------------------------------
+
+#### fn_semver_check_compat
+
+Checks if a version is compatible with a minimum one. If version is not compatible, it raises an error.
+
+See [fn_semver](#fn_semver).
+
+**Syntax:**
+
+```Makefile
+$(call fn_semver_check_compat,minVersion,version,[errorMessage])
+```
+
+**Parameters:**
+
+| Parameter      | Details                            |
+|----------------|------------------------------------|
+| `minVersion`   | Minimum accepted version.          |
+| `version`      | Tested version.                    |
+| `errorMessage` | Optional customized error message. |
+
+**Return value:**
+
+_This function does not return any value._
+
+--------------------------------------------------------------------------------
+
+#### fn_semver_cmp
+
+Compares two semantic versions.
+
+See [fn_semver](#fn_semver).
+
+**Syntax:**
+
+```Makefile
+$(call fn_semver_cmp,v1,v2)
+```
+
+**Parameters:**
+
+| Parameter      | Details         |
+|----------------|-----------------|
+| `v1`           | First version.  |
+| `v2`           | Second version. |
+
+**Return value:**
+
+| Return value | If                                                                                       |
+|--------------|------------------------------------------------------------------------------------------|
+| `-3`         | `v1.major < v2.major`.                                                                   |
+| `3`          | `v1.major > v2.major`.                                                                   |
+| `-2`         | `v1.major == v2.major and v1.minor < v2.minor`.                                          |
+| `2`          | `v1.major == v2.major and v1.minor > v2.minor`.                                          |
+| `-1`         | `v1.major == v2.major, v1.minor == v2.minor and v1.patch < v2.patch`.                    |
+| `1`          | `v1.major == v2.major, v1.minor == v2.minor and v1.patch > v2.patch`.                    |
+| `0`          | Versions are equal (NOTE: any [metadata](#fn_semver_metadata) is ignored in comparison). |
+
+If any of provided versions is invalid, an error will be raised.
+
+--------------------------------------------------------------------------------
+
+#### fn_semver_major
+
+Returns the major component for given version.
+
+See [fn_semver](#fn_semver).
+
+**Syntax:**
+
+```Makefile
+$(call fn_semver_major,semanticVersion)
+```
+
+**Parameters:**
+
+| Parameter         | Details                  |
+|-------------------|--------------------------|
+| `semanticVersion` | Semantic version string. |
+
+**Return value:**
+
+The major component of given version.
+
+--------------------------------------------------------------------------------
+
+#### fn_semver_metadata
+
+Returns the metadata component for given version.
+
+See [fn_semver](#fn_semver).
+
+**Syntax:**
+
+```Makefile
+$(call fn_semver_metadata,semanticVersion)
+```
+
+**Parameters:**
+
+| Parameter         | Details                  |
+|-------------------|--------------------------|
+| `semanticVersion` | Semantic version string. |
+
+**Return value:**
+
+The metadata component of given version. If there is no metadata component in `semanticVersion`, returns an empty string.
+
+--------------------------------------------------------------------------------
+
+#### fn_semver_minor
+
+Returns the minor component for given version.
+
+See [fn_semver](#fn_semver).
+
+**Syntax:**
+
+```Makefile
+$(call fn_semver_minor,semanticVersion)
+```
+
+**Parameters:**
+
+| Parameter         | Details                  |
+|-------------------|--------------------------|
+| `semanticVersion` | Semantic version string. |
+
+**Return value:**
+
+The minor component of given version. If there is no minor component in `semanticVersion`, returns an empty string.
+
+--------------------------------------------------------------------------------
+
+#### fn_semver_patch
+
+Returns the patch component for given version.
+
+See [fn_semver](#fn_semver).
+
+**Syntax:**
+
+```Makefile
+$(call fn_semver_patch,semanticVersion)
+```
+
+**Parameters:**
+
+| Parameter         | Details                  |
+|-------------------|--------------------------|
+| `semanticVersion` | Semantic version string. |
+
+**Return value:**
+
+The patch component of given version. If there is no patch component in `semanticVersion`, returns an empty string.
+
+--------------------------------------------------------------------------------
+
+### File system functions
+
+#### fn_find_files
+
+Lists files in a directory.
+
+**Syntax:**
+
+```Makefile
+$(call fn_find_files,directory,[findFlags])
+```
+
+**Parameters:**
+
+| Parameter   | Details                                            |
+|-------------|----------------------------------------------------|
+| `directory` | Path to the directory which will be inspected.     |
+| `findFlags` | Optional flags to be passed to the `find` command. |
+
+**Return value:**
+
+This function returns the list of files in given directory (by default recursively) through a call to the [`find`](https://man7.org/linux/man-pages/man1/find.1.html) command.
+
+--------------------------------------------------------------------------------
+
+#### fn_is_inside_dir
+
+Checks if a path is inside a directory.
+
+**Syntax:**
+
+```Makefile
+$(call fn_is_inside_dir,parentDir,path)
+```
+
+**Parameters:**
+
+| Parameter   | Details                                           |
+|-------------|---------------------------------------------------|
+| `parentDir` | Directory which should be parent of given `path`. |
+| `path`      | Tested path.                                      |
+
+**Return value:**
+
+If given path correspond to a path inside given directory, return the path. Otherwise, returns an empty value.
+
+--------------------------------------------------------------------------------
+
+#### fn_rel_dir
+
+Returns the relative path for going from `fromDir` to `toDir`.
+
+**Syntax:**
+
+```Makefile
+$(call fn_rel_dir,fromDir,toDir)
+```
+
+**Parameters:**
+
+| Parameter | Details                     |
+|-----------|-----------------------------|
+| `fromDir` | Departure directory path.   |
+| `toDir`   | Destination directory path. |
+
+**Return value:**
+
+Returns the relative path for going from `fromDir` to `toDir`.
+
+--------------------------------------------------------------------------------
+
+### Miscellaneous
+
+#### fn_log_cmd
+
+Generates an echo command (using `printf`) for log messages.
+
+!!! Notes
+    * Real color support relies on terminal support. If there is no support colors are ignored.
+    * This function returns the command string to be used by recipees. It does not execute any actual printing command.
+
+ **Syntax:**
+
+```Makefile
+$(call fn_log_cmd,[useColor],msg)
+```
+
+**Parameters:**
+
+| Parameter  | Description                                                                                                                                              |
+|------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `verbose`  | Defines if generated command for verbose mode. Defaults to `0` (non-verbose mode).<br/>Any other non-empty value will cause the verbose mode to be used. |
+| `msg`      | Message to be printed to stdout.                                                                                                                         |
+
+**Return value:**
+
+The echo command string for log messages.
 
 --------------------------------------------------------------------------------
 
@@ -623,86 +676,3 @@ $(call fn_shell,cmd,[errorMessage])
 **Return value:**
 
 Output of given `cmd` execution.
-
---------------------------------------------------------------------------------
-
-### Colored output
-
-#### fn_colored_text
-
-Generate a colored string.
-
-!!! Note
-    Real color support relies on terminal support. If there is no support colors are ignored.
-
-**Syntax:**
-
-```Makefile
-$(call fn_colored_text,[ansiColor],msg)
-```
-
-**Parameters:**
-
-| Parameter   | Description                                                            |
-|-------------|------------------------------------------------------------------------|
-| `ansiColor` | Optional ANSI color code (e.g. for bold bright green would be `92;1`). |
-| `msg`       | Message to be printed to stdout.                                       |
-
-**Return value:**
-
-If terminal support color output, return escaped colored `msg`. If either `ansiColor` is not provided, or terminal does not support color output, returns `msg`.
-
---------------------------------------------------------------------------------
-
-#### fn_log
-
-Generates an echo command for a log message.
-
-!!! Notes
-    * Real color support relies on terminal support. If there is no support colors are ignored.
-    * This function returns the command string to be used by recipees. It does not execute any actual printing command.
-
- **Syntax:**
-
-```Makefile
-$(call fn_log,[color],msg)
-```
-
-**Parameters:**
-
-| Parameter   | Description                                                            |
-|-------------|------------------------------------------------------------------------|
-| `ansiColor` | Optional ANSI color code (e.g. for bold bright green would be `92;1`). |
-| `msg`       | Message to be printed to stdout.                                       |
-
-**Return value:**
-
-The echo command string for a log message.
-
---------------------------------------------------------------------------------
-
-#### fn_log_info
-
-Generates an echo command for INFO log message.
-
-!!! Notes
-    * Real color support relies on terminal support. If there is no support colors are ignored.
-    * This function returns the command string to be used by recipees. It does not execute any actual printing command.
-
- **Syntax:**
-
-```Makefile
-$(call fn_log_info,[useColor],msg)
-```
-
-**Parameters:**
-
-| Parameter  | Description                                                                                                                                                |
-|------------|------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `useColor` | Defines if generated command should use colored text. Defaults to `0` (no color output).<br/>Any other non-empty value will cause the use of colored text. |
-| `msg`      | Message to be printed to stdout.                                                                                                                           |
-
-
-**Return value:**
-
-The echo command string for a INFO log message.

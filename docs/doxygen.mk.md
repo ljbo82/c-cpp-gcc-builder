@@ -1,5 +1,3 @@
-!!! hint "Review status: OK"
-
 # doxygen.mk
 
 This makefile provides a target to generate source documentation using [doxygen](https://www.doxygen.nl/index.html).
@@ -8,7 +6,7 @@ This makefile provides a target to generate source documentation using [doxygen]
 
 ## Basic usage
 
-If your project contains a `Doxyfile`, include this makefile:
+If your project contains a `Doxyfile`, and you want to automate the invocation of `doxygen`, include this makefile:
 
 ```Makefile
 include $(CPB_DIR)/doxygen.mk
@@ -79,13 +77,13 @@ The following variables controls how documentation should be generated:
 
 --------------------------------------------------------------------------------
 
-#### DOXYARGS
+#### DOXYVARS
 
-* **Description:** Extra arguments to be passed to doxygen.
+* **Description:** List of variables definitions overriding the contents of [DOXYFILE](#doxyfile).
 * **Required:** No.
-* **Default value:** Undefined.
+* **Default value:** The value `\nOUTPUT_DIRECTORY = \"$(DOC_DIR)\"\n` will always be appended to the variable.
 * **Origins:** Makefile.
-* **Restrictions:** Value shall not contain whitespaces nor can be an empty string.
+* **Restrictions:** Since the contents of this variable will be printed using shell's `printf` command, be sure to escape new lines and quotes correctly.
 
 --------------------------------------------------------------------------------
 
@@ -96,6 +94,9 @@ The following variables controls how documentation should be generated:
 * **Default value:** `Doxyfile`.
 * **Origins:** Makefile.
 * **Restrictions:** Value shall not contain whitespaces nor can be an empty string.
+
+!!! Note
+    The doxygen variable `OUTPUT_DIRECTORY` will always be overriden when calling the [doc target](#doc) (see [DOXYVARS](#doxyvars)).
 
 --------------------------------------------------------------------------------
 

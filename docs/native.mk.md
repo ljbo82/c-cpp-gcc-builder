@@ -1,5 +1,3 @@
-!!! hint "Review status: OK"
-
 # native.mk
 
 This makefile tries to detect native host and exposes information through output variables.

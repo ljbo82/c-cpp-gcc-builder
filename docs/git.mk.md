@@ -1,5 +1,3 @@
-!!! hint "Review status: OK"
-
 # git.mk
 
 This file inspects `<PROJ_ROOT>` directory and exposes git repository information (current commit, tag, status, etc) through certain variables.

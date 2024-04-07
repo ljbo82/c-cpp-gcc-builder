@@ -1,12 +1,6 @@
-!!! hint "Review status: OK"
-
 # cpp-project-builder
 
-cpp-project-builder provides a build system based on makefiles containing standard recipes to build C/C++/Assembly multiplatform projects using a GCC-based compiler.
-
-!!! warning
-    This documentation is under heavily development!
-
+cpp-project-builder provides a makefile-based build system containing standard recipes to build C/C++/Assembly multiplatform projects using a GCC-based compiler.
 
 ## License
 
@@ -15,14 +9,14 @@ cpp-project-builder is distributed under MIT License. Please see the  [LICENSE](
 
 ## Basic usage
 
-cpp-project-builder provides a build system intended to be used by C/C++/Assembly projects in order to build source files using a GCC-based compiler.
+cpp-project-builder provides a makefile-based build system intended to be used by C/C++/Assembly projects in order to build source files using a GCC-based compiler.
 
 !!! note  "Assumptions"
     * Although the build system simplifies a makefile writing process, the developer must have a basic knowledge about how [GNU Make](https://www.gnu.org/software/make/) works, and how to write makefiles. For details, check [GNU Make official documentation](https://www.gnu.org/software/make/manual/make.html).
-    * Although complex arrangements can be made using the build system, in order make easier the explanation of the concepts, it will be assumed a project containing a single makefile responsible by the compilation/distribution process.
+    * Although your project's build logic could be splitted into multiple makefiles, in order make easier the explanation of the concepts, it will be assumed a project containing a single makefile responsible by the compilation/distribution process.
     * From this point onwards, the project root directory will be referred to as `<PROJ_ROOT>` and it is the directory where project's `Makefile` is located.
 
-The build system can be either shared by multiple projects or emebedded directly into your project.
+The build system can be either shared by multiple projects (i.e. multiple projects unsing a single copy of the build system), or it can be emebedded directly into your project.
 
 The basic usage is comprised by the following steps:
 
@@ -39,15 +33,14 @@ The basic usage is comprised by the following steps:
 
             [https://github.com/ljbo82/cpp-project-builder](https://github.com/ljbo82/cpp-project-builder)
 
-            The aggregator repository contains the build system (as a git submodule located into its `core` subdirectory) along with documentation sources, testing application, etc.
+            The aggregator repository contains the actual build system (as a git submodule located in `core` subdirectory) along with documentation sources, testing application, etc.
 
             Be aware that if you get the aggregator repository, `<CPB_DIR>` should point to its `core` subdirectory.
 
     !!! note "Recommended way to share the build system with multiple projects"
-        It is recommended to declare an environment variable named `CPB_DIR` with value pointing to the directory where the shared build system is located.
+        It is recommended to declare an environment variable named `CPB_DIR` with value pointing to the directory where the shared build system is located. This environment variable can have any valid name, but be sure to refer to it by using the same name in your project's `Makefile`.
 
-
-        The variable name can be any valid name, but be sure to refer to the same name in your project's `Makefile`.
+        Both the build system repo, as well the aggregator one provide a convenience script named `init-env`, which expose the variable `CPB_DIR` correctly when sourced.
 
 2. Place project's C/C++/Assembly source and header files into specific directories:
 
@@ -76,15 +69,20 @@ Now your project is ready to be built.
 
 Just call `make` (from `<PROJ_ROOT>` directory, or use `make -C <PROJ_ROOT>` from any other directory) in order to build your project.
 
-For further details about the build system (e.g. how to customize build process, supporting multiple platforms, variable reference, etc.), check the [user guide](user-guide).
+For further details about the build system (e.g. how to customize build process, use custom source directories, support multiple platforms, etc.), check the [user guide](user-guide).
 
 For more examples, check the [demos](https://github.com/ljbo82/cpp-project-builder/tree/dev/demos).
 
 ## Makefiles
 
-The build system is composed by multiple makefiles that can be included by your project, depending on its requirements.
+The build system is composed by multiple makefiles which, when included by your project's `Makefile`, they could:
 
-Here is a summary of the makefiles provided by the build system:
+* Expect certain [variables](#../variables) to be defined in order to customize its actions.
+* Expose some useful information that can be used during build through [variables](#../variables).
+* Provide make targets for certain actions.
+* Provide utility functions.
+
+Here is a summary of the makefiles provided by the build system which can be included by your project (note that some of them are included manually uppon including others):
 
 ### builder.mk
 
@@ -103,7 +101,9 @@ See makefile [documentation](doxygen.mk.md) for details.
 This makefile exposes utility makefile functions used by the build system, which can also be used by your project.
 
 !!! note
-    This makefile is automatically included by `builder.mk`
+    This makefile is automatically included by [builder.mk](#buildermk), [git.mk](#gitmk), and [doxygen.mk](#doxygenmk).
+
+    If you want to use its functions before the inclusion of `builder.mk`, include it manually.
 
 See makefile [documentation](functions.mk.md) for details.
 
@@ -119,5 +119,7 @@ This makefile tries to detect native host and exposes information through output
 
 !!! note
     This makefile is automatically included by `builder.mk`.
+
+    If you want to use its exposed variables before the inclusion of `builder.mk`, include it manually.
 
 See makefile [documentation](native.mk.md) for details.
