@@ -2,6 +2,11 @@
 
 This makefile exposes utility makefile functions used by the build system, which can also be used by your project.
 
+!!! Warning
+    The build system declare internal private variables and functions that are not intended to be used by projects. All of those private variables and functions, have their names prefixed with `cpb_` prefix. Please avoid using/defining variables or functions with names beginning with such prefix.
+
+    The build system checks for attempts to define variables and functions with the same name of reserved ones. Any attempt to define such items will result in errors being raised by the build system.
+
 --------------------------------------------------------------------------------
 
 ## Basic usage

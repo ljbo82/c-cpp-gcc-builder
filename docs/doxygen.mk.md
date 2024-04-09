@@ -63,6 +63,11 @@ Following are described all variables used/exported by this makefile:
 
     * **Restrictions:** Contains information about restrictions on which kind of values that can be stored in the variable.
 
+!!! Warning
+    The build system declare internal private variables and functions that are not intended to be used by projects. All of those private variables and functions, have their names prefixed with `cpb_` prefix. Please avoid using/defining variables or functions with names beginning with such prefix.
+
+    The build system checks for attempts to define variables and functions with the same name of reserved ones. Any attempt to define such items will result in errors being raised by the build system.
+
 ### Input variables
 
 The following variables controls how documentation should be generated:
@@ -77,16 +82,6 @@ The following variables controls how documentation should be generated:
 
 --------------------------------------------------------------------------------
 
-#### DOXYVARS
-
-* **Description:** List of variables definitions overriding the contents of [DOXYFILE](#doxyfile).
-* **Required:** No.
-* **Default value:** The value `\nOUTPUT_DIRECTORY = \"$(DOC_DIR)\"\n` will always be appended to the variable.
-* **Origins:** Makefile.
-* **Restrictions:** Since the contents of this variable will be printed using shell's `printf` command, be sure to escape new lines and quotes correctly.
-
---------------------------------------------------------------------------------
-
 #### DOXYFILE
 
 * **Description:** Defines the path of the `Doxyfile` which will be parsed by doxygen.
@@ -97,6 +92,16 @@ The following variables controls how documentation should be generated:
 
 !!! Note
     The doxygen variable `OUTPUT_DIRECTORY` will always be overriden when calling the [doc target](#doc) (see [DOXYVARS](#doxyvars)).
+
+--------------------------------------------------------------------------------
+
+#### DOXYVARS
+
+* **Description:** List of variables definitions overriding the contents of [DOXYFILE](#doxyfile).
+* **Required:** No.
+* **Default value:** The value `\nOUTPUT_DIRECTORY = \"$(DOC_DIR)\"\n` will always be appended to the variable.
+* **Origins:** Makefile.
+* **Restrictions:** Since the contents of this variable will be printed using shell's `printf` command, be sure to escape new lines and quotes correctly.
 
 --------------------------------------------------------------------------------
 
@@ -122,7 +127,7 @@ The following variables controls how documentation should be generated:
 
 ### Output variables
 
-_This makefile does not expose any output variable._
+_This makefile does not expose any variable._
 
 --------------------------------------------------------------------------------
 

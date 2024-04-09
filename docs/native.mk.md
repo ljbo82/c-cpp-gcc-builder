@@ -42,25 +42,20 @@ Following are described all variables used/exported by this makefile:
 
     * **Restrictions:** Contains information about restrictions on which kind of values that can be stored in the variable.
 
+!!! Warning
+    The build system declare internal private variables and functions that are not intended to be used by projects. All of those private variables and functions, have their names prefixed with `cpb_` prefix. Please avoid using/defining variables or functions with names beginning with such prefix.
+
+    The build system checks for attempts to define variables and functions with the same name of reserved ones. Any attempt to define such items will result in errors being raised by the build system.
+
 ### Input variables
 
-_This makefile does not expect any input variables._
+_This makefile does not expect any variables._
 
 --------------------------------------------------------------------------------
 
 ### Output variables
 
 The following variables are generated automatically by this makefile in order to expose native host:
-
-#### NATIVE_OS
-
-* **Description:** Contains detected native operting system.
-* **Required:**  Not applicable (variable is set by the build system).
-* **Default value:** Detected native operting system. If it would not be possible to detect it, variable will be empty/undefined.
-* **Origins:**  Not applicable (variable is set by the build system).
-* **Restrictions:** This is a read-only reserved variable.
-
---------------------------------------------------------------------------------
 
 #### NATIVE_ARCH
 
@@ -78,6 +73,16 @@ The following variables are generated automatically by this makefile in order to
 * **Required:** Not applicable (variable is set by the build system).
 * **Default value:** Detected native HOST (a combination of [`NATIVE_OS`](#native_os) and [`NATIVE_ARCH`](#native_arch)). If it would not be possible to detect it, variable will be empty/undefined.
 * **Origins:** Not applicable (variable is set by the build system).
+* **Restrictions:** This is a read-only reserved variable.
+
+--------------------------------------------------------------------------------
+
+#### NATIVE_OS
+
+* **Description:** Contains detected native operting system.
+* **Required:**  Not applicable (variable is set by the build system).
+* **Default value:** Detected native operting system. If it would not be possible to detect it, variable will be empty/undefined.
+* **Origins:**  Not applicable (variable is set by the build system).
 * **Restrictions:** This is a read-only reserved variable.
 
 --------------------------------------------------------------------------------
