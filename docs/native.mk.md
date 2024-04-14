@@ -8,7 +8,7 @@ Currently supported hosts are `linux-x86`, `linux-x64`, `linux-arm`, `linux-arm6
 
 ## Basic usage
 
-When this makefile is included, it tries to detect native host and expose information through output variables.
+When this makefile is included, it tries to detect native host and expose information through output variables (in the following example is assumed the existence of the variable `CPB_DIR` pointing the directory where the build system is located):
 
 ```Makefile
 include $(CPB_DIR)/native.mk
@@ -89,4 +89,4 @@ The following variables are generated automatically by this makefile in order to
 
 ## Functions
 
-_This makefile does not expose any function._
+_This makefile does not expose any function explicitly._

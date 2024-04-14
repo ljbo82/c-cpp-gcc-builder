@@ -6,7 +6,7 @@ This makefile provides a target to generate source documentation using [doxygen]
 
 ## Basic usage
 
-If your project contains a `Doxyfile`, and you want to automate the invocation of `doxygen`, include this makefile:
+If your project contains a `Doxyfile`, and you want to automate the invocation of `doxygen`, include this makefile (in the following example is assumed the existence of the variable `CPB_DIR` pointing the directory where the build system is located):
 
 ```Makefile
 include $(CPB_DIR)/doxygen.mk
@@ -127,10 +127,10 @@ The following variables controls how documentation should be generated:
 
 ### Output variables
 
-_This makefile does not expose any variable._
+_This makefile does not expose any variable explicitly._
 
 --------------------------------------------------------------------------------
 
 ## Functions
 
-_This makefile does not expose any function._
+_This makefile does not expose any function explicitly._

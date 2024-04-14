@@ -90,6 +90,8 @@ This is the main makefile provided by the build system. It contains standard rec
 
 Include this file at the end of your `<PROJ_ROOT>/Makefile`.
 
+See [user guide](user-guide) for details.
+
 ### doxygen.mk
 
 This makefile provides a target to generate source documentation using [doxygen](https://www.doxygen.nl/index.html).

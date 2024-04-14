@@ -6,7 +6,7 @@ This file inspects `<PROJ_ROOT>` directory and exposes git repository informatio
 
 ## Basic usage
 
-When this makefile is included, it will expose git repository (if applicable) information through output variables.
+When this makefile is included, it will expose git repository (if applicable) information through output variables (in the following example is assumed the existence of the variable `CPB_DIR` pointing the directory where the build system is located):
 
 ```Makefile
 include $(CPB_DIR)/git.mk
@@ -117,4 +117,4 @@ The following variables are generated automatically by this makefile in order to
 
 ## Functions
 
-_This makefile does not expose any function._
+_This makefile does not expose any function explicitly._

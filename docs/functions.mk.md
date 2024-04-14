@@ -2,16 +2,11 @@
 
 This makefile exposes utility makefile functions used by the build system, which can also be used by your project.
 
-!!! Warning
-    The build system declare internal private variables and functions that are not intended to be used by projects. All of those private variables and functions, have their names prefixed with `cpb_` prefix. Please avoid using/defining variables or functions with names beginning with such prefix.
-
-    The build system checks for attempts to define variables and functions with the same name of reserved ones. Any attempt to define such items will result in errors being raised by the build system.
-
 --------------------------------------------------------------------------------
 
 ## Basic usage
 
-By including this makefile it will expose several utility functions which can be invoked via GNU Make [`$(call)`](https://www.gnu.org/software/make/manual/html_node/Call-Function.html) function.
+By including this makefile it will expose several utility functions which can be invoked via GNU Make [`$(call)`](https://www.gnu.org/software/make/manual/html_node/Call-Function.html) function (in the following example is assumed the existence of the variable `CPB_DIR` pointing the directory where the build system is located):
 
 ```Makefile
 include $(CPB_DIR)/functions.mk
@@ -30,7 +25,12 @@ _This makefile does not expose any target._
 
 ## Variables
 
-_This makefile does not expect nor expose any variables (except [functions](#functions))._
+_This makefile does not expect nor expose any variables (except the [functions](#functions) themselves)._
+
+!!! Warning
+    The build system declare internal private variables and functions that are not intended to be used by projects. All of those private variables and functions, have their names prefixed with `cpb_` prefix. Please avoid using/defining variables or functions with names beginning with such prefix.
+
+    The build system checks for attempts to define variables and functions with the same name of reserved ones. Any attempt to define such items will result in errors being raised by the build system.
 
 --------------------------------------------------------------------------------
 

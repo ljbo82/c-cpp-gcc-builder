@@ -1,4 +1,5 @@
 !!! danger "Review status: IN PROGRESS"
+    Last reviewd: [`LIB_TYPE`](#lib_type).
 
 # Variable Reference
 
@@ -28,9 +29,9 @@ This document contain details about all variables known by the build system.
 
 
 !!! Warning
-    The build system declare internal private variables that are not intended to be used by projects. All of those private variables, have their names prefixed with `cpb_` prefix. Please avoid using/defining variables with names beginning with such prefix.
+    The build system declare internal private variables and functions that are not intended to be used by projects. All of those private variables and functions, have their names prefixed with `cpb_` prefix. Please avoid using/defining variables or functions with names beginning with such prefix.
 
-    The build system checks for usage of critical known private variables and, most of the time, any attempt to define such variables will result in an error raised by the build system.
+    The build system checks for attempts to define variables and functions with the same name of reserved ones. Any attempt to define such items will result in errors being raised by the build system.
 
 --------------------------------------------------------------------------------
 
@@ -43,7 +44,7 @@ The following variables defines the project.
 * **Description:** Defines project name.
 * **Required:** Yes.
 * **Default value:** Undefined.
-* **Origins:** Makefile
+* **Origins:** Makefile.
 * **Restrictions:** Value shall not contain whitespaces nor can be an empty string.
 
 --------------------------------------------------------------------------------
@@ -76,14 +77,13 @@ The following variables provide a way to inform the build system about source fi
 
 ### DIST_DIRS
 
-* **Description:** Contains a list of entries defining extra directories, whose files will copied into [`$(O_DIST_DIR)`](#o_dist_dir):
+* **Description:** Contains a list of entries defining extra directories, whose files will be copied into [`$(O_DIST_DIR)`](#o_dist_dir):
     * Each entry in this variable has the syntax `ORIGIN_DIR[:DEST_DIR]` (all files recursively contained in `ORIGIN_DIR` will be copied into <tt style="color:#E74C3C">$([O_DIST_DIR](#o_dist_dir))/DEST_DIR</tt>. Note that `DEST_DIR` component is optional for entries. Its default value is the same as `ORIGIN_DIR`).
+    * The build system may append values to this variable.
 * **Required:** No.
 * **Default value:** If [`INCLUDE_DIRS`](#include_dirs) variable is not defined, `<PROJ_ROOT>/include` directory exists, and [`PROJ_TYPE`](#proj_type) equals to `lib`, then the default value will be `include:include`. Otherwise, the variable is left undefined.
 * **Origins:** Makefile.
-* **Restrictions:**
-    * A list is composed by values delimited by whitespaces (this is a GNU make restriction). Due to this reason, paths containing spaces are not supported.
-    * The build system may append add values to this variable.
+* **Restrictions:** A list is composed by values delimited by whitespaces (this is a GNU make restriction). Due to this reason, paths containing spaces are not supported.
 
 --------------------------------------------------------------------------------
 
@@ -91,82 +91,85 @@ The following variables provide a way to inform the build system about source fi
 
 * **Description:** Contains a list of extra files which shall be individually copied into [`$(O_DIST_DIR)`](#o_dist_dir):
     * Each entry in this variable has the syntax `ORIGIN_FILE[:DEST_FILE]` (an `ORIGIN_FILE` will be copied into <tt style="color:#E74C3C">$([O_DIST_DIR](#o_dist_dir))/DEST_FILE</tt>. Note that `DEST_FILE` component is optional for entries. Its default value is <tt style="color:#E74C3C">$([notdir](https://www.gnu.org/software/make/manual/make.html#index-notdir) ORIGIN_FILE)</tt>).
-* **Required:** No
-* **Default value:** Varies according to [`HOST`](#host), [`PROJ_TYPE`](#proj_type), and [`DIST_DIRS`](#dist_dirs):
-    * Generated artifacts (executables and libraries) are added to the default value. The filename of such artifact varies according to [`HOST`](#host) and [`PROJ_TYPE`](#proj_type) (for example, executables in windows platforms have the `.exe` suffix; shared libraries in linux have the `.so` suffix, while in windows it is `.dll`).
     * If [`DIST_DIRS`](#dist_dirs) is set, then for all files contained in these directories, there will be an corresponding entry in `DIST_FILES` default value.
+    * The build system may append values to this variable.
+* **Required:** No.
+* **Default value:** Varies according to [`HOST`](#host), [`PROJ_TYPE`](#proj_type), and [`DIST_DIRS`](#dist_dirs):
+    * Generated artifacts (executables or libraries) are added to the default value. The filename of such artifact varies according to [`HOST`](#host) and [`PROJ_TYPE`](#proj_type) (see [`ARTIFACT`](#artifact). For example, executables in windows platforms have the `.exe` suffix; shared libraries in linux have the `.so` suffix, while in windows it is `.dll`).
 * **Origins:** Makefile.
-* **Restrictions:**
-    * A list is composed by values delimited by whitespaces (this is a GNU make restriction). For this reason, paths containing spaces are not supported.
-    * The build system may append add values to this variable.
+* **Restrictions:** A list is composed by values delimited by whitespaces (this is a GNU make restriction). For this reason, paths containing spaces are not supported.
 
 --------------------------------------------------------------------------------
 
 ### INCLUDE_DIRS
 
-* **Description:** Contains list of directories to be added to compiler's include search path.
+* **Description:** Contains list of directories to be added to compiler's include search path:
+    * All directories entries defined in [`SRC_DIRS`](#src_dirs) are automatically added to this variable.
 * **Required:** No.
 * **Default value:** If [`PROJ_TYPE`](#proj_type) is `lib` and `<PROJ_ROOT>/include` directory exists, the default value is `include`. Otherwise, the variable is left undefined.
 * **Origins:** Makefile.
-* **Restrictions:**
-    * A list is composed by values delimited by whitespaces (this is a GNU make restriction). For this reason, paths containing spaces are not supported.
-    * The build system may append add values to this variable.
+* **Restrictions:** A list is composed by values delimited by whitespaces (this is a GNU make restriction). For this reason, paths containing spaces are not supported.
 
 --------------------------------------------------------------------------------
 
 ### SKIPPED_SRC_DIRS
 
-* **Description:** This variable constains a list of directories that shall be skipped while looking for source files.
-* **Required:** No
-* **Default value:** Undefined
-* **Origins:** makefile
+* **Description:** This variable constains a list of directories that shall be skipped while looking for source files (see [SRC_DIRS](#src_dirs)).
+* **Required:** No.
+* **Default value:** Undefined.
+* **Origins:** Makefile.
 * **Restrictions:** A list is composed by values delimited by whitespaces (this is a GNU make restriction). For this reason, paths containing spaces are not supported.
 
 --------------------------------------------------------------------------------
 
 ### SKIPPED_SRC_FILES
 
-* **Description:** This variable constains a list of source files that shall be skipped during build.
-* **Required:** No
-* **Default value:** Undefined
-* **Origins:** makefile
+* **Description:** This variable constains a list of source files that shall be skipped while looking for source files (see [SRC_DIRS](#src_dirs)).
+* **Required:** No.
+* **Default value:** Undefined.
+* **Origins:** Makefile.
 * **Restrictions:** A list is composed by values delimited by whitespaces (this is a GNU make restriction). For this reason, paths containing spaces are not supported.
 
 --------------------------------------------------------------------------------
 
 ### SRC_DIRS
 
-* **Description:** Contains whitespace-separated list of directories containing source files to be compiled. If you want to specify individual files, use [`SRC_FILES`](#src_files) instead.
+* **Description:** Contains list of directories containing source files to be compiled. If you want to specify individual files, use [`SRC_FILES`](#src_files) instead:
+    * Source files inside any specified directory are searched recursively. If you want to skip certain directories and/or files, add entries to [SKIPPED_SRC_DIRS](#skipped_src_dirs) and/or [SKIPPED_SRC_FILES](#skipped_src_files).
+    * If your project defines an entry in both `SRC_DIRS` and in [`SKIPPED_SRC_DIRS`](#skipped_src_dirs), an error will be raised.
+    * The build system may append values to this variable if there are [platform layers](../user-guide/#multiplatform-projects) being used during build.
 * **Required:** No.
 * **Default value:** If `<PROJ_ROOT>/src` directory exists, the default value is `src`. Otherwise, the variable is left undefined.
 * **Origins:** Makefile.
 * **Restrictions:**
     * A list is composed by values delimited by whitespaces (this is a GNU make restriction). For this reason, paths containing spaces are not supported.
-    * The build system may append add values to this variable.
     * Directories must be located inside [`$(CURDIR)`](https://www.gnu.org/software/make/manual/make.html#index-CURDIR). If this condition is not met, an error will be raised by the build system.
 
 --------------------------------------------------------------------------------
 
 ### SRC_FILES
 
-* **Description:** Contains whitespace-separated list of files to be compiled.
-* **Required:** No
-* **Default value:** _Depends on selected [target host](#HOST), the presence of [default source directory](#default-directories) and [layer-specific source directories](#layer-directories-and-files)._
-* **Origins:** makefile
+* **Description:** Contains list of files to be compiled:
+    * If your project defines an entry in both `SRC_FILES` and in [`SKIPPED_SRC_FILES`](#skipped_src_files), an error will be raised.
+    * The build system may append values to this variable if:
+        * There are source files in [platform layers](../user-guide/#multiplatform-projects) being used during build.
+        * There are source files in any directory defined in [`SRC_DIRS`](#src_dirs).
+* **Required:** No.
+* **Default value:** If `<PROJ_ROOT>/src` directory exists, for every [source file](../user-guide/#proj_rootsrc) contained (recursively) in this directory, there will be an entry in this variable. If either `<PROJ_ROOT>/src` does not exists, or there are no source files found, the variable is left undefined.
+* **Origins:** Makefile.
 * **Restrictions:**
-    * This variable will be modified by build system in order to include detected source files.
-    * In order to achive flexibility on multiplatform projects, it is strongly recommeded to append values to this variable (using `+=` makefile operator) instead of setting a value directly.
     * A list is composed by values delimited by whitespaces (this is a GNU make restriction). For this reason, paths containing spaces are not supported.
+    * Files must be located inside [`$(CURDIR)`](https://www.gnu.org/software/make/manual/make.html#index-CURDIR). If this condition is not met, an error will be raised by the build system.
 
 --------------------------------------------------------------------------------
 
 ## Build configuration
 
-The following variables configures the build process.
+The following variables configures how the build system should behave.
 
 ### ARTIFACT
 
-* **Description:** Defines the actual filename for target artifact. Set this variable to override auto-generated value.
+* **Description:** Defines the actual filename for target artifact.
 * **Required:** No.
 * **Default value:** Varies according to [`HOST`](#host), [`PROJ_NAME`](#proj_name), [`PROJ_TYPE`](#proj_type), [`LIB_TYPE`](#lib_type) (for libraries):
     * If there is no default support for [`HOST`](#host), the default artifact name is `a.out`.
@@ -176,45 +179,82 @@ The following variables configures the build process.
     * Shared libraries files in Linux are named <tt style="color:#E74C3C">lib$([LIB_NAME](#lib_name)).so</tt>
 	* Shared libraries files in mac OS are named <tt style="color:#E74C3C">lib$([LIB_NAME](#lib_name)).dylib</tt>
 	* Shared libraries files in Windows are named <tt style="color:#E74C3C">$([LIB_NAME](#lib_name)).dll</tt>
-* **Origins:** Makefile
-* **Restrictions:** Value shall not contain whitespaces nor can be an empty string.
+* **Origins:** Makefile.
+* **Restrictions:**
+    * Value shall not contain whitespaces nor can be an empty string.
+    * Value must contain a only filename. It cannot have any path components.
 
 --------------------------------------------------------------------------------
 
 ### BUILD_DEPS
 
+* **Description:** Defines build targets on which the build process depends upon.
+* **Required:** No.
+* **Default value:** <tt style="color:#E74C3C">$([O_BUILD_DIR](#o_build_dir))/$([ARTIFACT](#artifact))</tt>.
+* **Origins:** Makefile.
+* **Restrictions:** None.
+
 --------------------------------------------------------------------------------
 
 ### BUILD_SUBDIR
 
-* **Description:** Sets the path of a subdirectory inside [build directory](#output-directories) (`$(O)/build`).
-  * Changing this value is useful to isolate object files when building dependencies (e.g. libraries) prior to project build.
-* **Required:** No
-* **Default value:**  Undefined
-* **Origins:** _Any, although it is strongly recommended to define this variable through command-line parameters._
+* **Description:** Sets the path of a subdirectory inside <tt style="color:#E74C3C">$([O](#o))/build</tt> used to hold built artifacts:
+    * Changing this value is useful to isolate build directories when building dependencies (e.g. libraries) using the same output directory of the project:
+        * This variable is used when dependencies declared in [`LIBS`](#libs) are built.
+* **Required:** No.
+* **Default value:** Undefined.
+* **Origins:** Any.
 * **Restrictions:**
-    * Value shall not contain whitespaces
-    * Since this directory will be created inside [`$(O)`/build](#output-directories) directory, passing relative paths resulting in a directory other than [`$(O)`/build](#output-directories) is not allowed (an error will be raised by the build system)
+    * When defined, value shall not contain whitespaces.
+    * Since this directory will be created inside <tt style="color:#E74C3C">$([O](#o))/build</tt> directory, passing relative paths resulting in a directory outside `$(O)/build` is not allowed (an error will be raised by the build system).
+
+--------------------------------------------------------------------------------
+
+### CPB_DIR
+
+* **Description:** This variable holds the absolute path of the directory where the build system is located.
+* **Required:** No.
+* **Default value:** This value will never be left empty and it will hold the absolute path of the directory where the build system is located.
+* **Origins:** Any.
+* **Restrictions:** There are no restrictions for this variable..
 
 --------------------------------------------------------------------------------
 
 ### CPB_MIN_VERSION
 
+* **Description:** Ensures the the build system used is compatible with project expected one:
+    * This is useful when sharing the same build system with multiple projects.
+    * If build system version used in the project is NOT compatible (using semantic version) with the minimum required one, an error will be raised.
+* **Required:** No.
+* **Default value:** Undefined.
+* **Origins:** Makefile.
+* **Restrictions:**
+    * When defined, the value shall not be empty nor contain whitespaces.
+    * When defined, this variable must hold a valid semantic version (see [fn_semver](../functions.mk/#fn_semver)).
+
 --------------------------------------------------------------------------------
 
 ### CPB_VERSION
+
+* **Description:** This read-only variable holds the version of the build system.
+* **Required:** No.
+* **Default value:** The version of the build system.
+* **Origins:** Not applicable (variable is set by the build system).
+* **Restrictions:** This is a read-only reserved variable.
 
 --------------------------------------------------------------------------------
 
 ### DEBUG
 
-* **Description:** Enables/Disables the debug mode for the build. By default:
-    * While bulding in debug mode (i.e. when `DEBUG = 1`), debug symbols will be added to generated binary artifact.
-    * In release mode (i.e. when `DEBUG = 0`), debugging symbols are not included in generated binary, and artifact is [stripped](#strip_release).
+* **Description:** Enables/Disables the debug mode for the build. By default (this behavior can be customized):
+    * While bulding in debug mode, debug symbols will be added to generated binary artifact.
+    * In release mode (i.e. debug mode is disabled), debugging symbols are not included in generated binary, and artifact is [stripped](#strip_release).
 * **Required:** No.
 * **Default value:** `0` (i.e. release mode).
 * **Origins:** The variable can be declared through any origin, although it is strongly recommended to define this variable through command-line parameters.
-* **Restrictions:** Accepted values are `1` (enable debug mode) or `0` (disables debug mode / enables release mode).
+* **Restrictions:** Accepted values are:
+    * `1` (enable debug mode);
+    * `0` (disables debug mode / enables release mode).
 
 --------------------------------------------------------------------------------
 
@@ -232,13 +272,13 @@ The following variables configures the build process.
 
 ### DIST_SUBDIR
 
-* **Description:** Sets the path of a subdirectory inside [distribution directory](#output-directories) (`$(O)/dist`).
-* **Required:** No
-* **Default value:**  Undefined
-* **Origins:** _Any, although it is strongly recommended to define this variable through command-line parameters._
+* **Description:** Sets the path of a subdirectory inside  <tt style="color:#E74C3C">$([O](#o))/dist</tt> used to hold distribution artifacts.
+* **Required:** No.
+* **Default value:**  Undefined.
+* **Origins:** Any.
 * **Restrictions:**
-    * Value shall not contain whitespaces
-    * Since this directory will be created inside [`$(O)`/build](#output-directories) directory, passing relative paths resulting in a directory other than [`$(O)`/build](#output-directories) is not allowed (an error will be raised by the build system)
+    * Value shall not contain whitespaces.
+    * Since this directory will be created inside <tt style="color:#E74C3C">$([O](#o))/dist</tt> directory, passing relative paths resulting in a directory outside `$(O)/dist` is not allowed (an error will be raised by the build system).
 
 --------------------------------------------------------------------------------
 
@@ -246,33 +286,36 @@ The following variables configures the build process.
 
 * **Description:** Sets the target host for compilation (see [multiplatform projects](../user-guide/#multiplatform-projects)).
 * **Required:** No.
-* **Default value:** Native host identified by [native-host.mk](../native.mk) or value is left undefined if native host was not detected.
+* **Default value:** <tt style="color:#E74C3C">$([NATIVE_HOST](../native.mk/#native_host))</tt> or value is left undefined if native host was not detected.
 * **Origins:** Any, although it is strongly recommended to define this variable through command-line parameters.
 * **Restrictions:**
-    * The value should hold a single word (NOTE: dashes are used to factorize host and identify compatible [platform layers](../user-guide/#multiplatform-projects)).
-    * When defined, value cannot be empty.
+    * The value should hold a single word.
+    * Dashes are used to factorize host and identify compatible [platform layers](../user-guide/#multiplatform-projects).
+    * Value cannot be empty.
 
 --------------------------------------------------------------------------------
 
 ### HOSTS_DIRS
 
-* **Description:** Defines a list of [base directories for layers](#layer-directories-and-files).
-* **Required:** No
-* **Default value:** _(Depends on selected HOST)_
-* **Origins:** makefile
+* **Description:** Defines a list of directories where [platform layers](../user-guide/#layer-directories-and-files) are searched while building [multiplatorm projects](../user-guide/#multiplatform-projects):
+* **Required:** No.
+* **Default value:**
+    * If the directory `<PROJ_ROOT>/hosts` is present, it will be automatically added to this variable.
+    * The directory  <tt style="color:#E74C3C">$([CPB_DIR](#cpb_dir))/hosts</tt> will be automatically added to this variable.
+* **Origins:** Makefile.
 * **Restrictions:** Since value is a list of paths, paths shall not contain whitespaces.
 
 --------------------------------------------------------------------------------
 
 ### LIB_NAME
 
-* **Description:** Sets the base name for libraries..
-* **Required:** Yes (only if [`PROJ_TYPE`](#proj_type) equals to `lib`. Otherwise, variable is not required).
+* **Description:** Sets the base name for libraries.
+* **Required:** No.
 * **Default value:** If [`PROJ_TYPE`](#proj_type) does NOT equal to `lib`, the default value will be undefined. Otherwise:
     * If [PROJ_VERSION](#proj_version) is defined, the default value is <tt style="color:#E74C3C">$([PROJ_NAME](#proj_name))$(call [fn_semver_major](../functions.mk/#fn_semver_major),[PROJ_VERSION](#proj_version))</tt>.
     * If [PROJ_VERSION](#proj_version) is not defined, the default value is  <tt style="color:#E74C3C">$([PROJ_NAME](#proj_name))</tt>.
 * **Origins:** Makefile.
-* **Restrictions:** Whitespaces are not allowed.
+* **Restrictions:** When defined, value cannot be empty nor contains whitespaces.
 
 --------------------------------------------------------------------------------
 
@@ -282,7 +325,9 @@ The following variables configures the build process.
 * **Required:** No.
 * **Default value:** Depends on [`HOST`](#host). Usually, on systems supporting shared libraries, the default value will be `shared`.
 * **Origins:** Any, although it is strongly recommended to define this variable through command-line parameters.
-* **Restrictions:** Accepted values are `static` (for a static library) or `shared` (for a shared library).
+* **Restrictions:** Accepted values are:
+    * `static` (for a **static** library);
+    * `shared` (for a **shared** library).
 
 --------------------------------------------------------------------------------
 
@@ -356,9 +401,9 @@ The following variables configures the build process.
 
 * **Description:** Contains a list of targets to be executed AFTER [`dist`](#dist) target.
   * See [make targets](#make-targets)
-* **Required:** No
-* **Default value:**  Undefined
-* **Origins:** makefile
+* **Required:** No.
+* **Default value:**  Undefined.
+* **Origins:** Makefile.
 * **Restrictions:** Since variable is intended to hold a list of values (whitespace-delimited string), it is recommend to use the `+=` operator while adding values to the variable.
 
 --------------------------------------------------------------------------------
@@ -381,9 +426,9 @@ The following variables configures the build process.
 
 * **Description:** Contains a list of targets to be executed BEFORE the internal rules of the [`build`](#build) target. This is usefull to build dependencies before building the target artifact itself.
   * See [make targets](#make-targets)
-* **Required:** No
-* **Default value:**  Undefined
-* **Origins:** makefile
+* **Required:** No.
+* **Default value:**  Undefined.
+* **Origins:** Makefile.
 * **Restrictions:** Since variable is intended to hold a list of values (whitespace-delimited string), it is recommend to use the `+=` operator while adding values to the variable.
 
 --------------------------------------------------------------------------------
@@ -396,9 +441,9 @@ The following variables configures the build process.
 
 * **Description:** Contains a list of targets to be executed BEFORE the internal rules of the [`clean`](#clean) target.
   * See [make targets](#make-targets)
-* **Required:** No
-* **Default value:**  Undefined
-* **Origins:** makefile
+* **Required:** No.
+* **Default value:**  Undefined.
+* **Origins:** Makefile.
 * **Restrictions:** Since variable is intended to hold a list of values (whitespace-delimited string), it is recommend to use the `+=` operator while adding values to the variable.
 
 --------------------------------------------------------------------------------
@@ -407,9 +452,9 @@ The following variables configures the build process.
 
 * **Description:** Contains a list of targets to be called BEFORE the internal rules of [`dist`](#dist) target.
   * See [make targets](#make-targets)
-* **Required:** No
-* **Default value:**  Undefined
-* **Origins:** makefile
+* **Required:** No.
+* **Default value:**  Undefined.
+* **Origins:** Makefile.
 * **Restrictions:** Since variable is intended to hold a list of values (whitespace-delimited string), it is recommend to use the `+=` operator while adding values to the variable.
 
 --------------------------------------------------------------------------------
@@ -492,9 +537,9 @@ These variables are generally used for cross-compilation. For native build, thes
 ### AR
 
 * **Description:** Contains the name of archiver executable.
-* **Required:** No
-* **Default value:** `ar`
-* **Origins:** _Any_
+* **Required:** No.
+* **Default value:** `ar`.
+* **Origins:** _Any_.
 * **Restrictions:**
     * Value cannot be empty.
     * Modifications are rarely needed (when cross compiling, the name of executable is usually customized through [`CROSS_COMPILE`](#CROSS_COMPILE) variable).
@@ -508,9 +553,9 @@ These variables are generally used for cross-compilation. For native build, thes
 ### AS
 
 * **Description:** Contains the name of assembler executable.
-* **Required:** No
-* **Default value:** `as`
-* **Origins:** _Any_
+* **Required:** No.
+* **Default value:** `as`.
+* **Origins:** _Any_.
 * **Restrictions:** Value cannot be empty.
   * Modifications are rarely needed (when cross compiling, the name of executable is usually customized through [`CROSS_COMPILE`](#CROSS_COMPILE) variable).
 
@@ -519,9 +564,9 @@ These variables are generally used for cross-compilation. For native build, thes
 ### ASFLAGS
 
 * **Description:** Flags to be passed to the assembler.
-* **Required:** No
-* **Default value:** _Depends on build configuration and [project type](#PROJ_TYPE)._
-* **Origins:** _enviroment_, _file_
+* **Required:** No.
+* **Default value:** _Depends on build configuration and [project type](#PROJ_TYPE)_.
+* **Origins:** _enviroment_, _file_.
 * **Restrictions:** In order to achive flexibility on multiplatform projects, it is strongly recommeded to append values to this variable instead of setting a value directly.
 
 --------------------------------------------------------------------------------
@@ -529,9 +574,9 @@ These variables are generally used for cross-compilation. For native build, thes
 ### CC
 
 * **Description:** Contains the name of C compiler executable.
-* **Required:** No
-* **Default value:** `gcc`
-* **Origins:** _Any_
+* **Required:** No.
+* **Default value:** `gcc`.
+* **Origins:** _Any_.
 * **Restrictions:** Value cannot be empty.
     * Modifications are rarely needed (when cross compiling, the name of executable is usually customized through [`CROSS_COMPILE`](#CROSS_COMPILE) variable).
 
@@ -540,9 +585,9 @@ These variables are generally used for cross-compilation. For native build, thes
 ### CFLAGS
 
 * **Description:** Flags to be passed to the C compiler.
-* **Required:** No
-* **Default value:** _Depends on build configuration and [project type](#PROJ_TYPE)._
-* **Origins:** _enviroment_, _file_
+* **Required:** No.
+* **Default value:** _Depends on build configuration and [project type](#PROJ_TYPE)_.
+* **Origins:** _enviroment_, _file_.
 * **Restrictions:** In order to achive flexibility on multiplatform projects, it is strongly recommeded to append values to this variable instead of setting a value directly.
 
 --------------------------------------------------------------------------------
@@ -550,9 +595,9 @@ These variables are generally used for cross-compilation. For native build, thes
 ### CROSS_COMPILE
 
 * **Description:** Contains the prefix to be added to toolchain executables.
-* **Required:** No
-* **Default value:** Undefined
-* **Origins:** _Any_
+* **Required:** No.
+* **Default value:** Undefined.
+* **Origins:** _Any_.
 * **Restrictions:** Cannot be left undefined for cross compilation.
 
 --------------------------------------------------------------------------------
@@ -560,9 +605,9 @@ These variables are generally used for cross-compilation. For native build, thes
 ### CXX
 
 * **Description:** Contains the name of C++ compiler executable.
-* **Required:** No
-* **Default value:** `g++`
-* **Origins:** _Any_
+* **Required:** No.
+* **Default value:** `g++`.
+* **Origins:** _Any_.
 * **Restrictions:** Value cannot be empty.
     * Modifications are rarely needed (when cross compiling, the name of executable is usually customized through [`CROSS_COMPILE`](#CROSS_COMPILE) variable).
 
@@ -571,9 +616,9 @@ These variables are generally used for cross-compilation. For native build, thes
 ### CXXFLAGS
 
 * **Description:** Flags to be passed to the C++ compiler.
-* **Required:** No
-* **Default value:** _Depends on build configuration and [project type](#PROJ_TYPE)._
-* **Origins:** _enviroment_, _file_
+* **Required:** No.
+* **Default value:** _Depends on build configuration and [project type](#PROJ_TYPE)_.
+* **Origins:** _enviroment_, _file_.
 * **Restrictions:** In order to achive flexibility on multiplatform projects, it is strongly recommeded to append values to this variable instead of setting a value directly.
 
 --------------------------------------------------------------------------------
@@ -581,9 +626,9 @@ These variables are generally used for cross-compilation. For native build, thes
 ### LD
 
 * **Description:** Contains the name of linker executable.
-* **Required:** No
+* **Required:** No.
 * **Default value:** `gcc` _(for pure C or Assemlby projects)_, `g++` _(for projects containing C++ sources)_.
-* **Origins:** _Any_
+* **Origins:** _Any_.
 * **Restrictions:** Value cannot be empty.
     * Modifications are rarely needed (when cross compiling, the name of executable is usually customized through [`CROSS_COMPILE`](#CROSS_COMPILE) variable).
 
@@ -592,9 +637,9 @@ These variables are generally used for cross-compilation. For native build, thes
 ### LDFLAGS
 
 * **Description:** Flags to be passed to the linker.
-* **Required:** No
-* **Default value:** _Depends on build configuration and [project type](#PROJ_TYPE)._
-* **Origins:** _enviroment_, _file_
+* **Required:** No.
+* **Default value:** _Depends on build configuration and [project type](#PROJ_TYPE)_.
+* **Origins:** _enviroment_, _file_.
 * **Restrictions:** In order to achive flexibility on multiplatform projects, it is strongly recommeded to append values to this variable instead of setting a value directly.
 
 --------------------------------------------------------------------------------
@@ -608,11 +653,11 @@ The build system can automatically build dependencies. Use the following variabl
 * **Description:** List of libraries the project must link agains. Each e  make syntax definitions which will be parsed after [`platform layers`](#multiplatform-projects) were parsed. This is useful to define targets depending on variables which will be fully defined later.
 * **Description:** Contains a whitespace-separated list of libraries the project shall link against.
     * Each entry in this variable has the syntax `LIB_NAME[:LIB_PROJECT_DIR]`:
-        * `LIB_NAME`: defines the library name used by linker
+        * `LIB_NAME`: defines the library name used by linker.
         * `LIB_PROJECT_DIR`: When defined, the library will be compiled along with the project. This component contains the path to the directory where the library project is located (is assumed that library project is using cpp-project-builder to manage its building process).
-* **Required:** No
-* **Default value:** Undefined
-* **Origins:** makefile
+* **Required:** No.
+* **Default value:** Undefined.
+* **Origins:** Makefile.
 * **Restrictions:**
     * In order to achive flexibility on multiplatform projects, it is strongly recommeded to append values to this variable (using `+=` makefile operator) instead of setting a value directly.
 
