@@ -31,25 +31,13 @@ DIR  = "projects"
 class test_proj_version(TestBase):
 	@TestBase.BuildTest
 	def test_reject_from_command_line(self):
-		self.create_file('Makefile', f'''
-PROJ_NAME := hello
-PROJ_TYPE := app
-
-include {TestBase.CPB_DIR}/builder.mk
-'''\
-		)
+		self.create_file('Makefile', TestBase.MIN_VALID_APP_MAKEFILE)
 		result = self.make('PROJ_VERSION=some_val')
 		self.assert_error_unexpected_origin('PROJ_VERSION', 'command line', result)
 
 	@TestBase.BuildTest
 	def test_reject_from_enviroment(self):
-		self.create_file('Makefile', f'''
-PROJ_NAME := hello
-PROJ_TYPE := app
-
-include {TestBase.CPB_DIR}/builder.mk
-'''\
-		)
+		self.create_file('Makefile', TestBase.MIN_VALID_APP_MAKEFILE)
 		result = self.make(env='PROJ_VERSION=some_val')
 		self.assert_error_unexpected_origin('PROJ_VERSION', 'environment', result)
 
@@ -82,13 +70,7 @@ include {TestBase.CPB_DIR}/builder.mk
 
 	@TestBase.BuildTest
 	def test_undefined_uses_default_value(self):
-		self.create_file('Makefile', f'''
-PROJ_NAME := hello
-PROJ_TYPE := app
-
-include {TestBase.CPB_DIR}/builder.mk
-'''\
-		)
+		self.create_file('Makefile', TestBase.MIN_VALID_APP_MAKEFILE)
 		result = self.make('print-vars VARS=PROJ_VERSION')
 		self.assert_success(result, 'PROJ_VERSION =')
 

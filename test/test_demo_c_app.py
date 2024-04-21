@@ -26,13 +26,7 @@
 from TestBase import TestBase
 import unittest
 
-DIR = "../demos/c-app"
-
 class test_demo_c_app(TestBase):
-
-	def setUp(self):
-		self.cwd = DIR
-
 	@TestBase.BuildTest
 	def test_linux_standard_verbosity(self):
 		result = self.make()
@@ -65,7 +59,7 @@ class test_demo_c_app(TestBase):
 			"/bin/cp output/build/hello output/dist/bin/hello", \
 			result.output[line + 1])
 
-	@TestBase.BuildTest(output_dir=".build")
+	@TestBase.BuildTest(subdir=".build")
 	def test_linux_custom_output(self):
 		result = self.make('O=.build')
 

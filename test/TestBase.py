@@ -54,6 +54,26 @@ class Result:
 
 class TestBase(unittest.TestCase):
 	CPB_DIR = os.path.abspath(os.path.join(os.path.abspath(os.path.dirname(__file__)), '../core'))
+	DEMOS_DIR = os.path.abspath(os.path.join(os.path.abspath(os.path.dirname(__file__)), '../demos'))
+
+	MIN_VALID_APP_MAKEFILE = f'''
+PROJ_NAME = project
+PROJ_TYPE = app
+
+include {CPB_DIR}/builder.mk
+'''
+	MIN_VALID_LIB_MAKEFILE = f'''
+PROJ_NAME = project
+PROJ_TYPE = lib
+
+include {CPB_DIR}/builder.mk
+'''
+
+	@staticmethod
+	def get_native_host():
+		result = TestBase.exec(f'CPB_DIR={TestBase.CPB_DIR} make --no-print-directory -C {TestBase.DEMOS_DIR}/c-app print-vars VARS=NATIVE_HOST')
+		TestBase.assert_success(result)
+		return result.output[0].split(' ')[2]
 
 	@staticmethod
 	def create_file(path, contents=None):

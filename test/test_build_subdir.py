@@ -27,36 +27,34 @@ from TestBase import TestBase
 import unittest
 import os
 
-DIR  = "projects"
-
 class test_build_subdir(TestBase):
-
-	def setUp(self):
-		self.cwd = DIR
-
 	@TestBase.BuildTest
 	def test_reject_value_with_spaces(self):
+		self.create_file('Makefile', TestBase.MIN_VALID_APP_MAKEFILE)
 		result = self.make('BUILD_SUBDIR=\ path\ with\ spaces')
 		self.assert_error_whitespaces('BUILD_SUBDIR', result)
 
 	@TestBase.BuildTest
 	def test_reject_invalid_path(self):
+		self.create_file('Makefile', TestBase.MIN_VALID_APP_MAKEFILE)
 		result = self.make('BUILD_SUBDIR=../dir_outside_build')
 		self.assert_error_var('BUILD_SUBDIR', 'Invalid path', result)
 
 	@TestBase.BuildTest
 	def test_reject_reserved_var(self):
+		self.create_file('Makefile', TestBase.MIN_VALID_APP_MAKEFILE)
 		result = self.make('O_BUILD_DIR=test')
 		self.assert_error_reserved_variable('O_BUILD_DIR', result)
 
 	@TestBase.BuildTest
 	def test_test_inspect_valid_value(self):
+		self.create_file('Makefile', TestBase.MIN_VALID_APP_MAKEFILE)
 		result = self.make('BUILD_SUBDIR=subDir print-vars VARS=O_BUILD_DIR')
-		self.assert_success(result, 'O_BUILD_DIR = output/build/subDir')
+		self.assert_success(result, f'O_BUILD_DIR = output/{TestBase.get_native_host()}/release/build/subDir')
 
-	@TestBase.BuildTest(cwd='../../demos/c-app')
+	@TestBase.BuildTest()
 	def test_test_valid_value(self):
-		result = self.make('BUILD_SUBDIR=subDir')
+		result = self.make(env=f'CPB_DIR={TestBase.CPB_DIR}', make_flags=f'--no-print-directory -C {TestBase.DEMOS_DIR}/c-app O={os.getcwd()}/output BUILD_SUBDIR=subDir')
 		self.assert_success(result)
 		self.assertTrue(os.path.exists('output/build/subDir/hello'))
 

@@ -56,25 +56,13 @@ include {TestBase.CPB_DIR}/builder.mk
 
 	@TestBase.BuildTest
 	def test_reject_invalid_value(self):
-		self.create_file('Makefile', f'''
-PROJ_NAME = project
-PROJ_TYPE = app
-
-include {TestBase.CPB_DIR}/builder.mk
-'''\
-		)
+		self.create_file('Makefile', TestBase.MIN_VALID_APP_MAKEFILE)
 		result = self.make('DEBUG=invalid')
 		self.assert_error_invalid_value('DEBUG', result)
 
 	@TestBase.BuildTest
 	def test_undefined_uses_default_value(self):
-		self.create_file('Makefile', f'''
-PROJ_NAME = project
-PROJ_TYPE = app
-
-include {TestBase.CPB_DIR}/builder.mk
-'''\
-		)
+		self.create_file('Makefile', TestBase.MIN_VALID_APP_MAKEFILE)
 		result = self.make('print-vars VARS=DEBUG')
 		self.assert_success(result, 'DEBUG = 0')
 
