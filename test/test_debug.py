@@ -26,30 +26,55 @@
 from TestBase import TestBase
 import unittest
 
-DIR  = "projects"
-
 class test_debug(TestBase):
-
-	def setUp(self):
-		self.cwd = DIR
-
 	@TestBase.BuildTest
 	def test_reject_empty_value(self):
-		result = self.make('-f debug_empty.mk')
+		self.create_file('Makefile', f'''
+EMPTY :=
+PROJ_NAME = project
+PROJ_TYPE = app
+DEBUG = $(EMPTY)
+
+include {TestBase.CPB_DIR}/builder.mk
+'''\
+		)
+		result = self.make()
 		self.assert_error_missing_value('DEBUG', result)
 
 	@TestBase.BuildTest
 	def test_reject_value_with_spaces(self):
-		result = self.make('-f debug_spaces.mk')
+		self.create_file('Makefile', f'''
+PROJ_NAME = project
+PROJ_TYPE = app
+DEBUG = 0 1
+
+include {TestBase.CPB_DIR}/builder.mk
+'''\
+		)
+		result = self.make()
 		self.assert_error_whitespaces('DEBUG', result)
 
 	@TestBase.BuildTest
 	def test_reject_invalid_value(self):
+		self.create_file('Makefile', f'''
+PROJ_NAME = project
+PROJ_TYPE = app
+
+include {TestBase.CPB_DIR}/builder.mk
+'''\
+		)
 		result = self.make('DEBUG=invalid')
 		self.assert_error_invalid_value('DEBUG', result)
 
 	@TestBase.BuildTest
 	def test_undefined_uses_default_value(self):
+		self.create_file('Makefile', f'''
+PROJ_NAME = project
+PROJ_TYPE = app
+
+include {TestBase.CPB_DIR}/builder.mk
+'''\
+		)
 		result = self.make('print-vars VARS=DEBUG')
 		self.assert_success(result, 'DEBUG = 0')
 

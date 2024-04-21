@@ -26,15 +26,10 @@
 from TestBase import TestBase
 import unittest
 
-DIR  = "projects"
-
 class test_misc(TestBase):
-
-	def setUp(self):
-		self.cwd = DIR
-
-	@TestBase.BuildTest(cwd='path with spaces')
+	@TestBase.BuildTest(subdir='path with spaces')
 	def test_reject_path_with_spaces(self):
+		self.create_file('Makefile', f'include {TestBase.CPB_DIR}/builder.mk')
 		result = self.make()
 		self.assert_failure(result, "whitespaces")
 
