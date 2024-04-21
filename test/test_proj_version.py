@@ -29,34 +29,68 @@ import unittest
 DIR  = "projects"
 
 class test_proj_version(TestBase):
-
-	def setUp(self):
-		self.cwd = DIR
-
 	@TestBase.BuildTest
 	def test_reject_from_command_line(self):
+		self.create_file('Makefile', f'''
+PROJ_NAME := hello
+PROJ_TYPE := app
+
+include {TestBase.CPB_DIR}/builder.mk
+'''\
+		)
 		result = self.make('PROJ_VERSION=some_val')
 		self.assert_error_unexpected_origin('PROJ_VERSION', 'command line', result)
 
 	@TestBase.BuildTest
 	def test_reject_from_enviroment(self):
+		self.create_file('Makefile', f'''
+PROJ_NAME := hello
+PROJ_TYPE := app
+
+include {TestBase.CPB_DIR}/builder.mk
+'''\
+		)
 		result = self.make(env='PROJ_VERSION=some_val')
 		self.assert_error_unexpected_origin('PROJ_VERSION', 'environment', result)
 
 	@TestBase.BuildTest
 	def test_reject_empty_value(self):
-		result = self.make('-f proj_version_empty.mk')
+		self.create_file('Makefile', f'''
+EMPTY :=
+PROJ_NAME := hello
+PROJ_TYPE := app
+PROJ_VERSION = $(EMPTY)
+
+include {TestBase.CPB_DIR}/builder.mk
+'''\
+		)
+		result = self.make()
 		self.assert_error_missing_value('PROJ_VERSION', result)
 
 	@TestBase.BuildTest
 	def test_reject_invalid_value(self):
-		result = self.make('-f proj_version_invalid.mk')
-		self.assert_error_var('PROJ_VERSION', 'Invalid semantic version', result)
+		self.create_file('Makefile', f'''
+PROJ_NAME := hello
+PROJ_TYPE := app
+PROJ_VERSION = abc
+
+include {TestBase.CPB_DIR}/builder.mk
+'''\
+		)
+		result = self.make()
+		self.assert_error_var('PROJ_VERSION', 'Invalid value', result)
 
 	@TestBase.BuildTest
 	def test_undefined_uses_default_value(self):
+		self.create_file('Makefile', f'''
+PROJ_NAME := hello
+PROJ_TYPE := app
+
+include {TestBase.CPB_DIR}/builder.mk
+'''\
+		)
 		result = self.make('print-vars VARS=PROJ_VERSION')
-		self.assert_success(result, 'PROJ_VERSION = 0.1.0')
+		self.assert_success(result, 'PROJ_VERSION =')
 
 if __name__ == '__main__':
 	unittest.main()

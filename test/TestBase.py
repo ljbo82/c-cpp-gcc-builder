@@ -25,134 +25,153 @@
 
 import subprocess
 import os
-import shutil
 import unittest
 import functools
+import tempfile
+from pathlib import Path
 
-DIR = os.path.abspath(os.path.dirname(__file__))
+from enum import Enum
+
+class FindMode(Enum):
+	'''
+	Contains the mode used for find methods.
+	'''
+	FIND_ALL = 1,
+	FIND_ANY = 2
+
+class Result:
+	'''
+	Result of a shell command execution.
+
+	Attributes:
+		exitCode (int): Result of command execution.
+
+		output (list): Process output (list of lines).
+	'''
+	def __init__(self, core_result):
+		self.exitCode = core_result.returncode
+		self.output = (core_result.stdout if core_result.returncode == 0 else core_result.stderr).strip().split('\n')
 
 class TestBase(unittest.TestCase):
-
-	@property
-	def cwd(self):
-		try:
-			return self.__cwd
-		except:
-			cwd = os.path.abspath(os.path.join(DIR, '.'))
-			os.chdir(cwd)
-			self.__cwd = cwd
-			return cwd
-
-	@cwd.setter
-	def cwd(self, cwd):
-		cwd = os.path.abspath(os.path.join(self.cwd, cwd))
-		os.chdir(cwd)
-		self.__cwd = cwd
+	CPB_DIR = os.path.abspath(os.path.join(os.path.abspath(os.path.dirname(__file__)), '../core'))
 
 	@staticmethod
-	def BuildTest(output_dir='output', cwd=None):
+	def create_file(path, contents=None):
+		'''
+		Creates a text file
+
+		Args:
+			path (str): Path of a file.
+
+			contents (str): File contents.
+		'''
+		parent_dir = Path(path).parent.absolute()
+		os.makedirs(parent_dir, exist_ok = True)
+		with open(path, "w") as f:
+			if contents is not None:
+				f.write(contents)
+
+	@staticmethod
+	def BuildTest(subdir=None):
 		def decorator(func):
 			@functools.wraps(func)
 			def wrapper(self):
-				oldCwd = self.cwd
-				if cwd is not None:
-					self.cwd = cwd
+				with tempfile.TemporaryDirectory() as tmpDir:
+					cwd = tmpDir
+					if subdir is not None:
+						cwd = os.path.abspath(os.path.join(cwd, subdir))
+						os.mkdir(cwd)
 
-				if output_dir is not None and os.path.exists(output_dir):
-					shutil.rmtree(output_dir, True)
-
-				try:
+					os.chdir(cwd)
 					func(self)
-				finally:
-					if output_dir is not None and os.path.exists(output_dir):
-						shutil.rmtree(output_dir, True)
-
-					if cwd is not None:
-						self.cwd = oldCwd
 
 			return wrapper
 
-		if callable(output_dir):
-			decorator = TestBase.BuildTest('output', None)
-			return decorator(output_dir)
+		if callable(subdir):
+			decorator = TestBase.BuildTest(None)
+			return decorator(subdir)
 
 		return decorator
 
 	@staticmethod
-	def __run_command(command):
-		return subprocess.run(\
+	def exec(command):
+		'''
+		Executes a shell command.
+
+		Args:
+			command (str): shell command to be executed.
+
+		Returns:
+			Returns a Result instance.
+		'''
+		return Result(subprocess.run(\
 			command, \
 			capture_output = True, \
 			text = True,\
-			shell = True)
-
-	def make(self, make_flags=None, env=None):
-		make_command = f"{'' if env is None else env + ' '}make{'' if make_flags is None else ' ' + make_flags}"
-		class Result:
-			def __init__(self, core_result):
-				self.exitCode = core_result.returncode
-				self.output = (core_result.stdout if core_result.returncode == 0 else core_result.stderr).strip().split('\n')
-
-		return Result(self.__run_command(make_command))
+			shell = True))
 
 	@staticmethod
-	def find(what, where, find_all=None, find_any=None):
+	def make(make_flags=None, env=None):
 		'''
-		Checks if a string is found in another string or inside a list of strings
+		Executes a make invocation.
 
 		Args:
-			what(str or a list): searched value(s). Passing a list means that
-			all entries should be found.
+			make_flags (str): arguments to be passed to make invocation.
 
-			where(str or list): Inspected values.
+			env (str): environment variables to be defined during invocation.
 
 		Returns:
-			True if string was found. Otherwise, returns False.
+			Returns a Result instance.
 		'''
-		if find_all is not None and find_any is not None:
-			raise ValueError('find_all and find_any defined together')
+		make_command = f"{'' if env is None else env + ' '}make{'' if make_flags is None else ' ' + make_flags}"
 
-		if find_all is not None:
-			find_any = not find_all
+		return TestBase.exec(make_command)
 
-		if find_any is not None:
-			find_all = not find_any
+	@staticmethod
+	def find(what, where, find_mode=FindMode.FIND_ANY):
+		'''
+		Finds for strings occurrences.
 
-		if find_all is None:
-			find_all = True
+		Args:
+			what (str or list): String or a list of strings to be searched.
 
-		if find_any is None:
-			find_any = False
+			where (str or list): String of list of strings to be inspected.
 
+			find_mode (FindMode=FindMode.FIND_ANY): Defines if all or any
+				occurrence of `what` entries should be found inside `where`.
+
+		Returns:
+			A tuple with a boolean value indicating if find succeded and an entry:
+				* If search fails, entry is the string not found.
+				* If search succeeds:
+					* If find_mode is FindMode.FIND_ANY, entry is the first matched string.
+					* If find_mode is FindMode.FIND_ALL, entry is `what`
+		'''
 		if not isinstance(where, list):
-			whereEntries = [where]
-		else:
-			whereEntries = where
+			where = [where]
 
 		if not isinstance(what, list):
-			whatEntries = [what]
-		else:
-			whatEntries = what
+			what = [what]
 
 		found = False
-		for whatEntry in whatEntries:
+		for whatEntry in what:
 			found = False
 
-			for whereEntry in whereEntries:
+			for whereEntry in where:
 				if whatEntry in whereEntry:
 					found = True
 					break
 
-			if not found and find_all:
+			if not found and find_mode is FindMode.FIND_ALL:
 				return (False, whatEntry)
 
-			if found and find_any:
+			if found and find_mode is FindMode.FIND_ANY:
 				return (True, whatEntry)
 
 		return (found, what)
 
 	@staticmethod
-	def find_line(find, lines, exactMatch=False):
+	def find_line(find, lines, exact_match=False):
 		'''
 		Returns the index of the first line containing a given string.
 
@@ -170,7 +189,7 @@ class TestBase(unittest.TestCase):
 		'''
 		index = 0
 		for line in lines:
-			if (find in line) if not exactMatch else (find == line):
+			if (find in line) if not exact_match else (find == line):
 				return index
 
 			index += 1
@@ -196,52 +215,52 @@ class TestBase(unittest.TestCase):
 		raise RuntimeError('TODO: Check replace find by find_line')
 
 	@staticmethod
-	def assert_find_line(find, lines, exactMatch=False):
-		line = TestBase.find_line(find, lines, exactMatch)
+	def assert_find_line(find, lines, exact_match=False):
+		line = TestBase.find_line(find, lines, exact_match)
 		if line == -1:
 			raise AssertionError(f"{repr(find)} was NOT found")
 
 		return line
 
 	@staticmethod
-	def assert_success(result, outputMessage=None, exactMatch=False):
+	def assert_success(result, output_message=None, exact_match=False):
 		if result.exitCode != 0:
 			raise AssertionError("Execution failed")
 
-		if outputMessage is not None:
-			TestBase.assert_find_line(outputMessage, result.output, exactMatch)
+		if output_message is not None:
+			TestBase.assert_find_line(output_message, result.output, exact_match)
 
 	@staticmethod
-	def assert_failure(result, outputMessage=None, exactMatch=False):
+	def assert_failure(result, output_message=None, exact_match=False):
 		if result.exitCode == 0:
 			raise AssertionError("Execution succeeded")
 
-		if outputMessage is not None:
-			TestBase.assert_find_line(outputMessage, result.output, exactMatch)
+		if output_message is not None:
+			TestBase.assert_find_line(output_message, result.output, exact_match)
 
 	@staticmethod
-	def assert_error_var(varName, varMessage, result):
-		TestBase.assert_failure(result, f'[{varName}] {varMessage}')
+	def assert_error_var(var_name, var_message, result):
+		TestBase.assert_failure(result, f'[{var_name}] {var_message}')
 
 	@staticmethod
-	def assert_error_missing_value(varName, result):
-		TestBase.assert_error_var(varName, 'Missing value', result)
+	def assert_error_missing_value(var_name, result):
+		TestBase.assert_error_var(var_name, 'Missing value', result)
 
 	@staticmethod
-	def assert_error_unexpected_origin(varName, givenOrigin, result):
-		TestBase.assert_error_var(varName, f'Unexpected origin: "{givenOrigin}"', result)
+	def assert_error_unexpected_origin(var_name, given_origin, result):
+		TestBase.assert_error_var(var_name, f'Unexpected origin: "{given_origin}"', result)
 
 	@staticmethod
-	def assert_error_whitespaces(varName, result):
-		TestBase.assert_error_var(varName, 'Value cannot have whitespaces', result)
+	def assert_error_whitespaces(var_name, result):
+		TestBase.assert_error_var(var_name, 'Value cannot have whitespaces', result)
 
 	@staticmethod
-	def assert_error_invalid_value(varName, result):
-		TestBase.assert_error_var(varName, 'Invalid value', result)
+	def assert_error_invalid_value(var_name, result):
+		TestBase.assert_error_var(var_name, 'Invalid value', result)
 
 	@staticmethod
-	def assert_error_reserved_variable(varName, result):
-		TestBase.assert_error_var(varName, 'Reserved variable', result)
+	def assert_error_reserved_variable(var_name, result):
+		TestBase.assert_error_var(var_name, 'Reserved variable', result)
 	# --------------------------------------------------------------------------
 	#endregion
 

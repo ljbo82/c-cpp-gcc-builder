@@ -26,36 +26,46 @@
 from TestBase import TestBase
 import unittest
 
-DIR  = "projects"
-
 class test_proj_name(TestBase):
-
-	def setUp(self):
-		self.cwd = DIR
-
 	@TestBase.BuildTest
 	def test_reject_from_command_line(self):
-		result = self.make('-f proj_name_undefined.mk PROJ_NAME=some_val')
+		self.create_file('Makefile', f'include {TestBase.CPB_DIR}/builder.mk')
+		result = self.make('PROJ_NAME=some_val')
 		self.assert_error_unexpected_origin('PROJ_NAME', 'command line', result)
 
 	@TestBase.BuildTest
 	def test_reject_from_environment(self):
-		result = self.make(make_flags='-f proj_name_undefined.mk', env='PROJ_NAME=some_val')
+		self.create_file('Makefile', f'include {TestBase.CPB_DIR}/builder.mk')
+		result = self.make(env='PROJ_NAME=some_val')
 		self.assert_error_unexpected_origin('PROJ_NAME', 'environment', result)
 
 	@TestBase.BuildTest
 	def test_reject_undefined(self):
-		result = self.make('-f proj_name_undefined.mk')
+		self.create_file('Makefile', f'include {TestBase.CPB_DIR}/builder.mk')
+		result = self.make()
 		self.assert_error_missing_value('PROJ_NAME', result)
 
 	@TestBase.BuildTest
 	def test_reject_empty_value(self):
-		result = self.make('-f proj_name_empty.mk')
+		self.create_file('Makefile', f'''
+EMPTY :=
+PROJ_NAME = $(EMPTY)
+
+include {TestBase.CPB_DIR}/builder.mk
+'''\
+		)
+		result = self.make()
 		self.assert_error_missing_value('PROJ_NAME', result)
 
 	@TestBase.BuildTest
 	def test_reject_value_with_spaces(self):
-		result = self.make('-f proj_name_spaces.mk')
+		self.create_file('Makefile', f'''
+PROJ_NAME := hello world
+
+include {TestBase.CPB_DIR}/builder.mk
+'''\
+		)
+		result = self.make()
 		self.assert_error_whitespaces('PROJ_NAME', result)
 
 if __name__ == '__main__':

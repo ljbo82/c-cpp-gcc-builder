@@ -688,7 +688,7 @@ Use the following variables in order to establish dependencies on external libra
             * By defining this entry, the variable <tt style="color:#E74C3C">[LIB_MKDIR](#lib_mkdir_lib_name)_&lt;LIB_NAME></tt> will be automatically defined.
         * `LIB_PROJECT_MAKEFILE`: When defined, this component refers to the makefile which will be used to build the project (is assumed that library project is built using cpp-project-builder):
             * By defining this entry, the variable <tt style="color:#E74C3C">[LIB_MAKEFILE](#lib_makefile_lib_name)_&lt;LIB_NAME></tt> will be automatically defined.
-    * If you want to pass custom flags to the make invokation while building a library, define the variable <tt style="color:#E74C3C">[LIB_MKFLAGS](#lib_mkflags_lib_name)_&lt;LIB_NAME></tt> with the flags to be passed.
+    * If you want to pass custom flags to the make invocation while building a library, define the variable <tt style="color:#E74C3C">[LIB_MKFLAGS](#lib_mkflags_lib_name)_&lt;LIB_NAME></tt> with the flags to be passed.
     * If a library being built also depends on another libraries, the transient dependencies will also be built.
     * The build system will pass the correct flags to the compiler and linker in order to use all declared libraries and their dependencies:
         * For example, If a project depends on library `X`, and library `X` depends on library `Y`, which in turn depends on library `Z`, and all of them are using cpp-project-builder to manage their building process, then the main project is required to only declare dependency on `X` (the other transient dependencies are managed automatically by the build system).
