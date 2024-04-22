@@ -25,11 +25,13 @@
 
 import subprocess
 import os
+import shutil
 import unittest
 import functools
 import tempfile
-from pathlib import Path
+import textwrap
 
+from pathlib import Path
 from enum import Enum
 
 class FindMode(Enum):
@@ -54,20 +56,26 @@ class Result:
 
 class TestBase(unittest.TestCase):
 	CPB_DIR = os.path.abspath(os.path.join(os.path.abspath(os.path.dirname(__file__)), '../core'))
+	'''Directory where the build system is located.'''
+
 	DEMOS_DIR = os.path.abspath(os.path.join(os.path.abspath(os.path.dirname(__file__)), '../demos'))
+	'''Directory where demo applications are located.'''
 
-	MIN_VALID_APP_MAKEFILE = f'''
-PROJ_NAME = project
-PROJ_TYPE = app
+	MIN_VALID_APP_MAKEFILE = textwrap.dedent(f'''\
+		PROJ_NAME = project
+		PROJ_TYPE = app
 
-include {CPB_DIR}/builder.mk
-'''
-	MIN_VALID_LIB_MAKEFILE = f'''
-PROJ_NAME = project
-PROJ_TYPE = lib
+		include {CPB_DIR}/builder.mk
+		''')
+	'''Minimal makefile for an application project. '''
 
-include {CPB_DIR}/builder.mk
-'''
+	MIN_VALID_LIB_MAKEFILE = textwrap.dedent(f'''\
+		PROJ_NAME = project
+		PROJ_TYPE = lib
+
+		include {CPB_DIR}/builder.mk
+		''')
+	'''Minimal makefile for a lib project.'''
 
 	@staticmethod
 	def get_native_host():
@@ -93,6 +101,12 @@ include {CPB_DIR}/builder.mk
 
 	@staticmethod
 	def BuildTest(subdir=None):
+		'''
+		Marks a test method to run in a temporary directory.
+
+		Args:
+			subdir (str): Optional subdirectory inside temporary directory.
+		'''
 		def decorator(func):
 			@functools.wraps(func)
 			def wrapper(self):
@@ -110,6 +124,46 @@ include {CPB_DIR}/builder.mk
 		if callable(subdir):
 			decorator = TestBase.BuildTest(None)
 			return decorator(subdir)
+
+		return decorator
+
+	@staticmethod
+	def DemoTest(demo_dir, output_dir='output'):
+		'''
+		Marks a test method to run inside a demo directory.
+
+		Args:
+			demo_dir (str): Mandatory. Demo subdirectory inside TestBase.DEMOS_DIR.
+
+			output_dir (str): Optional. Output directory after execution to be removed.
+		'''
+		def decorator(func):
+			@functools.wraps(func)
+			def wrapper(self):
+				os.chdir(os.path.join(TestBase.DEMOS_DIR,demo_dir))
+				os.environ['CPB_DIR'] = TestBase.CPB_DIR
+				if output_dir is not None:
+					if output_dir is '.':
+						raise ValueError('Invalid output_dir: \'.\'')
+
+					os.environ['O'] = output_dir
+
+				try:
+					func(self)
+				finally:
+					os.unsetenv('CPB_DIR')
+					if output_dir is not None:
+						if os.path.exists(output_dir):
+							shutil.rmtree(output_dir, True)
+
+						os.unsetenv('O')
+
+			return wrapper
+
+		if callable(demo_dir):
+			raise ValueError('Missing demo_dir')
+			# decorator = TestBase.DemoTest(output_dir)
+			# return decorator(demo_dir)
 
 		return decorator
 
@@ -220,19 +274,15 @@ include {CPB_DIR}/builder.mk
 	# --------------------------------------------------------------------------
 	@staticmethod
 	def assert_contains(what, where):
-		result = TestBase.find(what, where, find_all=True)
+		result = TestBase.find(what, where, find_mode=FindMode.FIND_ALL)
 		if not result[0]:
 			raise AssertionError(f"{repr(result[1])} was NOT found")
 
-		raise RuntimeError('TODO: Check replace find by find_line')
-
 	@staticmethod
 	def assert_not_contains(what, where):
-		result = TestBase.find(what, where, find_any=True)
+		result = TestBase.find(what, where, find_mode=FindMode.FIND_ANY)
 		if result[0]:
 			raise AssertionError(f"{repr(result[1])} was FOUND")
-
-		raise RuntimeError('TODO: Check replace find by find_line')
 
 	@staticmethod
 	def assert_find_line(find, lines, exact_match=False):

@@ -23,10 +23,10 @@
 #
 # For more information, please refer to <http://unlicense.org/>
 
-from TestBase import TestBase
 import unittest
+import textwrap
 
-DIR  = "projects"
+from TestBase import TestBase
 
 class test_proj_version(TestBase):
 	@TestBase.BuildTest
@@ -43,27 +43,27 @@ class test_proj_version(TestBase):
 
 	@TestBase.BuildTest
 	def test_reject_empty_value(self):
-		self.create_file('Makefile', f'''
-EMPTY :=
-PROJ_NAME := hello
-PROJ_TYPE := app
-PROJ_VERSION = $(EMPTY)
+		self.create_file('Makefile', textwrap.dedent(f'''\
+			EMPTY :=
+			PROJ_NAME := hello
+			PROJ_TYPE := app
+			PROJ_VERSION = $(EMPTY)
 
-include {TestBase.CPB_DIR}/builder.mk
-'''\
+			include {TestBase.CPB_DIR}/builder.mk
+			''')
 		)
 		result = self.make()
 		self.assert_error_missing_value('PROJ_VERSION', result)
 
 	@TestBase.BuildTest
 	def test_reject_invalid_value(self):
-		self.create_file('Makefile', f'''
-PROJ_NAME := hello
-PROJ_TYPE := app
-PROJ_VERSION = abc
+		self.create_file('Makefile', textwrap.dedent(f'''\
+			PROJ_NAME := hello
+			PROJ_TYPE := app
+			PROJ_VERSION = abc
 
-include {TestBase.CPB_DIR}/builder.mk
-'''\
+			include {TestBase.CPB_DIR}/builder.mk
+			''')
 		)
 		result = self.make()
 		self.assert_error_var('PROJ_VERSION', 'Invalid value', result)

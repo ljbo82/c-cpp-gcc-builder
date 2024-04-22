@@ -23,23 +23,20 @@
 #
 # For more information, please refer to <http://unlicense.org/>
 
-from TestBase import TestBase
 import unittest
 
-DIR  = "projects"
+from TestBase import TestBase
 
 class test_src_dirs(TestBase):
-
-	def setUp(self):
-		self.cwd = DIR
-
 	@TestBase.BuildTest
 	def test_reject_from_command_line(self):
+		self.create_file('Makefile', TestBase.MIN_VALID_APP_MAKEFILE)
 		result = self.make('SRC_DIRS=some_val')
 		self.assert_error_unexpected_origin('SRC_DIRS', 'command line', result)
 
 	@TestBase.BuildTest
 	def test_reject_from_environment(self):
+		self.create_file('Makefile', TestBase.MIN_VALID_APP_MAKEFILE)
 		result = self.make(env='SRC_DIRS=some_val')
 		self.assert_error_unexpected_origin('SRC_DIRS', 'environment', result)
 

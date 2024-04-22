@@ -23,78 +23,78 @@
 #
 # For more information, please refer to <http://unlicense.org/>
 
-from TestBase import TestBase
 import unittest
+import textwrap
 
-DIR  = "projects"
+from TestBase import TestBase
 
 class test_proj_type(TestBase):
 	@TestBase.BuildTest
 	def test_reject_from_command_line(self):
-		self.create_file('Makefile', f'''
-PROJ_NAME := hello
+		self.create_file('Makefile', textwrap.dedent(f'''\
+			PROJ_NAME := hello
 
-include {TestBase.CPB_DIR}/builder.mk
-'''\
+			include {TestBase.CPB_DIR}/builder.mk
+			''')
 		)
 		result = self.make('PROJ_TYPE=some_val')
 		self.assert_error_unexpected_origin('PROJ_TYPE', 'command line', result)
 
 	@TestBase.BuildTest
 	def test_reject_from_environment(self):
-		self.create_file('Makefile', f'''
-PROJ_NAME := hello
+		self.create_file('Makefile', textwrap.dedent(f'''\
+			PROJ_NAME := hello
 
-include {TestBase.CPB_DIR}/builder.mk
-'''\
+			include {TestBase.CPB_DIR}/builder.mk
+			''')
 		)
 		result = self.make(env='PROJ_TYPE=some_val')
 		self.assert_error_unexpected_origin('PROJ_TYPE', 'environment', result)
 
 	@TestBase.BuildTest
 	def test_reject_empty_value(self):
-		self.create_file('Makefile', f'''
-EMPTY :=
-PROJ_NAME := hello
-PROJ_TYPE = $(EMPTY)
+		self.create_file('Makefile', textwrap.dedent(f'''\
+			EMPTY :=
+			PROJ_NAME := hello
+			PROJ_TYPE = $(EMPTY)
 
-include {TestBase.CPB_DIR}/builder.mk
-'''\
+			include {TestBase.CPB_DIR}/builder.mk
+			''')
 		)
 		result = self.make()
 		self.assert_error_missing_value('PROJ_TYPE', result)
 
 	@TestBase.BuildTest
 	def test_reject_undefined(self):
-		self.create_file('Makefile', f'''
-PROJ_NAME := hello
+		self.create_file('Makefile', textwrap.dedent(f'''\
+			PROJ_NAME := hello
 
-include {TestBase.CPB_DIR}/builder.mk
-'''\
+			include {TestBase.CPB_DIR}/builder.mk
+			''')
 		)
 		result = self.make()
 		self.assert_error_missing_value('PROJ_TYPE', result)
 
 	@TestBase.BuildTest
 	def test_reject_value_with_spaces(self):
-		self.create_file('Makefile', f'''
-PROJ_NAME := hello
-PROJ_TYPE := value with spaces
+		self.create_file('Makefile', textwrap.dedent(f'''\
+			PROJ_NAME := hello
+			PROJ_TYPE := value with spaces
 
-include {TestBase.CPB_DIR}/builder.mk
-'''\
+			include {TestBase.CPB_DIR}/builder.mk
+			''')
 		)
 		result = self.make()
 		self.assert_error_whitespaces('PROJ_TYPE', result)
 
 	@TestBase.BuildTest
 	def test_reject_invalid_value(self):
-		self.create_file('Makefile', f'''
-PROJ_NAME := hello
-PROJ_TYPE := invalid
+		self.create_file('Makefile', textwrap.dedent(f'''\
+			PROJ_NAME := hello
+			PROJ_TYPE := invalid
 
-include {TestBase.CPB_DIR}/builder.mk
-'''\
+			include {TestBase.CPB_DIR}/builder.mk
+			''')
 		)
 		result = self.make()
 		self.assert_error_invalid_value('PROJ_TYPE', result)

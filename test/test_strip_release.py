@@ -23,45 +23,72 @@
 #
 # For more information, please refer to <http://unlicense.org/>
 
-from TestBase import TestBase
 import unittest
+import textwrap
 
-DIR  = "projects"
+from TestBase import TestBase
 
 class test_strip_release(TestBase):
-
-	def setUp(self):
-		self.cwd = DIR
-
 	@TestBase.BuildTest
 	def test_reject_from_command_line(self):
+		self.create_file('Makefile', TestBase.MIN_VALID_APP_MAKEFILE)
 		result = self.make('STRIP_RELEASE=some_val')
 		self.assert_error_unexpected_origin('STRIP_RELEASE', 'command line', result)
 
 	@TestBase.BuildTest
 	def test_reject_from_environment(self):
+		self.create_file('Makefile', TestBase.MIN_VALID_APP_MAKEFILE)
 		result = self.make(env='STRIP_RELEASE=some_val')
 		self.assert_error_unexpected_origin('STRIP_RELEASE', 'environment', result)
 
 	@TestBase.BuildTest
 	def test_reject_empty_value(self):
-		result = self.make('-f strip_release_empty.mk')
+		self.create_file('Makefile', textwrap.dedent(f'''\
+			PROJ_NAME = hello
+			PROJ_TYPE = app
+
+			STRIP_RELEASE :=
+
+			include {TestBase.CPB_DIR}/builder.mk
+			''')
+		)
+
+		result = self.make()
 		self.assert_error_missing_value('STRIP_RELEASE', result)
 
 	@TestBase.BuildTest
 	def test_reject_invalid_value(self):
-		result = self.make('-f strip_release_invalid.mk')
+		self.create_file('Makefile', textwrap.dedent(f'''\
+			PROJ_NAME = hello
+			PROJ_TYPE = app
+
+			STRIP_RELEASE := 3
+
+			include {TestBase.CPB_DIR}/builder.mk
+			''')
+		)
+		result = self.make()
 		self.assert_error_invalid_value('STRIP_RELEASE', result)
 
 	@TestBase.BuildTest
 	def test_reject_value_with_spaces(self):
-		result = self.make('-f strip_release_spaces.mk')
+		self.create_file('Makefile', textwrap.dedent(f'''\
+			PROJ_NAME = hello
+			PROJ_TYPE = app
+
+			STRIP_RELEASE := 1 0
+
+			include {TestBase.CPB_DIR}/builder.mk
+			''')
+		)
+		result = self.make()
 		self.assert_error_whitespaces('STRIP_RELEASE', result)
 
 	@TestBase.BuildTest
 	def test_uses_default_value(self):
-		result = self.make('print-vars VARS=SKIP_DEFAULT_INCLUDE_DIR')
-		self.assert_success(result, 'SKIP_DEFAULT_INCLUDE_DIR = 0')
+		self.create_file('Makefile', TestBase.MIN_VALID_APP_MAKEFILE)
+		result = self.make('print-vars VARS=STRIP_RELEASE')
+		self.assert_success(result, 'STRIP_RELEASE = 1')
 
 if __name__ == '__main__':
 	unittest.main()

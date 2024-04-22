@@ -52,9 +52,9 @@ class test_build_subdir(TestBase):
 		result = self.make('BUILD_SUBDIR=subDir print-vars VARS=O_BUILD_DIR')
 		self.assert_success(result, f'O_BUILD_DIR = output/{TestBase.get_native_host()}/release/build/subDir')
 
-	@TestBase.BuildTest()
+	@TestBase.DemoTest('c-app')
 	def test_test_valid_value(self):
-		result = self.make(env=f'CPB_DIR={TestBase.CPB_DIR}', make_flags=f'--no-print-directory -C {TestBase.DEMOS_DIR}/c-app O={os.getcwd()}/output BUILD_SUBDIR=subDir')
+		result = self.make('BUILD_SUBDIR=subDir')
 		self.assert_success(result)
 		self.assertTrue(os.path.exists('output/build/subDir/hello'))
 

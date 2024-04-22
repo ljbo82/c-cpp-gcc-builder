@@ -23,51 +23,53 @@
 #
 # For more information, please refer to <http://unlicense.org/>
 
-from TestBase import TestBase
 import unittest
+import os
+
+from TestBase import TestBase
 
 class test_demo_c_app(TestBase):
-	@TestBase.BuildTest
+	@TestBase.DemoTest('c-app')
 	def test_linux_standard_verbosity(self):
 		result = self.make()
 
 		self.assertEqual(0, result.exitCode)
-		self.assert_contains([ \
-			"[CC] output/build/src/main.c.o", \
-			"[LD] output/build/hello", \
-			"[DIST] output/dist/bin/hello", \
+		self.assert_contains([
+			"[CC] output/build/src/main.c.o",
+			"[LD] output/build/hello",
+			"[DIST] output/dist/bin/hello",
 		], result.output)
 		self.assert_not_contains(['gcc', 'cp'], result.output)
 
-	@TestBase.BuildTest
+	@TestBase.DemoTest('c-app')
 	def test_linux_verbose_build(self):
 		result = self.make("V=1")
 		self.assertEqual(0, result.exitCode)
 
 		line = self.assert_find_line("[CC] output/build/src/main.c.o", result.output)
-		self.assert_contains( \
-			"gcc -MMD -MP -Isrc -Wall -O2 -s -c src/main.c -o output/build/src/main.c.o", \
+		self.assert_contains(
+			"gcc -MMD -MP -Isrc -Wall -O2 -s -c src/main.c -o output/build/src/main.c.o",
 			result.output[line + 1])
 
 		line = self.assert_find_line("[LD] output/build/hello", result.output)
-		self.assert_contains( \
-			"gcc -o output/build/hello output/build/src/main.c.o -s", \
+		self.assert_contains(
+			"gcc -o output/build/hello output/build/src/main.c.o -s",
 			result.output[line + 1])
 
 		line = self.assert_find_line("[DIST] output/dist/bin/hello", result.output)
-		self.assert_contains( \
-			"/bin/cp output/build/hello output/dist/bin/hello", \
+		self.assert_contains(
+			'ln -f output/build/hello output/dist/bin/hello',
 			result.output[line + 1])
 
-	@TestBase.BuildTest(subdir=".build")
+	@TestBase.DemoTest('c-app', output_dir='.build')
 	def test_linux_custom_output(self):
-		result = self.make('O=.build')
+		result = self.make()
 
 		self.assertEqual(0, result.exitCode)
-		self.assert_contains([ \
-			"[CC] .build/build/src/main.c.o", \
-			"[LD] .build/build/hello", \
-			"[DIST] .build/dist/bin/hello", \
+		self.assert_contains([
+			"[CC] .build/build/src/main.c.o",
+			"[LD] .build/build/hello",
+			"[DIST] .build/dist/bin/hello",
 		], result.output)
 		self.assert_not_contains(['gcc', 'cp'], result.output)
 

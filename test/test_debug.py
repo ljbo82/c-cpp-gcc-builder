@@ -23,33 +23,35 @@
 #
 # For more information, please refer to <http://unlicense.org/>
 
-from TestBase import TestBase
 import unittest
+import textwrap
+
+from TestBase import TestBase
 
 class test_debug(TestBase):
 	@TestBase.BuildTest
 	def test_reject_empty_value(self):
-		self.create_file('Makefile', f'''
-EMPTY :=
-PROJ_NAME = project
-PROJ_TYPE = app
-DEBUG = $(EMPTY)
+		self.create_file('Makefile', textwrap.dedent(f'''\
+			EMPTY :=
+			PROJ_NAME = project
+			PROJ_TYPE = app
+			DEBUG = $(EMPTY)
 
-include {TestBase.CPB_DIR}/builder.mk
-'''\
+			include {TestBase.CPB_DIR}/builder.mk
+			''')
 		)
 		result = self.make()
 		self.assert_error_missing_value('DEBUG', result)
 
 	@TestBase.BuildTest
 	def test_reject_value_with_spaces(self):
-		self.create_file('Makefile', f'''
-PROJ_NAME = project
-PROJ_TYPE = app
-DEBUG = 0 1
+		self.create_file('Makefile', textwrap.dedent(f'''\
+			PROJ_NAME = project
+			PROJ_TYPE = app
+			DEBUG = 0 1
 
-include {TestBase.CPB_DIR}/builder.mk
-'''\
+			include {TestBase.CPB_DIR}/builder.mk
+			''')
 		)
 		result = self.make()
 		self.assert_error_whitespaces('DEBUG', result)

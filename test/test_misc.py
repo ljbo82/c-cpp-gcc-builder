@@ -23,8 +23,9 @@
 #
 # For more information, please refer to <http://unlicense.org/>
 
-from TestBase import TestBase
 import unittest
+
+from TestBase import TestBase
 
 class test_misc(TestBase):
 	@TestBase.BuildTest(subdir='path with spaces')
@@ -32,6 +33,20 @@ class test_misc(TestBase):
 		self.create_file('Makefile', f'include {TestBase.CPB_DIR}/builder.mk')
 		result = self.make()
 		self.assert_failure(result, "whitespaces")
+
+	@TestBase.BuildTest
+	def test_single_target(self):
+		self.create_file('Makefile', TestBase.MIN_VALID_APP_MAKEFILE)
+		result = self.make('clean build')
+		self.assert_failure(result, 'Only one target can be called per time.')
+
+	@TestBase.BuildTest
+	def test_print_vars_no_vars(self):
+		self.create_file('Makefile', TestBase.MIN_VALID_APP_MAKEFILE)
+		result = self.make('print-vars VARS=')
+		self.assert_error_missing_value('VARS', result)
+	# --------------------------------------------------------------------------
+	#endregion
 
 
 if __name__ == '__main__':

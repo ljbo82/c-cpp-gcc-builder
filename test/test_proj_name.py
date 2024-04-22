@@ -23,8 +23,10 @@
 #
 # For more information, please refer to <http://unlicense.org/>
 
-from TestBase import TestBase
 import unittest
+import textwrap
+
+from TestBase import TestBase
 
 class test_proj_name(TestBase):
 	@TestBase.BuildTest
@@ -47,23 +49,23 @@ class test_proj_name(TestBase):
 
 	@TestBase.BuildTest
 	def test_reject_empty_value(self):
-		self.create_file('Makefile', f'''
-EMPTY :=
-PROJ_NAME = $(EMPTY)
+		self.create_file('Makefile', textwrap.dedent(f'''\
+			EMPTY :=
+			PROJ_NAME = $(EMPTY)
 
-include {TestBase.CPB_DIR}/builder.mk
-'''\
+			include {TestBase.CPB_DIR}/builder.mk
+			''')
 		)
 		result = self.make()
 		self.assert_error_missing_value('PROJ_NAME', result)
 
 	@TestBase.BuildTest
 	def test_reject_value_with_spaces(self):
-		self.create_file('Makefile', f'''
-PROJ_NAME := hello world
+		self.create_file('Makefile', textwrap.dedent(f'''\
+			PROJ_NAME := hello world
 
-include {TestBase.CPB_DIR}/builder.mk
-'''\
+			include {TestBase.CPB_DIR}/builder.mk
+			''')
 		)
 		result = self.make()
 		self.assert_error_whitespaces('PROJ_NAME', result)
