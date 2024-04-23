@@ -24,71 +24,59 @@
 # For more information, please refer to <http://unlicense.org/>
 
 import unittest
-import os
 import textwrap
 
 from TestBase import TestBase
 
-class test_src_dirs(TestBase):
+class test_custom_build(TestBase):
 	@TestBase.BuildTest
 	def test_reject_from_command_line(self):
 		self.create_file('Makefile', TestBase.MIN_VALID_APP_MAKEFILE)
-		result = self.make('SRC_DIRS=some_val')
-		self.assert_error_unexpected_origin('SRC_DIRS', 'command line', result)
+		result = self.make('CUSTOM_BUILD=0')
+		self.assert_error_unexpected_origin('CUSTOM_BUILD', 'command line', result)
 
 	@TestBase.BuildTest
 	def test_reject_from_environment(self):
 		self.create_file('Makefile', TestBase.MIN_VALID_APP_MAKEFILE)
-		result = self.make(env='SRC_DIRS=some_val')
-		self.assert_error_unexpected_origin('SRC_DIRS', 'environment', result)
+		result = self.make(env='CUSTOM_BUILD=0')
+		self.assert_error_unexpected_origin('CUSTOM_BUILD', 'environment', result)
 
 	@TestBase.BuildTest
-	def test_default_value_if_dir_exists_and_var_not_set(self):
-		os.makedirs('src')
+	def test_reject_empty_value(self):
+		self.create_file('Makefile', textwrap.dedent(f'''\
+			PROJ_NAME = test
+			PROJ_TYPE = app
+			EMPTY :=
+			CUSTOM_BUILD = $(EMPTY)
+			include {TestBase.CPB_DIR}/builder.mk
+			''')
+		)
+		result = self.make()
+		self.assert_error_missing_value('CUSTOM_BUILD', result)
+
+	@TestBase.BuildTest
+	def test_reject_invalid(self):
+		self.create_file('Makefile', textwrap.dedent(f'''\
+			PROJ_NAME = test
+			PROJ_TYPE = app
+			CUSTOM_BUILD = 3
+			include {TestBase.CPB_DIR}/builder.mk
+			''')
+		)
+		result = self.make()
+		self.assert_error_invalid_value('CUSTOM_BUILD', result)
+
+	@TestBase.BuildTest
+	def test_default_value(self):
 		self.create_file('Makefile', TestBase.MIN_VALID_APP_MAKEFILE)
-		result = self.make('print-vars VARS=SRC_DIRS')
-		self.assert_success(result, 'SRC_DIRS = src')
+		result = self.make('print-vars VARS=CUSTOM_BUILD')
+		self.assert_success(result, 'CUSTOM_BUILD = 0')
 
 	@TestBase.BuildTest
-	def test_ignore_src_dir_if_variable_present(self):
-		os.makedirs('src')
-		os.makedirs('custom')
-		self.create_file('Makefile', textwrap.dedent(f'''\
-			PROJ_NAME = test
-			PROJ_TYPE = app
-
-			SRC_DIRS += custom
-			include {TestBase.CPB_DIR}/builder.mk
-			''')
-		)
-		result = self.make('print-vars VARS=SRC_DIRS')
-		self.assert_success(result, 'SRC_DIRS = custom')
-
-	@TestBase.BuildTest
-	def test_reject_entry_not_found(self):
-		self.create_file('Makefile', textwrap.dedent(f'''\
-			PROJ_NAME = test
-			PROJ_TYPE = app
-
-			SRC_DIRS += custom
-			include {TestBase.CPB_DIR}/builder.mk
-			''')
-		)
+	def test_check_in_default_vars(self):
+		self.create_file('Makefile', TestBase.MIN_VALID_APP_MAKEFILE)
 		result = self.make('print-vars')
-		self.assert_failure(result, '[SRC_DIRS] No such directory: \'custom\'')
-
-	@TestBase.BuildTest
-	def test_reject_entry_outside_project(self):
-		self.create_file('Makefile', textwrap.dedent(f'''\
-			PROJ_NAME = test
-			PROJ_TYPE = app
-
-			SRC_DIRS += ..
-			include {TestBase.CPB_DIR}/builder.mk
-			''')
-		)
-		result = self.make('print-vars')
-		self.assert_failure(result, '[SRC_DIRS] Directory outside project root directory: \'..\'')
+		self.assert_success(result, 'CUSTOM_BUILD = 0')
 
 if __name__ == '__main__':
 	unittest.main()

@@ -46,16 +46,6 @@ The following variables are related with the project.
 
 --------------------------------------------------------------------------------
 
-### PROJ_NAME
-
-* **Description:** Defines project name.
-* **Required:** Yes.
-* **Default value:** Undefined.
-* **Origins:** Makefile.
-* **Restrictions:** Value shall not contain whitespaces nor can be an empty string.
-
---------------------------------------------------------------------------------
-
 ### PROJ_TYPE
 
 * **Description:** Defines the project type.
@@ -88,7 +78,7 @@ The following variables provide a way to inform the build system about source fi
     * Each entry in this variable has the syntax `ORIGIN_DIR[:DEST_DIR]` (all files recursively contained in `ORIGIN_DIR` will be copied into <tt style="color:#E74C3C">$([O_DIST_DIR](#o_dist_dir))/DEST_DIR</tt>. Note that `DEST_DIR` component is optional for entries. Its default value is the same as `ORIGIN_DIR`).
     * The build system may append values to this variable.
 * **Required:** No.
-* **Default value:** If [`INCLUDE_DIRS`](#include_dirs) variable is not defined, <tt style="color:#E74C3C">$([CURDIR](https://www.gnu.org/software/make/manual/make.html#index-CURDIR))/include</tt> directory exists, and [`PROJ_TYPE`](#proj_type) equals to `lib`, then the default value will be `include:include`. Otherwise, the variable is left undefined.
+* **Default value:** If [`INCLUDE_DIRS`](#include_dirs) variable is not defined, <tt style="color:#E74C3C">$([CURDIR](https://www.gnu.org/software/make/manual/make.html#index-CURDIR))/include</tt> directory exists, and [`PROJ_TYPE`](#proj_type) equals to `lib`, then the default value `include:include` will be appended to this variable. Otherwise, the variable is left undefined.
 * **Origins:** Makefile.
 * **Restrictions:** A list is composed by values delimited by whitespaces (this is a GNU make restriction). Due to this reason, paths containing spaces are not supported.
 
@@ -198,9 +188,9 @@ The following variables configures the build system or show informations about i
 
 * **Description:** Defines build targets on which the build process depends upon.
 * **Required:** No.
-* **Default value:** <tt style="color:#E74C3C">$([O_BUILD_DIR](#o_build_dir))/$([ARTIFACT](#artifact))</tt>.
+* **Default value:** if [`CUSTOM_BUILD`](#custom_build) is not set, the default value <tt style="color:#E74C3C">$([O_BUILD_DIR](#o_build_dir))/$([ARTIFACT](#artifact))</tt> will be appended to this variable.
 * **Origins:** Makefile.
-* **Restrictions:** The build system will append value(s) to this variable.
+* **Restrictions:** The build system will append the defvalue(s) to this variable.
 
 --------------------------------------------------------------------------------
 
@@ -249,6 +239,26 @@ The following variables configures the build system or show informations about i
 * **Default value:** The version of the build system.
 * **Origins:** Not applicable (variable is set by the build system).
 * **Restrictions:** This is a read-only reserved variable.
+
+--------------------------------------------------------------------------------
+
+### CUSTOM_BUILD
+
+* **Description:** Defines if the project uses a custom logic to perform its build.
+
+    * When using a custom logic, define one or more targets in [`BUILD_DEPS`](#build_deps) variable. These targets should implement the custom build logic.
+
+    !!! Warning
+        Changing the default value will require your project to handle entire build logic on its own.
+
+        NOTE: All variables support would be still available.
+
+* **Required:** No.
+* **Default value:** `0` (uses default build system logic).
+* **Origins:** Makefile.
+* **Restrictions:** Accepted values are:
+    * `0`: Use build system logic to perform build.
+    * `1`: Use a custom logic to build by calling targets defined in [`BUILD_DEPS`](#build_deps) variable.
 
 --------------------------------------------------------------------------------
 
