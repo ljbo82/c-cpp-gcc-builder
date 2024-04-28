@@ -29,7 +29,7 @@ endif
 
 CPB_MIN_VERSION := 0.1.0
 
-PROJ_NAME := hosts-demo
+PROJ_NAME := multiplatform
 PROJ_TYPE := app
 
 include $(CPB_DIR)/builder.mk
