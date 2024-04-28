@@ -30,8 +30,8 @@ from TestBase import TestBase
 
 class test_functions(TestBase):
 	@staticmethod
-	def call_function(call, hasReturn=True):
-		if hasReturn:
+	def call_function(call, has_return=True, make_flags=None, env=None):
+		if has_return:
 			TestBase.create_file('Makefile', textwrap.dedent(f'''\
 				include {TestBase.CPB_DIR}/functions.mk
 				$(info $(call {call}))
@@ -50,7 +50,7 @@ class test_functions(TestBase):
 				''')
 			)
 
-		return TestBase.make()
+		return TestBase.make(make_flags, env)
 
 	@TestBase.BuildTest
 	def test_fn_semver_cmp(self):
@@ -130,6 +130,21 @@ class test_functions(TestBase):
 
 		result = self.call_function('fn_semver_check_compat,4.3.2,4.3.1', False)
 		self.assert_failure(result, '4.3.2+')
+
+	@TestBase.BuildTest
+	def test_fn_check_not_origin(self):
+		result = self.call_function('fn_check_not_origin,VAR,environment', False, make_flags='VAR=val')
+		self.assert_success(result)
+
+		result = self.call_function('fn_check_not_origin,VAR,command line', False, env='VAR=val')
+		self.assert_success(result)
+
+		result = self.call_function('fn_check_not_origin,VAR,environment', False, env='VAR=val')
+		self.assert_failure(result, 'environment')
+
+		result = self.call_function('fn_check_not_origin,VAR,command line', False,'VAR=val')
+		self.assert_failure(result, 'command line')
+
 
 if __name__ == '__main__':
 	unittest.main()

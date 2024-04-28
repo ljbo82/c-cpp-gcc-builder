@@ -90,6 +90,36 @@ _This function does not return any value._
 
 --------------------------------------------------------------------------------
 
+#### fn_check_not_origin
+
+Ensures the [origin](https://www.gnu.org/software/make/manual/make.html#Origin-Function) of an variable differs from a forbidden one.
+
+If a variable has the same origin as a forbidden one, an error will be raised.
+
+**Syntax:**
+
+```Makefile
+$(call fn_check_not_origin,varName,forbiddenOrigin,[errorMessage])
+```
+
+**Parameters:**
+
+| Parameter         | Description                                                                                                                 |
+|-------------------|-----------------------------------------------------------------------------------------------------------------------------|
+| `varName`         | Variable name                                                                                                               |
+| `forbiddenOrigin` | Forbidden origin.                                                                                                           |
+| `errorMessage`    | Optional error message. If value is suppressed or an empty value is given,<br/>a standardized message will be used instead. |
+
+**Return value:**
+
+_This function does not return any value._
+
+--------------------------------------------------------------------------------
+
+
+
+
+
 #### fn_check_options
 
 Ensures the contents of a variable is one among a list of accepted values.
