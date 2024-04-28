@@ -29,13 +29,16 @@ endif
 
 CPB_MIN_VERSION := 0.1.0
 
-PROJ_NAME := mylib
-PROJ_TYPE := lib
+PROJ_NAME := test-app
+PROJ_TYPE := app
 
-CFLAGS += -fvisibility=hidden
+LIBS += mylib:..
+LIBS += CppUTest
+
+LIB_MKFLAGS_mylib += LIB_TYPE=static
 
 include $(CPB_DIR)/builder.mk
 
-.PHONY: test
-test:
-	$(V_PREFIX)$(MAKE) -C test run
+.PHONY: run
+run: all
+	$(V_PREFIX)$(O_DIST_DIR)/bin/test-app

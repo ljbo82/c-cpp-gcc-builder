@@ -24,12 +24,25 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 For more information, please refer to <http://unlicense.org/>
 */
-#include "mylib_private.h"
+#pragma once
 
-int _mylib_sum(int a, int b) {
-	return a + b;
-}
+#include "defs.h"
 
-int mylib_sum(int a, int b) {
-	return _mylib_sum(a, b);
-}
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/**
+ * Sums to integers
+ *
+ * @param a First integer.
+ *
+ * @param b Second integer.
+ *
+ * @return The sum of \c a and \c b.
+*/
+MYLIB_PUBLIC int MYLIB_CALL mylib_sum(int a, int b);
+
+#ifdef __cplusplus
+} // extern "C"
+#endif

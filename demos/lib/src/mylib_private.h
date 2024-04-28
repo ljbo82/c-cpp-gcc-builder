@@ -26,18 +26,15 @@ For more information, please refer to <http://unlicense.org/>
 */
 #pragma once
 
-#include <stdint.h>
-#include <stdbool.h>
-#include <stddef.h>
-#include <inttypes.h>
-#include <stdlib.h>
+#include <mylib/mylib.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-void lib_println(const char* str);
-
-#ifdef __cplusplus
-} // extern "C"
-#endif
+/**
+ * Shared private API for {@link mylib_sum}.
+ *
+ * @param a First integer.
+ *
+ * @param b Second integer.
+ *
+ * @return The sum of \c a and \c b.
+*/
+int _mylib_sum(int a, int b);

@@ -24,12 +24,33 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 For more information, please refer to <http://unlicense.org/>
 */
-#include "mylib_private.h"
+#pragma once
 
-int _mylib_sum(int a, int b) {
-	return a + b;
-}
+#if defined _WIN32 || defined __CYGWIN__
+	#ifdef BUILD_DLL
+		/** @internal */
+		#define MYLIB_PUBLIC __declspec(dllexport)
+	#else
+		#if defined(USE_DLL)
+			/** @internal */
+			#define MYLIB_PUBLIC __declspec(dllimport)
+		#else
+			/** @internal */
+			#define MYLIB_PUBLIC
+		#endif
+	#endif
 
-int mylib_sum(int a, int b) {
-	return _mylib_sum(a, b);
-}
+	/** @internal */
+	#define MYLIB_CALL __cdecl
+#else
+	#if __GNUC__ >= 4
+		/** @internal */
+		#define MYLIB_PUBLIC __attribute__ ((visibility ("default")))
+	#else
+		/** @internal */
+		#define MYLIB_PUBLIC
+	#endif
+
+	/** @internal */
+	#define MYLIB_CALL
+#endif

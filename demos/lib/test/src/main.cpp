@@ -24,12 +24,17 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 For more information, please refer to <http://unlicense.org/>
 */
-#include "mylib_private.h"
 
-int _mylib_sum(int a, int b) {
-	return a + b;
+#include <CppUTest/TestHarness.h>
+#include <CppUTest/CommandLineTestRunner.h>
+
+TEST_GROUP(FirstTestGroup) {
+};
+
+TEST(FirstTestGroup, FirstTest) {
+	CHECK(true);
 }
 
-int mylib_sum(int a, int b) {
-	return _mylib_sum(a, b);
+int main(int ac, char** av) {
+	return CommandLineTestRunner::RunAllTests(ac, av);
 }
