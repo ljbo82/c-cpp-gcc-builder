@@ -24,9 +24,26 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 For more information, please refer to <http://unlicense.org/>
 */
+#pragma once
 
-#include <CppUTest/CommandLineTestRunner.h>
+#include <mylib/mylib.h>
 
-int main(int ac, char** av) {
-	return CommandLineTestRunner::RunAllTests(ac, av);
-}
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/**
+ * Shared private API for {@link mylib_sum}.
+ *
+ * @param a First integer.
+ *
+ * @param b Second integer.
+ *
+ * @return The sum of \c a and \c b.
+*/
+int _mylib_sum(int a, int b);
+
+
+#ifdef __cplusplus
+} // extern "C"
+#endif

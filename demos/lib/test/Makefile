@@ -32,13 +32,23 @@ CPB_MIN_VERSION := 0.1.0
 PROJ_NAME := test-app
 PROJ_TYPE := app
 
+# ------------------------------------------------------------------------------
 LIBS += mylib:..
-LIBS += CppUTest
 
+# Allows testing private API
 LIB_MKFLAGS_mylib += LIB_TYPE=static
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+LIBS += CppUTest
+# ------------------------------------------------------------------------------
+
+# Private headers
+INCLUDE_DIRS += ../src
 
 include $(CPB_DIR)/builder.mk
 
 .PHONY: run
 run: all
-	$(V_PREFIX)$(O_DIST_DIR)/bin/test-app
+	@printf "\nRunning tests:\n"
+	$(V_PREFIX)$(O_DIST_DIR)/bin/test-app -c

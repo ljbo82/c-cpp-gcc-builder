@@ -24,17 +24,17 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 For more information, please refer to <http://unlicense.org/>
 */
-#pragma once
+#include <CppUTest/TestHarness.h>
+#include <mylib/mylib_private.h>
+#include <iostream>
 
-#include <mylib/mylib.h>
+TEST_GROUP(MyLibTest) {
+};
 
-/**
- * Shared private API for {@link mylib_sum}.
- *
- * @param a First integer.
- *
- * @param b Second integer.
- *
- * @return The sum of \c a and \c b.
-*/
-int _mylib_sum(int a, int b);
+TEST(MyLibTest, _mylib_sum_test) {
+	CHECK_EQUAL(5, _mylib_sum(2, 3));
+}
+
+TEST(MyLibTest, mylib_sum_test) {
+	CHECK_EQUAL(7, mylib_sum(3, 4));
+}

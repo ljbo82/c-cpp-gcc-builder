@@ -23,17 +23,6 @@
 #
 # For more information, please refer to <http://unlicense.org/>
 
-ifndef CPB_DIR
-    $(error [CPB_DIR] Missing value)
+ifeq ($(LIB_TYPE),shared)
+    CFLAGS += -fvisibility=hidden
 endif
-
-CPB_MIN_VERSION := 0.1.0
-
-PROJ_NAME := mylib
-PROJ_TYPE := lib
-
-include $(CPB_DIR)/builder.mk
-
-.PHONY: test
-test:
-	$(V_PREFIX)$(MAKE) -C test run O=$(call fn_rel_dir,test,$(O)/test)
