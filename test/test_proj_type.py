@@ -99,5 +99,19 @@ class test_proj_type(TestBase):
 		result = self.make()
 		self.assert_error_invalid_value('PROJ_TYPE', result)
 
+	@TestBase.BuildTest
+	def test_valid_values(self):
+		self.create_file('Makefile', TestBase.MIN_VALID_APP_MAKEFILE)
+		result = self.make("print-vars")
+		self.assert_success(result, "PROJ_TYPE = app")
+
+		self.create_file('Makefile', TestBase.MIN_VALID_LIB_MAKEFILE)
+		result = self.make("print-vars")
+		self.assert_success(result, "PROJ_TYPE = lib")
+
+		self.create_file('Makefile', TestBase.MIN_VALID_CUSTOM_MAKEFILE)
+		result = self.make("print-vars")
+		self.assert_success(result, "PROJ_TYPE = custom")
+
 if __name__ == '__main__':
 	unittest.main()
