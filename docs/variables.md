@@ -557,7 +557,7 @@ Modifying default values are generally used for cross-compilation. For native bu
 * **Description:** Contains the name of archiver executable.
 * **Required:** No.
 * **Default value:** <tt style="color:#E74C3C">$([CROSS_COMPILE](#cross_compile))ar</tt>.
-* **Origins:** Any.
+* **Origins:** Any, except command line.
 * **Restrictions:** Value cannot be empty.
 
 --------------------------------------------------------------------------------
@@ -567,7 +567,7 @@ Modifying default values are generally used for cross-compilation. For native bu
 * **Description:** Additional flags to be passed to the archiver.
 * **Required:** No.
 * **Default value:** The build system will append appropriate values to this variable.
-* **Origins:** Any.
+* **Origins:** Any, except command line.
 * **Restrictions:** The build system will append appropriate values to this variable.
 
 --------------------------------------------------------------------------------
@@ -577,7 +577,7 @@ Modifying default values are generally used for cross-compilation. For native bu
 * **Description:** Contains the name of assembler executable.
 * **Required:** No.
 * **Default value:** <tt style="color:#E74C3C">$([CROSS_COMPILE](#cross_compile))as</tt>.
-* **Origins:** Any.
+* **Origins:** Any, except command line.
 * **Restrictions:** Value cannot be empty.
 
 --------------------------------------------------------------------------------
@@ -587,7 +587,7 @@ Modifying default values are generally used for cross-compilation. For native bu
 * **Description:** Additional flags to be passed to the assembler.
 * **Required:** No.
 * **Default value:** The build system will append appropriate values to this variable.
-* **Origins:** Any.
+* **Origins:** Any, except command line.
 * **Restrictions:** The build system will append appropriate values to this variable.
 
 --------------------------------------------------------------------------------
@@ -597,7 +597,7 @@ Modifying default values are generally used for cross-compilation. For native bu
 * **Description:** Contains the name of C compiler executable.
 * **Required:** No.
 * **Default value:** <tt style="color:#E74C3C">$([CROSS_COMPILE](#cross_compile))gcc</tt>.
-* **Origins:** Any.
+* **Origins:** Any, except command line.
 * **Restrictions:** Value cannot be empty.
 
 --------------------------------------------------------------------------------
@@ -607,7 +607,7 @@ Modifying default values are generally used for cross-compilation. For native bu
 * **Description:** Additional flags to be passed to the C compiler.
 * **Required:** No.
 * **Default value:** The build system will append appropriate values to this variable.
-* **Origins:** Any.
+* **Origins:** Any, except command line.
 * **Restrictions:** The build system will append appropriate values to this variable.
 
 --------------------------------------------------------------------------------
@@ -617,7 +617,7 @@ Modifying default values are generally used for cross-compilation. For native bu
 * **Description:** Contains the prefix to be added to toolchain executables.
 * **Required:** No.
 * **Default value:** Undefined.
-* **Origins:** Any.
+* **Origins:** Any, except command line.
 * **Restrictions:** None.
 
 --------------------------------------------------------------------------------
@@ -627,7 +627,7 @@ Modifying default values are generally used for cross-compilation. For native bu
 * **Description:** Contains the name of C++ compiler executable.
 * **Required:** No.
 * **Default value:** <tt style="color:#E74C3C">$([CROSS_COMPILE](#cross_compile))g++</tt>.
-* **Origins:** Any.
+* **Origins:** Any, except command line.
 * **Restrictions:** Value cannot be empty.
 
 --------------------------------------------------------------------------------
@@ -637,7 +637,7 @@ Modifying default values are generally used for cross-compilation. For native bu
 * **Description:** Flags to be passed to the C++ compiler.
 * **Required:** No.
 * **Default value:** The build system will append appropriate values to this variable.
-* **Origins:** Any.
+* **Origins:** Any, except command line.
 * **Restrictions:** The build system will append appropriate values to this variable.
 
 --------------------------------------------------------------------------------
@@ -649,7 +649,7 @@ Modifying default values are generally used for cross-compilation. For native bu
 * **Default value:**
     * <tt style="color:#E74C3C">$([CROSS_COMPILE](#cross_compile))gcc</tt> (for pure C or Assembly projects).
     * <tt style="color:#E74C3C">$([CROSS_COMPILE](#cross_compile))g++</tt> (for projects containing C++ sources).
-* **Origins:** Any.
+* **Origins:** Any, except command line.
 * **Restrictions:** Value cannot be empty.
 
 --------------------------------------------------------------------------------
@@ -659,7 +659,7 @@ Modifying default values are generally used for cross-compilation. For native bu
 * **Description:** Flags to be passed to the linker.
 * **Required:** No.
 * **Default value:** The build system will append appropriate values to this variable.
-* **Origins:** Any.
+* **Origins:** Any, except command line.
 * **Restrictions:** The build system will append appropriate values to this variable.
 
 --------------------------------------------------------------------------------
