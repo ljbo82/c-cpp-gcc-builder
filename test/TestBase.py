@@ -77,6 +77,14 @@ class TestBase(unittest.TestCase):
 		''')
 	'''Minimal makefile for a lib project.'''
 
+	MIN_VALID_CUSTOM_MAKEFILE = textwrap.dedent(f'''\
+		PROJ_NAME = project
+		PROJ_TYPE = custom
+
+		include {CPB_DIR}/builder.mk
+		''')
+	'''Minimal makefile for a custom project.'''
+
 	@staticmethod
 	def get_native_host():
 		result = TestBase.exec(f'CPB_DIR={TestBase.CPB_DIR} make --no-print-directory -C {TestBase.DEMOS_DIR}/c-app print-vars VARS=NATIVE_HOST')

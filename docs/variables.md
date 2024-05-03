@@ -55,6 +55,7 @@ The following variables are related with the project.
 * **Restrictions:** Accepted values are:
     * `app` (for an application executable);
     * `lib` (for a library. See  [`LIB_TYPE`](#lib_type));
+	* `custom` (The build logic is customized. See [`BUILD_DEPS`](#build_deps)).
 
 --------------------------------------------------------------------------------
 
@@ -188,9 +189,9 @@ The following variables configures the build system or show informations about i
 
 * **Description:** Defines build targets on which the build process depends upon.
 * **Required:** No.
-* **Default value:** if [`CUSTOM_BUILD`](#custom_build) is not set, the default value <tt style="color:#E74C3C">$([O_BUILD_DIR](#o_build_dir))/$([ARTIFACT](#artifact))</tt> will be appended to this variable.
+* **Default value:** if [`PROJ_TYPE`](#proj_type) is either `lib` or `app*`, the default value <tt style="color:#E74C3C">$([O_BUILD_DIR](#o_build_dir))/$([ARTIFACT](#artifact))</tt> will be appended to this variable. Otherwise, there will be no default value.
 * **Origins:** Makefile.
-* **Restrictions:** The build system will append the defvalue(s) to this variable.
+* **Restrictions:** The build system may append the value(s) to this variable depending on [`PROJ_TYPE`](#proj_type) value.
 
 --------------------------------------------------------------------------------
 
@@ -239,26 +240,6 @@ The following variables configures the build system or show informations about i
 * **Default value:** The version of the build system.
 * **Origins:** Not applicable (variable is set by the build system).
 * **Restrictions:** This is a read-only reserved variable.
-
---------------------------------------------------------------------------------
-
-### CUSTOM_BUILD
-
-* **Description:** Defines if the project uses a custom logic to perform its build.
-
-    * When using a custom logic, define one or more targets in [`BUILD_DEPS`](#build_deps) variable. These targets should implement the custom build logic.
-
-    !!! Warning
-        Changing the default value will require your project to handle entire build logic on its own.
-
-        NOTE: All variables support would be still available.
-
-* **Required:** No.
-* **Default value:** `0` (uses default build system logic).
-* **Origins:** Makefile.
-* **Restrictions:** Accepted values are:
-    * `0`: Use build system logic to perform build.
-    * `1`: Use a custom logic to build by calling targets defined in [`BUILD_DEPS`](#build_deps) variable.
 
 --------------------------------------------------------------------------------
 

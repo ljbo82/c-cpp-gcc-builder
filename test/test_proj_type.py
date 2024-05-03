@@ -37,7 +37,7 @@ class test_proj_type(TestBase):
 			include {TestBase.CPB_DIR}/builder.mk
 			''')
 		)
-		result = self.make('PROJ_TYPE=some_val')
+		result = self.make('PROJ_TYPE=app')
 		self.assert_error_unexpected_origin('PROJ_TYPE', 'command line', result)
 
 	@TestBase.BuildTest
@@ -48,7 +48,7 @@ class test_proj_type(TestBase):
 			include {TestBase.CPB_DIR}/builder.mk
 			''')
 		)
-		result = self.make(env='PROJ_TYPE=some_val')
+		result = self.make(env='PROJ_TYPE=app')
 		self.assert_error_unexpected_origin('PROJ_TYPE', 'environment', result)
 
 	@TestBase.BuildTest
