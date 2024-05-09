@@ -29,7 +29,7 @@ from TestBase import TestBase
 
 class test_output_dir(TestBase):
 	@TestBase.BuildTest()
-	def test_reject_o_inside_proj_dir(self):
+	def test_reject_o_equal_proj_dir(self):
 		self.create_file('Makefile', TestBase.MIN_VALID_APP_MAKEFILE)
 		result = self.make('O=.')
 		self.assert_failure(result)
@@ -66,6 +66,15 @@ class test_output_dir(TestBase):
 			'O=output',
 			'O_BASE=build'], result.output)
 
+	@TestBase.BuildTest()
+	def test_reject_o_base_equal_proj_dir(self):
+		self.create_file('Makefile', TestBase.MIN_VALID_APP_MAKEFILE)
+		result = self.make('O_BASE=. O=output')
+		self.assert_failure(result)
+		self.assert_contains([
+			'[O_BASE]',
+			'Project root',
+		], result.output)
 
 if __name__ == '__main__':
 	unittest.main()
