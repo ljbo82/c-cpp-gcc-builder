@@ -342,17 +342,23 @@ The following variables configures the build system or show informations about i
 * **Origins:** Any, although it is strongly recommended to define this variable through command-line parameters.
 * **Restrictions:**
     * Value shall not contain whitespaces nor can be an empty string.
-	* Value shall not be equal to [`CURDIR`](https://www.gnu.org/software/make/manual/make.html#index-CURDIR).
+    * Value shall not be equal to [`CURDIR`](https://www.gnu.org/software/make/manual/make.html#index-CURDIR).
+    * Value must point do a directory inside [`O_BASE`](#o_base).
 
 --------------------------------------------------------------------------------
 
 ### O_BASE
 
 * **Description:** Defines the base [output directory](../user-guide/#output-directories).
-* **Required:** Not applicable (variable is set by the build system).
+
+    If yor project is building for multiple platforms, this directory is intended to hold the base of multiple output directories.
+
+* **Required:** No.
 * **Default value:** If [`O`](#o) variable is defined, the value of this variable will be the same as [`O`](#o). Otherwise, the default value will be `output`.
-* **Origins:** Not applicable (variable is set by the build system).
-* **Restrictions:** This is a read-only reserved variable.
+* **Origins:** Any.
+* **Restrictions:**
+    * Value shall not contain whitespaces nor can be an empty string.
+    * Value shall not be equal to [`CURDIR`](https://www.gnu.org/software/make/manual/make.html#index-CURDIR).
 
 --------------------------------------------------------------------------------
 

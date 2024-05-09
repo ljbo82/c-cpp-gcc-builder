@@ -24,6 +24,7 @@
 # For more information, please refer to <http://unlicense.org/>
 
 import unittest
+import textwrap
 
 from TestBase import TestBase
 
@@ -31,7 +32,7 @@ class test_output_dir(TestBase):
 	@TestBase.BuildTest()
 	def test_reject_o_equal_proj_dir(self):
 		self.create_file('Makefile', TestBase.MIN_VALID_APP_MAKEFILE)
-		result = self.make('O=.')
+		result = self.make('O_BASE=output O=.')
 		self.assert_failure(result)
 		self.assert_contains(['[O]', 'Project root'], result.output)
 
@@ -75,6 +76,26 @@ class test_output_dir(TestBase):
 			'[O_BASE]',
 			'Project root',
 		], result.output)
+
+	@TestBase.BuildTest()
+	def test_reject_o_base_empty(self):
+		self.create_file('Makefile', textwrap.dedent(f'''\
+			PROJ_NAME = project
+			PROJ_TYPE = app
+
+			empty :=
+			O_BASE = $(empty)
+			include {TestBase.CPB_DIR}/builder.mk
+			'''))
+		result = self.make()
+		self.assert_error_missing_value('O_BASE', result)
+
+	@TestBase.BuildTest()
+	def test_reject_o_base_with_whitespaces(self):
+		self.create_file('Makefile', TestBase.MIN_VALID_LIB_MAKEFILE)
+		result = self.make('O_BASE=\'some dir\'')
+		self.assert_error_whitespaces('O_BASE', result)
+
 
 if __name__ == '__main__':
 	unittest.main()
