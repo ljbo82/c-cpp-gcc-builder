@@ -151,7 +151,7 @@ class TestBase(unittest.TestCase):
 				os.chdir(os.path.join(TestBase.DEMOS_DIR,demo_dir))
 				os.environ['CPB_DIR'] = TestBase.CPB_DIR
 				if output_dir is not None:
-					if output_dir is '.':
+					if output_dir == '.':
 						raise ValueError('Invalid output_dir: \'.\'')
 
 					os.environ['O'] = output_dir
