@@ -25,13 +25,49 @@ _This makefile does not expose any target._
 
 ## Variables
 
-_This makefile does not expect nor expose any variables (except the [functions](#functions) themselves)._
+!!! note "Variable details"
+    For each detailed variable, the following fields refer to:
+
+    * **Description:** Contains descriptive information about the variable.
+
+    * **Required:** Defines if a variable must be defined (and it must be non-empty) during build.
+
+    * **Default value:** Contains the value which will be assumed if variable is optional and it is not defined.
+
+    * **Origins:** Contains the list of allowed origins for variable definition.
+
+    * **Restrictions:** Contains information about restrictions on which kind of values that can be stored in the variable.
 
 !!! Warning
     The build system declare internal private variables and functions that are not intended to be used by projects. All of those private variables and functions, have their names prefixed with `cpb_` prefix. Please avoid using/defining variables or functions with names beginning with such prefix.
 
     The build system checks for attempts to define variables and functions with the same name of reserved ones. Any attempt to define such items will result in errors being raised by the build system.
 
+### comma
+
+* **Description:** Escape variable to represent a comma char (see limitations of [`$(call)`](https://www.gnu.org/software/make/manual/html_node/Syntax-of-Functions.html)).
+* **Required:** Not applicable (variable is set by the build system).
+* **Default value:** Variable expands to a `,` (comma) character.
+* **Origins:** Not applicable (variable is set by the build system).
+* **Restrictions:** This is a read-only reserved variable.
+--------------------------------------------------------------------------------
+
+### empty
+
+* **Description:** Escape variable to represent an empty value (see limitations of [`$(call)`](https://www.gnu.org/software/make/manual/html_node/Syntax-of-Functions.html)).
+* **Required:** Not applicable (variable is set by the build system).
+* **Default value:** The variable expands to an empty value.
+* **Origins:** Not applicable (variable is set by the build system).
+* **Restrictions:** This is a read-only reserved variable.
+--------------------------------------------------------------------------------
+
+### space
+
+* **Description:** Escape variable to represent a whitespace value (see limitations of [`$(call)`](https://www.gnu.org/software/make/manual/html_node/Syntax-of-Functions.html)).
+* **Required:** Not applicable (variable is set by the build system).
+* **Default value:** The variable expands to a single whitespace.
+* **Origins:** Not applicable (variable is set by the build system).
+* **Restrictions:** This is a read-only reserved variable.
 --------------------------------------------------------------------------------
 
 ## Functions
@@ -634,6 +670,31 @@ Returns the relative path for going from `fromDir` to `toDir`.
 
 ### Miscellaneous
 
+#### fn_error
+
+Raises an error and output a colored message.
+
+!!! Notes
+    * Real color support relies on terminal support. If there is no support colors are ignored.
+
+ **Syntax:**
+
+```Makefile
+$(call fn_error,msg)
+```
+
+**Parameters:**
+
+| Parameter  | Description                             |
+|------------|-----------------------------------------|
+| `msg`      | Message to be printed due to the error. |
+
+**Return value:**
+
+_This function does not return any value._
+
+--------------------------------------------------------------------------------
+
 #### fn_log_cmd
 
 Generates an echo command (using `printf`) for log messages.
@@ -711,3 +772,28 @@ $(call fn_shell,cmd,[errorMessage])
 **Return value:**
 
 Output of given `cmd` execution.
+
+#### fn_warning
+
+Prints a colored warning message into console.
+
+!!! Notes
+    * Real color support relies on terminal support. If there is no support colors are ignored.
+
+ **Syntax:**
+
+```Makefile
+$(call fn_warning,msg)
+```
+
+**Parameters:**
+
+| Parameter  | Description                               |
+|------------|-------------------------------------------|
+| `msg`      | Message to be printed due to the warning. |
+
+**Return value:**
+
+_This function does not return any value._
+
+--------------------------------------------------------------------------------
