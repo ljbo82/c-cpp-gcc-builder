@@ -24,7 +24,7 @@
 # For more information, please refer to <http://unlicense.org/>
 
 ifndef CPB_DIR
-    $(error [CPB_DIR] Missing value)
+    $(call fn_error,[CPB_DIR] Missing value)
 endif
 
 CPB_MIN_VERSION := 0.1.0

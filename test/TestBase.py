@@ -326,7 +326,7 @@ class TestBase(unittest.TestCase):
 
 	@staticmethod
 	def assert_error_unexpected_origin(var_name, given_origin, result):
-		TestBase.assert_error_var(var_name, f'Unexpected origin: "{given_origin}"', result)
+		TestBase.assert_error_var(var_name, f"Unexpected origin: '{given_origin}'", result)
 
 	@staticmethod
 	def assert_error_whitespaces(var_name, result):

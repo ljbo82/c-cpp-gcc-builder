@@ -24,13 +24,13 @@
 # For more information, please refer to <http://unlicense.org/>
 
 ifndef CPB_DIR
-    $(error [CPB_DIR] Missing value)
+    $(call fn_error,[CPB_DIR] Missing value)
 endif
 
 CPB_MIN_VERSION := 0.1.0
 
 ifndef LIBS_DIR
-    $(error [LIBS_DIR] missing definition)
+    $(call fn_error,[LIBS_DIR] Missing definition)
 endif
 
 PROJ_NAME = X
