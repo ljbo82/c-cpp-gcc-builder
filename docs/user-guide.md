@@ -116,6 +116,10 @@ If you want to have platforms layers spread across multiple directories, add ent
 
 For details about what platform layers are and how to use them in oder to add support to multiple platforms in your project, see [multiplatform projects](#multiplatform-projects).
 
+#### Custom sources
+
+TODO
+
 ### Output directories and files
 
 All files produced by the building process are placed into an output directory (defined by the variable [`O`](#O)).
@@ -484,7 +488,3 @@ TODO (mention extras/arduino)
 ## Linking to external libraries
 
 TODO
-
-## IDE Integration
-
-### VSCode

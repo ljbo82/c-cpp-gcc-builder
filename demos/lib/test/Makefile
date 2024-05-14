@@ -36,7 +36,7 @@ PROJ_TYPE := app
 LIBS += mylib:..
 
 # Allows testing private API
-LIB_MKFLAGS_mylib += LIB_TYPE=static
+LIB_MKFLAGS[mylib] += LIB_TYPE=static
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------

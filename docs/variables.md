@@ -113,7 +113,7 @@ The following variables provide a way to inform the build system about source fi
 
 ### SKIPPED_SRC_DIRS
 
-* **Description:** This variable constains a list of directories that shall be skipped while looking for source files (see [SRC_DIRS](#src_dirs)).
+* **Description:** This variable contains a list of directories that shall be skipped while looking for source files (see [SRC_DIRS](#src_dirs)).
 * **Required:** No.
 * **Default value:** Undefined.
 * **Origins:** Makefile.
@@ -123,7 +123,7 @@ The following variables provide a way to inform the build system about source fi
 
 ### SKIPPED_SRC_FILES
 
-* **Description:** This variable constains a list of source files that shall be skipped while looking for source files (see [SRC_DIRS](#src_dirs)).
+* **Description:** This variable contains a list of source files that shall be skipped while looking for source files (see [SRC_DIRS](#src_dirs)).
 * **Required:** No.
 * **Default value:** Undefined.
 * **Origins:** Makefile.
@@ -164,7 +164,7 @@ The following variables provide a way to inform the build system about source fi
 
 ## Build system configuration
 
-The following variables configures the build system or show informations about it.
+The following variables configures the build system or show information about it.
 
 ### ARTIFACT
 
@@ -214,8 +214,8 @@ The following variables configures the build system or show informations about i
 * **Description:** This variable holds the absolute path of the directory where the build system is located.
 * **Required:** No.
 * **Default value:** This value will never be left empty and it will hold the absolute path of the directory where the build system is located.
-* **Origins:** The variable can be defined anywhere, but it will always be overriden by the build system.
-* **Restrictions:** The variable will overriden by the build system.
+* **Origins:** The variable can be defined anywhere, but it will always be overridden by the build system.
+* **Restrictions:** The variable will overridden by the build system.
 
 --------------------------------------------------------------------------------
 
@@ -246,7 +246,7 @@ The following variables configures the build system or show informations about i
 ### DEBUG
 
 * **Description:** Enables/Disables the debug mode for the build. By default (this behavior can be customized):
-    * While bulding in debug mode, debug symbols will be added to generated binary artifact.
+    * While building in debug mode, debug symbols will be added to generated binary artifact.
     * In release mode (i.e. debug mode is disabled), debugging symbols are not included in generated binary, and artifact is [stripped](#strip_release).
 * **Required:** No.
 * **Default value:** `0` (i.e. release mode).
@@ -296,7 +296,7 @@ The following variables configures the build system or show informations about i
 
 ### HOSTS_DIRS
 
-* **Description:** Defines a list of directories where [platform layers](../user-guide/#layer-directories-and-files) are searched while building [multiplatorm projects](../user-guide/#multiplatform-projects):
+* **Description:** Defines a list of directories where [platform layers](../user-guide/#layer-directories-and-files) are searched while building [multiplatform projects](../user-guide/#multiplatform-projects):
 * **Required:** No.
 * **Default value:**
     * If the directory <tt style="color:#E74C3C">$([CURDIR](https://www.gnu.org/software/make/manual/make.html#index-CURDIR))/hosts</tt> is present, it will be automatically added to this variable.
@@ -446,7 +446,7 @@ The following variables configures the build system or show informations about i
 
 ### PRE_BUILD_DEPS
 
-* **Description:** Contains a list of targets to be executed BEFORE the internal rules of the [`build`](#build) target. This is usefull to build dependencies before building the target artifact itself.
+* **Description:** Contains a list of targets to be executed BEFORE the internal rules of the [`build`](#build) target. This is useful to build dependencies before building the target artifact itself.
   * See [make targets](#make-targets)
 * **Required:** No.
 * **Default value:**  Undefined.
@@ -493,7 +493,7 @@ The following variables configures the build system or show informations about i
 * **Origins:** Makefile.
 * **Restrictions:** Accepted values are any of the following (check [GCC documentation](https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html) for details):
     * `0` (no optimization);
-    * `1` (optmize);
+    * `1` (optimize);
     * `2` (optimize even more);
     * `3` (optimize yet more);
     * `s` (optimizes for size);
@@ -540,7 +540,7 @@ The following variables configures the build system or show informations about i
 ### V_PREFIX
 
 * **Description:** Contains a prefix that can be placed before receipt commands in order to suppress/show the command being executed according to the value defined in [`V`](#v).
-    * Here is an example used to hide/show the invoked compiler command while bulding a C file:
+    * Here is an example used to hide/show the invoked compiler command while building a C file:
         <pre><code class="language-makefile hljs">$(V_PREFIX)$(CROSS_COMPILE)$(CC) $(strip $(CFLAGS) -c $< -o $@)</code></pre>
 
 * **Required:** Not applicable (variable is set by the build system).
@@ -682,10 +682,10 @@ Use the following variables in order to establish dependencies on external libra
     * Each entry in this variable has the syntax `LIB_NAME[:LIB_PROJECT_DIR[:LIB_PROJECT_MAKEFILE]]`:
         * `LIB_NAME`: defines the library name used by linker.
         * `LIB_PROJECT_DIR`: When defined, the library will be compiled along with the project. This component contains the path to the directory where the library project is located (is assumed that library project is built using cpp-project-builder):
-            * By defining this entry, the variable <tt style="color:#E74C3C">[LIB_MKDIR](#lib_mkdir_lib_name)_&lt;LIB_NAME></tt> will be automatically defined.
+            * By defining this entry, the variable <tt style="color:#E74C3C">[LIB_MKDIR](#lib_mkdir_lib_name)[&lt;LIB_NAME>]</tt> will be automatically defined.
         * `LIB_PROJECT_MAKEFILE`: When defined, this component refers to the makefile which will be used to build the project (is assumed that library project is built using cpp-project-builder):
-            * By defining this entry, the variable <tt style="color:#E74C3C">[LIB_MAKEFILE](#lib_makefile_lib_name)_&lt;LIB_NAME></tt> will be automatically defined.
-    * If you want to pass custom flags to the make invocation while building a library, define the variable <tt style="color:#E74C3C">[LIB_MKFLAGS](#lib_mkflags_lib_name)_&lt;LIB_NAME></tt> with the flags to be passed.
+            * By defining this entry, the variable <tt style="color:#E74C3C">[LIB_MAKEFILE](#lib_makefile_lib_name)[&lt;LIB_NAME>]</tt> will be automatically defined.
+    * If you want to pass custom flags to the make invocation while building a library, define the variable <tt style="color:#E74C3C">[LIB_MKFLAGS](#lib_mkflags_lib_name)[&lt;LIB_NAME>]</tt> with the flags to be passed.
     * If a library being built also depends on another libraries, the transient dependencies will also be built.
     * The build system will pass the correct flags to the compiler and linker in order to use all declared libraries and their dependencies:
         * For example, If a project depends on library `X`, and library `X` depends on library `Y`, which in turn depends on library `Z`, and all of them are using cpp-project-builder to manage their building process, then the main project is required to only declare dependency on `X` (the other transient dependencies are managed automatically by the build system).
@@ -714,10 +714,10 @@ Use the following variables in order to establish dependencies on external libra
 
 --------------------------------------------------------------------------------
 
-### LIB_MAKEFILE<i>_&lt;lib_name></i>
+### LIB_MAKEFILE[<i>&lt;lib_name></i>]
 
 * **Description:** This variable holds the name of a makefile used to build a library named `LIB_NAME` declared in [`LIBS`](#libs) variable:
-    * For each `LIB_NAME`, the build system will check the existence of a variable named `LIB_MAKEFILE_<LIB_NAME>`.
+    * For each `LIB_NAME`, the build system will check the existence of a variable named `LIB_MAKEFILE[<LIB_NAME>]`.
     * For each library entry defined in [`LIBS`](#libs), if the component `LIB_PROJECT_MAKEFILE` is not informed and there is still a need to use a custom makefile to build the dependency, then this variable can be used.
     * If the component `LIB_PROJECT_MAKEFILE` is defined in library entry, then this variable is automatically defined.
 
@@ -731,10 +731,10 @@ Use the following variables in order to establish dependencies on external libra
 
 --------------------------------------------------------------------------------
 
-### LIB_MKDIR<i>_&lt;lib_name></i>
+### LIB_MKDIR[<i>&lt;lib_name></i>]
 
 * **Description:** This variable holds the path of a directory containing the project used to build a library named `LIB_NAME` declared in [`LIBS`](#libs) variable:
-    * For each `LIB_NAME`, the build system will check the existence of a variable named `LIB_MKDIR_<LIB_NAME>`.
+    * For each `LIB_NAME`, the build system will check the existence of a variable named `LIB_MKDIR[<LIB_NAME>]`.
     * For each library entry defined in [`LIBS`](#libs), if the component `LIB_PROJECT_DIR` is not informed and there is still a need to define the directory where its project is located, then this variable can be used.
     * If the component `LIB_PROJECT_DIR` is defined in library entry, then this variable is automatically defined.
 
@@ -748,10 +748,10 @@ Use the following variables in order to establish dependencies on external libra
 
 --------------------------------------------------------------------------------
 
-### LIB_MKFLAGS<i>_&lt;lib_name></i>
+### LIB_MKFLAGS[<i>&lt;lib_name></i>]
 
 * **Description:** This variable holds additional flags to be passed to the `make` invocation while building a library named `LIB_NAME` declared in [`LIBS`](#libs) variable:
-    * For each `LIB_NAME`, the build system will check the existence of a variable named `LIB_MKFLAGS_<LIB_NAME>`.
+    * For each `LIB_NAME`, the build system will check the existence of a variable named `LIB_MKFLAGS[<LIB_NAME>]`.
     * Let's suppose you are building a project which depends on library `B`. Then in project's makefile there would be an entry like this:
 
         <pre><code class="language-makefile hljs">LIBS += B:lib_b_dir</code></pre>
@@ -772,12 +772,12 @@ Use the following variables in order to establish dependencies on external libra
 
         In order to solve such problem, it would be required to specify the equivalent host while invoking the sub-make.
 
-		In order to do so, define the variable `LIB_MKFLAGS_B` when building for host `proj-host`:
+		In order to do so, define the variable `LIB_MKFLAGS[B]` when building for host `proj-host`:
 
         <pre><code class="language-makefile hljs">ifeq ($(HOST),proj-host)
     # Instead of using ifeq, this declaration could be done in
     # a `hosts.mk` inside a layer
-    LIB_MKFLAGS_B += HOST=custom-host
+    LIB_MKFLAGS[B] += HOST=custom-host
 endif
         </code></pre>
 

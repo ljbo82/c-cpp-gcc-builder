@@ -13,7 +13,7 @@ include $(CPB_DIR)/functions.mk
 ```
 
 !!! note
-    This makefile is automatically included by [builder.mk](../user-guide), [git.mk](../git.mk), and [doxygen.mk](../doxygen.mk).
+    This makefile is automatically included by [builder.mk](../builder.mk), [git.mk](../git.mk), [doxygen.mk](../doxygen.mk), and [native.mk](../native.mk).
 
 --------------------------------------------------------------------------------
 
@@ -43,7 +43,15 @@ _This makefile does not expose any target._
 
     The build system checks for attempts to define variables and functions with the same name of reserved ones. Any attempt to define such items will result in errors being raised by the build system.
 
-### comma
+### Input variables
+
+_This makefile does not expect any variables._
+
+--------------------------------------------------------------------------------
+
+### Output variables
+
+#### comma
 
 * **Description:** Escape variable to represent a comma char (see limitations of [`$(call)`](https://www.gnu.org/software/make/manual/html_node/Syntax-of-Functions.html)).
 * **Required:** Not applicable (variable is set by the build system).
@@ -52,7 +60,7 @@ _This makefile does not expose any target._
 * **Restrictions:** This is a read-only reserved variable.
 --------------------------------------------------------------------------------
 
-### empty
+#### empty
 
 * **Description:** Escape variable to represent an empty value (see limitations of [`$(call)`](https://www.gnu.org/software/make/manual/html_node/Syntax-of-Functions.html)).
 * **Required:** Not applicable (variable is set by the build system).
@@ -61,7 +69,7 @@ _This makefile does not expose any target._
 * **Restrictions:** This is a read-only reserved variable.
 --------------------------------------------------------------------------------
 
-### space
+#### space
 
 * **Description:** Escape variable to represent a whitespace value (see limitations of [`$(call)`](https://www.gnu.org/software/make/manual/html_node/Syntax-of-Functions.html)).
 * **Required:** Not applicable (variable is set by the build system).
@@ -701,7 +709,7 @@ Generates an echo command (using `printf`) for log messages.
 
 !!! Notes
     * Real color support relies on terminal support. If there is no support colors are ignored.
-    * This function returns the command string to be used by recipees. It does not execute any actual printing command.
+    * This function returns the command string to be used by recipes. It does not execute any actual printing command.
 
  **Syntax:**
 

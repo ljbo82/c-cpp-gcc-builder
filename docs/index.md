@@ -13,17 +13,17 @@ cpp-project-builder provides a makefile-based build system intended to be used b
 
 !!! note  "Assumptions"
     * Although the build system simplifies a makefile writing process, the developer must have a basic knowledge about how [GNU Make](https://www.gnu.org/software/make/) works, and how to write makefiles. For details, check [GNU Make official documentation](https://www.gnu.org/software/make/manual/make.html).
-    * Although your project's build logic could be splitted into multiple makefiles, in order make easier the explanation of the concepts, it will be assumed a project containing a single makefile responsible by the compilation/distribution process.
+    * Although your project's build logic could be split into multiple makefiles, in order make easier the explanation of the concepts, it will be assumed a project containing a single makefile responsible by the compilation/distribution process.
     * From this point onwards, the project root directory will be referred to as `<PROJ_ROOT>` and it is the directory where project's `Makefile` is located.
 
-The build system can be either shared by multiple projects (i.e. multiple projects unsing a single copy of the build system), or it can be emebedded directly into your project.
+The build system can be either shared by multiple projects (i.e. multiple projects using a single copy of the build system), or it can be embedded directly into your project.
 
 The basic usage is comprised by the following steps:
 
 1. Copy or clone the build system into a directory of your preference (from this point onwards, the directory containing the build system will be referred to as `<CPB_DIR>`).
 
     !!! note "Build system repository vs Build system aggregator repository"
-        There are two respositories in which you can get the build system:
+        There are two repositories in which you can get the build system:
 
         * **Actual build system repository:**
 
@@ -82,7 +82,7 @@ The build system is composed by multiple makefiles which, when included by your 
 * Provide make targets for certain actions.
 * Provide utility functions.
 
-Here is a summary of the makefiles provided by the build system which can be included by your project (note that some of them are included manually uppon including others):
+Here is a summary of the makefiles provided by the build system which can be included by your project (note that some of them are included manually upon including others):
 
 ### builder.mk
 
@@ -103,7 +103,7 @@ See makefile [documentation](doxygen.mk.md) for details.
 This makefile exposes utility makefile functions used by the build system, which can also be used by your project.
 
 !!! note
-    This makefile is automatically included by [builder.mk](#buildermk), [git.mk](#gitmk), and [doxygen.mk](#doxygenmk).
+    This makefile is automatically included by [builder.mk](#buildermk), [git.mk](#gitmk), [doxygen.mk](#doxygenmk), and [native.mk](#nativemk).
 
     If you want to use its functions before the inclusion of `builder.mk`, include it manually.
 

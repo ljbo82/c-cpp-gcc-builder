@@ -79,9 +79,9 @@ The following variables are generated automatically by this makefile in order to
 
 #### NATIVE_OS
 
-* **Description:** Contains detected native operting system.
+* **Description:** Contains detected native operating system.
 * **Required:**  Not applicable (variable is set by the build system).
-* **Default value:** Detected native operting system. If it would not be possible to detect it, variable will be empty/undefined.
+* **Default value:** Detected native operating system. If it would not be possible to detect it, variable will be empty/undefined.
 * **Origins:**  Not applicable (variable is set by the build system).
 * **Restrictions:** This is a read-only reserved variable.
 
@@ -89,4 +89,4 @@ The following variables are generated automatically by this makefile in order to
 
 ## Functions
 
-_This makefile does not expose any function explicitly._
+_This file itself does not expose any function explicitly. But since it automatically includes [functions.mk](../functions.mk), all functions contained there are implicitly exposed after inclusion_.
