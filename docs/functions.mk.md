@@ -93,7 +93,7 @@ If a variable value has whitespaces, an error will be raised.
 **Syntax:**
 
 ```Makefile
-$(call fn_check_no_whitespace,varName,[errorMessage])
+$(call fn_check_no_whitespace,varName,[errorMessage=<predefined_message>])
 ```
 
 **Parameters:**
@@ -118,7 +118,7 @@ If variable has an empty value, an error will be raised.
 **Syntax:**
 
 ```Makefile
-$(call fn_check_not_empty,varName,[errorMessage])
+$(call fn_check_not_empty,varName,[errorMessage=<predefined_message>])
 ```
 
 **Parameters:**
@@ -143,7 +143,7 @@ If a variable has the same origin as a forbidden one, an error will be raised.
 **Syntax:**
 
 ```Makefile
-$(call fn_check_not_origin,varName,forbiddenOrigin,[errorMessage])
+$(call fn_check_not_origin,varName,forbiddenOrigin,[errorMessage=<predefined_message>])
 ```
 
 **Parameters:**
@@ -173,7 +173,7 @@ If variable contents has an unexpected value, an error will be raised.
 **Syntax:**
 
 ```Makefile
-$(call fn_check_options,varName,acceptedOptions,[errorMessage])
+$(call fn_check_options,varName,acceptedOptions,[errorMessage=<predefined_message>])
 ```
 
 **Parameters:**
@@ -199,7 +199,7 @@ If a variable has an unexpected origin, an error will be raised.
 **Syntax:**
 
 ```Makefile
-$(call fn_check_origin,varName,expectedOrigin,[errorMessage])
+$(call fn_check_origin,varName,expectedOrigin,[errorMessage=<predefined_message>])
 ```
 
 **Parameters:**
@@ -225,7 +225,7 @@ If variable is defined in the moment of calling this function, it will raise an 
 **Syntax:**
 
 ```Makefile
-$(call fn_check_reserved,varName,[errorMessage])
+$(call fn_check_reserved,varName,[errorMessage=<predefined_message>])
 ```
 
 **Parameters:**
@@ -275,7 +275,7 @@ For example, the value `linux-arm-v7` can be decomposed into `linux`, `linux/arm
 **Syntax:**
 
 ```Makefile
-$(call fn_host_factorize,hostString,[delimiter],[replacement])
+$(call fn_host_factorize,hostString,[delimiter=-],[replacement=/])
 ```
 
 **Parameters:**
@@ -321,7 +321,7 @@ Explodes a delimited word into a list of words.
 **Syntax:**
 
 ```Makefile
-$(call fn_split,delimitedWord,delimiter,[tokenPrefix])
+$(call fn_split,delimitedWord,delimiter,[tokenPrefix=__?__])
 ```
 
 **Parameters:**
@@ -348,15 +348,15 @@ Generate a colored string.
 **Syntax:**
 
 ```Makefile
-$(call fn_text,[ansiColor],msg)
+$(call fn_text,msg,[ansiColor=])
 ```
 
 **Parameters:**
 
 | Parameter   | Description                                                            |
 |-------------|------------------------------------------------------------------------|
-| `ansiColor` | Optional ANSI color code (e.g. for bold bright green would be `92;1`). |
 | `msg`       | Message to be printed to stdout.                                       |
+| `ansiColor` | Optional ANSI color code (e.g. for bold bright green would be `92;1`). |
 
 **Return value:**
 
@@ -432,7 +432,7 @@ A valid semantic version matches with the following regex:
 **Syntax:**
 
 ```Makefile
-$(call fn_semver,semanticVersion,[errorMessage])
+$(call fn_semver,semanticVersion,[errorMessage=<predefined_message>])
 ```
 
 **Parameters:**
@@ -457,7 +457,7 @@ See [fn_semver](#fn_semver).
 **Syntax:**
 
 ```Makefile
-$(call fn_semver_check_compat,minVersion,version,[errorMessage])
+$(call fn_semver_check_compat,minVersion,version,[errorMessage=<predefined_message>])
 ```
 
 **Parameters:**
@@ -614,7 +614,7 @@ Lists files in a directory.
 **Syntax:**
 
 ```Makefile
-$(call fn_find_files,directory,[findFlags])
+$(call fn_find_files,directory,[findFlags=])
 ```
 
 **Parameters:**
@@ -688,14 +688,16 @@ Raises an error and output a colored message.
  **Syntax:**
 
 ```Makefile
-$(call fn_error,msg)
+$(call fn_error,msg,[skipColor=0])
 ```
 
 **Parameters:**
 
-| Parameter  | Description                             |
-|------------|-----------------------------------------|
-| `msg`      | Message to be printed due to the error. |
+| Parameter   | Description                                                                                                                        |
+|-------------|------------------------------------------------------------------------------------------------------------------------------------|
+| `msg`       | Message to be printed.                                                                                                             |
+| `skipColor` | Optional parameter which instructs the call to not use colors. Defaults to `0` (by default text is colored when there is support). |
+
 
 **Return value:**
 
@@ -703,30 +705,55 @@ _This function does not return any value._
 
 --------------------------------------------------------------------------------
 
-#### fn_log_cmd
+#### fn_info
 
-Generates an echo command (using `printf`) for log messages.
+Prints a colored info message into console.
 
 !!! Notes
     * Real color support relies on terminal support. If there is no support colors are ignored.
-    * This function returns the command string to be used by recipes. It does not execute any actual printing command.
 
  **Syntax:**
 
 ```Makefile
-$(call fn_log_cmd,[useColor],msg)
+$(call fn_info,msg,[skipColor=0])
 ```
 
 **Parameters:**
 
-| Parameter  | Description                                                                                                                                              |
-|------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `verbose`  | Defines if generated command for verbose mode. Defaults to `0` (non-verbose mode).<br/>Any other non-empty value will cause the verbose mode to be used. |
-| `msg`      | Message to be printed to stdout.                                                                                                                         |
+| Parameter   | Description                                                                                                                        |
+|-------------|------------------------------------------------------------------------------------------------------------------------------------|
+| `msg`       | Message to be printed.                                                                                                             |
+| `skipColor` | Optional parameter which instructs the call to not use colors. Defaults to `0` (by default text is colored when there is support). |
 
 **Return value:**
 
-The echo command string for log messages.
+_This function does not return any value._
+
+--------------------------------------------------------------------------------
+
+#### fn_log
+
+Prints an log message in standardized way. If verbose mode is informed, messages are colored.
+
+!!! Notes
+    * Real color support relies on terminal support. If there is no support colors are ignored.
+
+ **Syntax:**
+
+```Makefile
+$(call fn_log,msg,[verbose=0])
+```
+
+**Parameters:**
+
+| Parameter  | Description                                                                        |
+|------------|------------------------------------------------------------------------------------|
+| `msg`      | Message to be printed to stdout.                                                   |
+| `verbose`  | Defines if generated command for verbose mode. Defaults to `0` (non-verbose mode). |
+
+**Return value:**
+
+_This function does not return any value._
 
 --------------------------------------------------------------------------------
 
@@ -737,7 +764,7 @@ Numeric comparison of two numbers.
 **Syntax:**
 
 ```Makefile
-$(call fn_number_cmp,[first],[second])
+$(call fn_number_cmp,[first=0],[second=0])
 ```
 
 **Parameters:**
@@ -767,7 +794,7 @@ This function differs from [`$(shell)`](https://www.gnu.org/software/make/manual
 **Syntax:**
 
 ```Makefile
-$(call fn_shell,cmd,[errorMessage])
+$(call fn_shell,cmd,[errorMessage=<predefined_message>])
 ```
 
 **Parameters:**
@@ -781,6 +808,8 @@ $(call fn_shell,cmd,[errorMessage])
 
 Output of given `cmd` execution.
 
+--------------------------------------------------------------------------------
+
 #### fn_warning
 
 Prints a colored warning message into console.
@@ -791,14 +820,15 @@ Prints a colored warning message into console.
  **Syntax:**
 
 ```Makefile
-$(call fn_warning,msg)
+$(call fn_warning,msg,[skipColor=0])
 ```
 
 **Parameters:**
 
-| Parameter  | Description                               |
-|------------|-------------------------------------------|
-| `msg`      | Message to be printed due to the warning. |
+| Parameter   | Description                                                                                                                        |
+|-------------|------------------------------------------------------------------------------------------------------------------------------------|
+| `msg`       | Message to be printed.                                                                                                             |
+| `skipColor` | Optional parameter which instructs the call to not use colors. Defaults to `0` (by default text is colored when there is support). |
 
 **Return value:**
 
