@@ -702,12 +702,66 @@ Returns the relative path for going from `fromDir` to `toDir`.
 
 ### Miscellaneous
 
+#### fn_color_print_cmd
+
+Returns the printf statement that can be used in recipes to print a colored text into console.
+
+!!! Notes
+    * Real color support relies on terminal support. If there is no support colors are ignored.
+    * This command returns the printf statement (i.e. there is no immediate printing into console).
+
+ **Syntax:**
+
+```Makefile
+$(call fn_color_print_cmd,msg,[ansiColor=])
+```
+
+**Parameters:**
+
+| Parameter   | Description                                                                                                                        |
+|-------------|------------------------------------------------------------------------------------------------------------------------------------|
+| `msg`       | Message to be printed.                                                                                                             |
+| `ansiColor` | Optional ansi escape sequence used to colorize `msg`.                                                                              |
+
+**Return value:**
+
+This command returns the printf statement that can be used in recipes to print a colored text into console (i.e. there is no immediate printing into console).
+
+--------------------------------------------------------------------------------
+
+#### fn_debug
+
+Prints a colored debug message into console.
+
+!!! Notes
+    * Real color support relies on terminal support. If there is no support colors are ignored.
+    * Print into console is executed in the same way as [`$(warning)`](https://www.gnu.org/software/make/manual/make.html#index-warning) command.
+
+ **Syntax:**
+
+```Makefile
+$(call fn_debug,msg)
+```
+
+**Parameters:**
+
+| Parameter   | Description                                                                                                                        |
+|-------------|------------------------------------------------------------------------------------------------------------------------------------|
+| `msg`       | Message to be printed.                                                                                                             |
+
+**Return value:**
+
+_This function does not return any value._
+
+--------------------------------------------------------------------------------
+
 #### fn_error
 
 Raises an error and output a colored message.
 
 !!! Notes
     * Real color support relies on terminal support. If there is no support colors are ignored.
+    * Print into console is executed in the same way as [`$(error)`](https://www.gnu.org/software/make/manual/make.html#index-error) command.
 
  **Syntax:**
 
@@ -735,6 +789,7 @@ Prints a colored info message into console.
 
 !!! Notes
     * Real color support relies on terminal support. If there is no support colors are ignored.
+    * Print into console is executed in the same way as [`$(info)`](https://www.gnu.org/software/make/manual/make.html#index-info) command.
 
  **Syntax:**
 
@@ -761,6 +816,7 @@ Prints an log message in standardized way. If verbose mode is informed, messages
 
 !!! Notes
     * Real color support relies on terminal support. If there is no support colors are ignored.
+    * Print into console is executed in the same way as [`$(info)`](https://www.gnu.org/software/make/manual/make.html#index-info) command.
 
  **Syntax:**
 
@@ -770,16 +826,45 @@ $(call fn_log,msg,[verbose=0])
 
 **Parameters:**
 
-| Parameter  | Description                                                                        |
-|------------|------------------------------------------------------------------------------------|
-| `msg`      | Message to be printed to stdout.                                                   |
-| `verbose`  | Defines if generated command for verbose mode. Defaults to `0` (non-verbose mode). |
+| Parameter  | Description                                                                                |
+|------------|--------------------------------------------------------------------------------------------|
+| `msg`      | Message to be printed to stdout.                                                           |
+| `verbose`  | Defines if generated command applies for verbose mode. Defaults to `0` (non-verbose mode). |
 
 **Return value:**
 
 _This function does not return any value._
 
 --------------------------------------------------------------------------------
+
+#### fn_log_cmd
+
+Returns the printf statement that can be used in recipes to emulate [`$(call fn_log)`](#fn_log).
+
+!!! Notes
+    * Real color support relies on terminal support. If there is no support colors are ignored.
+    * This command returns the printf statement (i.e. there is no immediate printing into console).
+
+ **Syntax:**
+
+```Makefile
+$(call fn_log_cmd,message,[verbose=0])
+```
+
+**Parameters:**
+
+
+| Parameter  | Description                                                                                |
+|------------|--------------------------------------------------------------------------------------------|
+| `msg`      | Message to be printed to stdout.                                                           |
+| `verbose`  | Defines if generated command applies for verbose mode. Defaults to `0` (non-verbose mode). |
+
+**Return value:**
+
+This command returns the printf statement that can be used in recipes to emulate a [`fn_log`](#fn_log) call (i.e. there is no immediate printing into console).
+
+--------------------------------------------------------------------------------
+
 
 #### fn_number_cmp
 
