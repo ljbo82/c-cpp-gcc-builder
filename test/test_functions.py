@@ -122,6 +122,9 @@ class test_functions(TestBase):
 		result = self.call_function('fn_semver_check_compat,4,5', False)
 		self.assert_failure(result, '4+')
 
+		result = self.call_function('fn_semver_check_compat,4,5,1',False)
+		self.assert_success(result)
+
 		result = self.call_function('fn_semver_check_compat,5,4', False)
 		self.assert_failure(result, '5+')
 

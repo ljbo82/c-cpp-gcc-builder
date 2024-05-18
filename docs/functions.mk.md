@@ -457,16 +457,17 @@ See [fn_semver](#fn_semver).
 **Syntax:**
 
 ```Makefile
-$(call fn_semver_check_compat,minVersion,version,[errorMessage=<predefined_message>])
+$(call fn_semver_check_compat,minVersion,version,[majorBackwardsCompatible=0][errorMessage=<predefined_message>])
 ```
 
 **Parameters:**
 
-| Parameter      | Details                            |
-|----------------|------------------------------------|
-| `minVersion`   | Minimum accepted version.          |
-| `version`      | Tested version.                    |
-| `errorMessage` | Optional customized error message. |
+| Parameter                  | Details                                                    |
+|----------------------------|------------------------------------------------------------|
+| `minVersion`               | Minimum accepted version.                                  |
+| `version`                  | Tested version.                                            |
+| `majorBackwardsCompatible` | Defines if major version changes are backwards compatible. |
+| `errorMessage`             | Optional customized error message.                         |
 
 **Return value:**
 
