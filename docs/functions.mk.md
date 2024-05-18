@@ -160,10 +160,6 @@ _This function does not return any value._
 
 --------------------------------------------------------------------------------
 
-
-
-
-
 #### fn_check_options
 
 Ensures the contents of a variable is one among a list of accepted values.
@@ -335,6 +331,33 @@ $(call fn_split,delimitedWord,delimiter,[tokenPrefix=__?__])
 **Return value:**
 
 A list of words as a result of exploding given string using given delimiter.
+
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+
+#### fn_test_patterns
+
+Identifies which patterns match against a value.
+
+**Syntax:**
+
+```Makefile
+$(call fn_test_patterns,patterns,val,[find=],[replace=])
+```
+
+**Parameters**:
+
+| Parameter   | Description                                                                                                                                                        |
+|-------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `patterns`  | A space-separated list of patterns to be tested (see [`$(filter)`](https://www.gnu.org/software/make/manual/html_node/Text-Functions.html#index-filter) function). |
+| `val`       | Value to be tested against each provided pattern.                                                                                                                  |
+| `find`      | What to find the the list of matched patterns. Defaults to nothing.                                                                                                |
+| `replace`   | Replace each occurrence of `find` by `replace`. Defaults to nothing.                                                                                               |
+
+**Return value:**
+
+A list of patterns matching given `val` having each occurrence of `find` in such list being replaced by `replace` .
 
 --------------------------------------------------------------------------------
 

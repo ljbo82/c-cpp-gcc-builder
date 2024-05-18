@@ -54,6 +54,19 @@ class test_functions(TestBase):
 
 	@TestBase.BuildTest
 	def test_fn_semver_cmp(self):
+		self.create_file('Makefile', textwrap.dedent(f'''\
+			PROJ_NAME = project
+			PROJ_TYPE = app
+
+			# Declaring a variable using a restricted name:
+			fn_semver_cmp := some_val
+
+			include {TestBase.CPB_DIR}/builder.mk
+			''')
+		)
+		result = self.make()
+		self.assert_error_reserved_variable('fn_semver_cmp', result)
+
 		result = self.call_function('fn_semver_cmp,1,2')
 		self.assert_success(result, '-3')
 
@@ -104,6 +117,19 @@ class test_functions(TestBase):
 
 	@TestBase.BuildTest
 	def test_fn_semver_check_compat(self):
+		self.create_file('Makefile', textwrap.dedent(f'''\
+			PROJ_NAME = project
+			PROJ_TYPE = app
+
+			# Declaring a variable using a restricted name:
+			fn_semver_check_compat := some_val
+
+			include {TestBase.CPB_DIR}/builder.mk
+			''')
+		)
+		result = self.make()
+		self.assert_error_reserved_variable('fn_semver_check_compat', result)
+
 		result = self.call_function('fn_semver_check_compat,4,4', False)
 		self.assert_success(result)
 
@@ -136,6 +162,19 @@ class test_functions(TestBase):
 
 	@TestBase.BuildTest
 	def test_fn_check_not_origin(self):
+		self.create_file('Makefile', textwrap.dedent(f'''\
+			PROJ_NAME = project
+			PROJ_TYPE = app
+
+			# Declaring a variable using a restricted name:
+			fn_check_not_origin := some_val
+
+			include {TestBase.CPB_DIR}/builder.mk
+			''')
+		)
+		result = self.make()
+		self.assert_error_reserved_variable('fn_check_not_origin', result)
+
 		result = self.call_function('fn_check_not_origin,VAR,environment', False, make_flags='VAR=val')
 		self.assert_success(result)
 
@@ -148,6 +187,71 @@ class test_functions(TestBase):
 		result = self.call_function('fn_check_not_origin,VAR,command line', False,'VAR=val')
 		self.assert_failure(result, 'command line')
 
+	@TestBase.BuildTest
+	def test_fn_test_patterns(self):
+		# Check reserved usage -------------------------------------------------
+		self.create_file('Makefile', textwrap.dedent(f'''\
+			PROJ_NAME = project
+			PROJ_TYPE = app
+
+			# Declaring a variable using a restricted name:
+			fn_test_patterns := some_val
+
+			include {TestBase.CPB_DIR}/builder.mk
+			''')
+		)
+		result = self.make()
+		self.assert_error_reserved_variable('fn_test_patterns', result)
+		# ----------------------------------------------------------------------
+
+		# Check matching -------------------------------------------------------
+		result = self.call_function('fn_test_patterns,http://% https://% git://%,http://someurl.com')
+		self.assert_success(result,'http://%')
+
+		result = self.call_function('fn_test_patterns,http://% https://% git://%,https://someurl.com')
+		self.assert_success(result,'https://%')
+
+		result = self.call_function('fn_test_patterns,http://% https://% git://%,git://someurl.com')
+		self.assert_success(result,'git://%')
+
+		result = self.call_function('fn_test_patterns,http://% https://% git://%,hg://someurl.com')
+		self.assert_success(result)
+		self.assertEqual('', result.output[0])
+		# ----------------------------------------------------------------------
+
+		# Check find and replace -----------------------------------------------
+		result = self.call_function('fn_test_patterns,http://% https://% git://%,http://someurl.com,://%')
+		self.assert_success(result)
+		self.assertEqual('http', result.output[0])
+
+		result = self.call_function('fn_test_patterns,http://% https://% git://%,http://someurl.com,://%,X')
+		self.assert_success(result,'httpX')
+
+
+		result = self.call_function('fn_test_patterns,http://% https://% git://%,https://someurl.com,://%')
+		self.assert_success(result)
+		self.assertEqual('https', result.output[0])
+
+		result = self.call_function('fn_test_patterns,http://% https://% git://%,https://someurl.com,://%,Y')
+		self.assert_success(result,'httpsY')
+
+
+		result = self.call_function('fn_test_patterns,http://% https://% git://%,git://someurl.com,://%')
+		self.assert_success(result)
+		self.assertEqual('git', result.output[0])
+
+		result = self.call_function('fn_test_patterns,http://% https://% git://%,git://someurl.com,://%,Z')
+		self.assert_success(result,'gitZ')
+
+
+		result = self.call_function('fn_test_patterns,http://% https://% git://%,hg://someurl.com,://%')
+		self.assert_success(result)
+		self.assertEqual('', result.output[0])
+
+		result = self.call_function('fn_test_patterns,http://% https://% git://%,hg://someurl.com,://%,W')
+		self.assert_success(result)
+		self.assertEqual('', result.output[0])
+		# ----------------------------------------------------------------------
 
 if __name__ == '__main__':
 	unittest.main()
