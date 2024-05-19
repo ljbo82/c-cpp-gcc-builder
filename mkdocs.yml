@@ -8,6 +8,7 @@ nav:
   - Variable reference: variables.md
   - Makefiles:
     - builder.mk: builder.mk.md
+    - download.mk: download.mk.md
     - doxygen.mk: doxygen.mk.md
     - functions.mk: functions.mk.md
     - git.mk: git.mk.md

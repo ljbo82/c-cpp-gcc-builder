@@ -92,6 +92,12 @@ Include this file at the end of your `<PROJ_ROOT>/Makefile`.
 
 See [user guide](user-guide) for details.
 
+### download.mk
+
+This makefile can be used whenever your project needs to download external sources before its own build.
+
+See makefile [documentation](download.mk.md) for details.
+
 ### doxygen.mk
 
 This makefile provides a target to generate source documentation using [doxygen](https://www.doxygen.nl/index.html).
